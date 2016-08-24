@@ -1,0 +1,46 @@
+table.product-color tr{
+  cursor: pointer;
+}
+
+.dropzone-hidden {
+  display: none;
+}
+
+.dropzone-active {
+
+  background-color: #ededed;
+}
+
+.img-front {
+  border: medium none;
+  cursor: pointer;
+  display: block;
+  font-size: 14px;
+  text-align: center;
+}
+
+#fronted {
+  border: medium none;
+  cursor: pointer;
+  display: block;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 700;
+  color: #ed8e2c;
+}
+
+.carousel {
+  margin-top: 20px;
+}
+.item .thumb {
+  width: 25%;
+  cursor: pointer;
+  float: left;
+}
+.item .thumb img {
+  width: 100%;
+  margin: 2px;
+}
+.item img {
+  width: 100%;
+}

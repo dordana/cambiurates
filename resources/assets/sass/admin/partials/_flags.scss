@@ -1,0 +1,28 @@
+/*
+ *
+*/
+/* GLOBAL STYLES
+-------------------------------------------------- */
+
+/* PACE PLUGIN
+-------------------------------------------------- */
+#flag_collapse {
+  background-color: #232596;
+  height: 2px;
+  display: none;
+}
+
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-primary, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-primary {
+  background-color: #232596;
+}
+
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default, .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-default {
+  background: #f8ac59 none repeat scroll 0 0;
+  color: #000;
+}
+
+.flag-toggle-2 {
+  float: left;
+  margin-top: 10px;
+}
+
