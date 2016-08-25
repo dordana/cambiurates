@@ -6,7 +6,7 @@
     <div class="row">
 
         <div class="col-md-6">
-            <h2 class="font-bold">ACE-FX</h2>
+            <h2 class="font-bold">CAMBIU</h2>
 
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id magni modi nulla numquam quaerat quia reprehenderit soluta ullam unde vel. Accusantium amet debitis earum libero maiores nobis reprehenderit sequi vitae!
