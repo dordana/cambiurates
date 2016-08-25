@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['middleware' => 'web', 'prefix' => 'admin', 'namespace' => 'Admin'], function()
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 {
     Route::get('/', 'AdminController@index');
     Route::get('/users', 'UserController@index');
@@ -43,12 +43,12 @@ Route::group(['middleware' => 'web', 'prefix' => 'admin', 'namespace' => 'Admin'
         Route::get('users/destroy/{id}', 'UserController@destroy');
 
         //Exchange Rates
-//        Route::get('exchangerates', 'ExchangeRateController@index');
-//        Route::get('exchangerate/create', 'ExchangeRateController@create');
-//        Route::post('exchangerate/store', 'ExchangeRateController@store');
-//        Route::get('exchangerate/edit/{iId}', 'ExchangeRateController@edit');
-//        Route::post('exchangerate/update', 'ExchangeRateController@update');
-//        Route::get('exchangerate/destroy/{iId}', 'ExchangeRateController@destroy');
+        Route::get('exchangerates', 'ExchangeRateController@index');
+        Route::get('exchangerate/create', 'ExchangeRateController@create');
+        Route::post('exchangerate/store', 'ExchangeRateController@store');
+        Route::get('exchangerate/edit/{iId}', 'ExchangeRateController@edit');
+        Route::post('exchangerate/update', 'ExchangeRateController@update');
+        Route::get('exchangerate/destroy/{iId}', 'ExchangeRateController@destroy');
 
     });
 });
