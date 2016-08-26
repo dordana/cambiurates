@@ -23,9 +23,6 @@ class ExchangeRateRequest extends Request
     {
         $rules = [
             'symbol' => 'required|size:3|unique:'.app('App\Models\ExchangeRate')->getTable().',symbol'.($this->input('id') != null ? ','.$this->input('id') : ''),
-            'buy_markup' => 'required|numeric',
-            'sell_markup' => 'required|numeric',
-            'ttt_sell' => 'required|numeric',
             'title' => 'required',
         ];
         return $rules;

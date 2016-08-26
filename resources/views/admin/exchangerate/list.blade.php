@@ -33,12 +33,7 @@
                         <tr>
                             <th class="footable-first-column">Symbol</th>
                             <th>Title</th>
-                            <th>Visible</th>
                             <th>Exchange Rate</th>
-                            <th>Buy Markup (%)</th>
-                            <th>Sell Markup (%)</th>
-                            <th>TTT Sell</th>
-                            <th>Profit</th>
                             <th class="text-right footable-last-column">Action</th>
                         </tr>
 
@@ -50,32 +45,8 @@
                             <td>
                                 {{ $oExchangeRate->title }}
                             </td>
-                            <?php
-                            /*<td>
-                                {{ $oExchangeRate->featured != 0 ? $oExchangeRate->featured . ' spot' : 'No'}}
-                            </td>*/
-                            ?>
-                            <td>
-                                @if ($oExchangeRate->visible == 1)
-                                    <span class="label label-primary">Visible</span>
-                                @else
-                                    <span class="label label-warning">Hidden</span>
-                                @endif
-                            </td>
                             <td>
                                 {{ $oExchangeRate->exchangeRate }}
-                            </td>
-                            <td>
-                                {{ $oExchangeRate->buyMarkup }}
-                            </td>
-                            <td>
-                                {{ $oExchangeRate->sellMarkup }}
-                            </td>
-                            <td>
-                                {{ $oExchangeRate->tttSell }}
-                            </td>
-                            <td>
-                                {{ $oExchangeRate->getProfitAttribute() }}
                             </td>
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">

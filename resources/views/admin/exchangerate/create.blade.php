@@ -41,64 +41,6 @@
 
                         <div class="hr-line-dashed"></div>
 
-                        <div class="form-group{{ $errors->has('buy_markup') ? ' has-error' : '' }}">
-                            <label class="col-md-2 control-label" for="buy_markup">Buy Markup (%)</label>
-
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" name="buy_markup" id="buy_markup" value="{{ isset($oExchangeRate) ? $oExchangeRate->buyMarkup : old('buy_markup') }}">
-
-                                @if ($errors->has('buy_markup'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('buy_markup') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="hr-line-dashed"></div>
-
-                        <div class="form-group{{ $errors->has('sell_markup') ? ' has-error' : '' }}">
-                            <label class="col-md-2 control-label" for="sell_markup">Sell Markup (%)</label>
-
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" name="sell_markup" id="sell_markup" value="{{ isset($oExchangeRate) ? $oExchangeRate->sellMarkup : old('sell_markup') }}">
-
-                                @if ($errors->has('sell_markup'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('sell_markup') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="hr-line-dashed"></div>
-
-                        <div class="form-group{{ $errors->has('ttt_sell') ? ' has-error' : '' }}">
-                            <label class="col-md-2 control-label" for="ttt_sell">TTT Sell</label>
-
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" name="ttt_sell" id="ttt_sell" value="{{ isset($oExchangeRate) ? $oExchangeRate->tttSell : old('ttt_sell') }}">
-
-                                @if ($errors->has('ttt_sell'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('ttt_sell') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="hr-line-dashed"></div>
-
-                        <div class="form-group{{ $errors->has('visible') ? ' has-error' : '' }}">
-                            <label class="col-md-2 control-label" for="visible">Visible on Site</label>
-
-                            <div class="col-md-10" style="padding-top: 6px;">
-                                <input type="checkbox" class="form-control i-checks" name="visible" id="visible" value="1" {!! isset($oExchangeRate) && $oExchangeRate->visible ? "checked='checked'" : "" !!}>
-                            </div>
-                        </div>
-
-                        <div class="hr-line-dashed"></div>
-
                         <div class="form-group">
                             <div class="col-md-10 col-md-offset-2">
                                 <a href="/admin/exchangerates" class="btn btn-white" type="submit">Cancel</a>
@@ -118,16 +60,3 @@
         </div>
     </div>
 @endsection
-
-@section('footer')
-    <script>
-        $(document).ready(function() {
-            $('.i-checks').iCheck({
-                checkboxClass: 'icheckbox_square-green',
-                radioClass: 'iradio_square-green'
-            });
-
-            $('.chosen-select').chosen();
-        });
-    </script>
-@stop

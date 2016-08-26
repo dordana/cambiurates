@@ -49,15 +49,8 @@ class ExchangeRateController extends Controller
      */
     public function store(ExchangeRateRequest $oRequest)
     {
-       
-        $aData = $oRequest->all();
-        if (!isset($aData['visible'])) {
-            $aData['visible'] = 0;
-        }
-      
-        $object = ExchangeRate::create($aData);
-        $object->updateFeaturedSpots();
-
+        ExchangeRate::create($oRequest->all());
+        
         return redirect('admin/exchangerates')->with(['success' => 'Record successfully created!']);
     }
 
@@ -75,9 +68,7 @@ class ExchangeRateController extends Controller
         if (!$oExchangeRate) {
             return redirect('admin/exchangerates');
         }
-
-        $oExchangeRate->getProfitAttribute();
-
+        
         return view(
             'admin.exchangerate.create',
             ['oExchangeRate' => $oExchangeRate]
@@ -98,15 +89,9 @@ class ExchangeRateController extends Controller
         if (!$oExchangeRate) {
             return redirect()->back()->with(['not_found' => 'Sorry, we couldn\'t find that record.']);
         }
-
-        $aData = $oRequest->all();
-        if (!isset($aData['visible'])) {
-            $aData['visible'] = 0;
-        }
         
-        $oExchangeRate->update($aData);
-        $oExchangeRate->updateFeaturedSpots();
-
+        $oExchangeRate->update($oRequest->all());
+        
         return redirect('admin/exchangerates')->with(
             ['success' => 'Record successfully updated!']
         );
