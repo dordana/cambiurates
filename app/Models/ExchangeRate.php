@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 class ExchangeRate extends BaseModel
 {
     protected $fillable = [
@@ -35,5 +36,15 @@ class ExchangeRate extends BaseModel
     public function users(){
 
         return $this->belongsToMany(User::class, 'user_exchange_rates');
+    }
+
+    public function scopeSearchFor(Builder $query)
+    {
+        if (\Request::get('search') != '') {
+
+            $query->where('symbol', 'LIKE', '%'.\Request::get('search').'%')
+                ->orWhere('title', 'LIKE','%'.\Request::get('search').'%')
+                ->orderBy('symbol', 'asc');
+        }
     }
 }

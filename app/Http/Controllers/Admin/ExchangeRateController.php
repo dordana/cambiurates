@@ -17,15 +17,11 @@ class ExchangeRateController extends Controller
     public function index()
     {
 
-        $sSearch = \Request::get('search');
-
         return view(
             'admin.exchangerate.list',
             [
-                'aExchangeRates' => ExchangeRate::where('symbol', 'LIKE', '%'.$sSearch.'%')
-                    ->orWhere('title', 'LIKE','%'.$sSearch.'%')
-                    ->orderBy('symbol', 'asc')
-                    ->paginate($this->limit),
+                'aExchangeRates'  => ExchangeRate::searchFor()->has('users', '<', 1)->paginate($this->limit),
+                'myExchangeRates' => \Auth::user()->rates
             ]
         );
     }

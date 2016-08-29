@@ -34,7 +34,60 @@
                             <th style="max-width: 30px">Sell</th>
                             <th class="text-right footable-last-column">Action</th>
                         </tr>
+                        @foreach($myExchangeRates->all() as $iIdx => $oExchangeRate)
+                            <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row; background-color: #e1ffe6">
+                                <td class="check-mail footable-first-column">
+                                    <input type="checkbox" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}" class="i-checks">
+                                </td>
+                                <td>
+                                    {{ $oExchangeRate->symbol }}
+                                </td>
+                                <td>
+                                    {{ $oExchangeRate->title }}
+                                </td>
+                                <td>
+                                    {{ $oExchangeRate->exchangeRate }}
+                                </td>
+                                <td>
+                                    <div class="flag-toggle-2">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="true" class="flag-checkbox" data-name="visible" name="visible[]"
+                                                   {{ (true) ? 'checked' : '' }}
+                                                   data-toggle="toggle"
+                                                   data-size="small"
+                                                   data-on-text="Visible"
+                                                   data-off-text="Hidden"
+                                            >
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
+                                        <option selected="selected" value="disabled">Disabled</option>
+                                        <option value="percent">Margin(%)</option>
+                                        <option value="flat_rate">Flat Rate</option>
+                                    </select>
+                                    <input type="text" value="0" class="form-control buy" name="buy[]" data-name="buy" style="width:30%;" disabled="disabled">
+                                </td>
+                                <td>
+                                    <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
+                                        <option selected="selected" value="disabled">Disabled</option>
+                                        <option value="percent">Margin(%)</option>
+                                        <option value="flat_rate">Flat Rate</option>
+                                    </select>
+                                    <input type="text" value="0" class="form-control margin-rate-input" name="sell[]" data-name="sell" style="width:30%;"  disabled="disabled">
+                                </td>
 
+                                <td class="text-right footable-last-column">
+                                    <div class="btn-group">
+                                        <button class="btn-green btn btn-md single-row-edit">
+                                            Edit
+                                        </button>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
                         @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
                         <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row;">
                             <td class="check-mail footable-first-column">
