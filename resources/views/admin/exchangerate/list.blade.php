@@ -106,7 +106,7 @@
                                 <div class="flag-toggle-2">
                                     <label class="checkbox-inline">
                                         <input type="checkbox" value="true" class="flag-checkbox" data-name="visible" name="visible[]"
-                                               {{ (true) ? 'checked' : '' }}
+                                               {{ (false) ? 'checked' : '' }}
                                                data-toggle="toggle"
                                                data-size="small"
                                                data-on-text="Visible"
@@ -116,7 +116,7 @@
                                 </div>
                             </td>
                             <td>
-                                <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
+                                <select name="buy_trade[]" data-name="buy_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
                                     <option selected="selected" value="disabled">Disabled</option>
                                     <option value="percent">Margin(%)</option>
                                     <option value="flat_rate">Flat Rate</option>
@@ -124,7 +124,7 @@
                                 <input type="text" value="0" class="form-control buy" name="buy[]" data-name="buy" style="width:30%;" disabled="disabled">
                             </td>
                             <td>
-                                <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
+                                <select name="sell_trade[]" data-name="sell_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
                                     <option selected="selected" value="disabled">Disabled</option>
                                     <option value="percent">Margin(%)</option>
                                     <option value="flat_rate">Flat Rate</option>
@@ -137,7 +137,6 @@
                                     <button class="btn-green btn btn-md single-row-edit">
                                         Edit
                                     </button>
-
                                 </div>
                             </td>
                         </tr>
@@ -191,11 +190,8 @@
                 var that = $(this);
                 var row = that.parents('tr').first();
                 var data = {};
-                row.find('input').each(function () {
-                     data[$(this).prop('data-name')] =  $(this).val();
-                });
-                row.find('select').each(function () {
-                    data[$(this).prop('data-name')] =  $(this).val();
+                row.find('[data-name]').each(function () {
+                     data[$(this).data('name')] =  $(this).val();
                 });
 
                 $.ajax({
@@ -221,7 +217,7 @@
                 $('.i-checks:not(:first)').iCheck('toggle');
             });
 
-            $('select[data-name="trade_type"]').on('change',function () {
+            $('.chosen-select').on('change',function () {
                 var selected = $(this).val();
                 var input = $(this).parent().find('input');
                 if(selected == 'disabled') {
@@ -237,16 +233,14 @@
                 var that = $(this);
 
                 $('.i-checks').each(function () {
+
                     var row_data = {};
                     var row = $(this).parents('tr').first();
                     if ($(this).prop("checked")) {
-                        row.find('input').each(function () {
-                            row_data[$(this).prop('data-name')] = $(this).val();
+                        row.find('[data-name]').each(function () {
+                            row_data[$(this).data('name')] =  $(this).val();
                         });
-                        row.find('select').each(function () {
-                            row_data[$(this).prop('data-name')] = $(this).val();
-                        });
-                        data[$(this).index()] = row_data;
+                        data[row.index()] = row_data;
                     }
                 });
 
@@ -273,7 +267,6 @@
                     });
                 }
             });
-
         });
     </script>
 @endsection

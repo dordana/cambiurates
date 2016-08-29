@@ -55,9 +55,6 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
         Route::get('my-exchange-rates', 'UserExchangeRateController@index');
         Route::post('my-exchange-rates/edit', 'UserExchangeRateController@edit');
         Route::post('my-exchange-rates/edit-collection', 'UserExchangeRateController@editCollection');
- 
-//        Route::post('my-exchange-rates/increment-margins', 'UserExchangeRateController@incrementMargins');
-//        Route::post('my-exchange-rates/decrement-margins', 'UserExchangeRateController@decrementMargins');
-
+        
     });
 });

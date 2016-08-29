@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class UserExchangeRateRequest extends Request
+class UserExchangeRateCollectionRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
