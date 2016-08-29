@@ -23,10 +23,10 @@ class UserExchangeRateRequest extends Request
     {
         $rules = [
             'id' => 'required',
-            'trade_type'   => 'required',
-            'buy_margin' => 'numeric',
-            'rate_buy'  => 'numeric',
-            'rate_sell' => 'numeric'
+            'buy_trade_type'   => 'required',
+            'sell_trade_type'   => 'required',
+            'buy'  => 'numeric',
+            'sell' => 'numeric'
         ];
         return $rules;
     }
