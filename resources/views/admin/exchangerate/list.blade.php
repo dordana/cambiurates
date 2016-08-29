@@ -62,28 +62,26 @@
                                     </label>
                                 </div>
                             </td>
-
                             <td>
-                                <select name="trade_type[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
-                                    <option selected="selected" value="disabled">Disabled</option>
-                                    <option selected="selected" value="percent">Margin(%)</option>
-                                    <option value="flat_rate">Flat Rate</option>
-                                </select>
-                                <input type="text"  value="0" class="form-control margin-rate-input" name="buy_margin[]" data-name="buy" style="width:30%;">
-                            </td>
-                            <td>
-                                <select name="trade_type[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
+                                <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
                                     <option selected="selected" value="disabled">Disabled</option>
                                     <option value="percent">Margin(%)</option>
                                     <option value="flat_rate">Flat Rate</option>
                                 </select>
-                                <input type="text" value="0" class="form-control margin-rate-input" name="sell_margin[]" data-name="sell" style="width:30%;">
+                                <input type="text" value="0" class="form-control buy" name="buy[]" data-name="buy" style="width:30%;" disabled="disabled">
                             </td>
-
+                            <td>
+                                <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
+                                    <option selected="selected" value="disabled">Disabled</option>
+                                    <option value="percent">Margin(%)</option>
+                                    <option value="flat_rate">Flat Rate</option>
+                                </select>
+                                <input type="text" value="0" class="form-control margin-rate-input" name="sell[]" data-name="sell" style="width:30%;"  disabled="disabled">
+                            </td>
 
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">
-                                    <button class="btn-green btn btn-md single-row-edit" data-id="{{ $oExchangeRate->id }}">
+                                    <button class="btn-green btn btn-md single-row-edit">
                                         Edit
                                     </button>
 
@@ -91,7 +89,6 @@
                             </td>
                         </tr>
                         @endforeach
-
                         <tr>
                             <td colspan="7" class="footable-visible">
                                 @if($aExchangeRates->render() != '')
@@ -171,15 +168,13 @@
                 $('.i-checks:not(:first)').iCheck('toggle');
             });
 
-            $('select[name="trade_type[]"]').on('change',function () {
+            $('select[data-name="trade_type"]').on('change',function () {
                 var selected = $(this).val();
-                var row = $(this).parents('tr').first();
-                if(selected == 'flat_rate') {
-                    row.find('.flat-rate-input').prop('disabled', false);
-                    row.find('.margin-rate-input').prop('disabled', true);
-                } else if (selected == 'percent') {
-                    row.find('.flat-rate-input').prop('disabled', true);
-                    row.find('.margin-rate-input').prop('disabled', false);
+                var input = $(this).parent().find('input');
+                if(selected == 'disabled') {
+                    input.prop('disabled', true);
+                } else {
+                    input.prop('disabled', false);
                 }
             });
 
