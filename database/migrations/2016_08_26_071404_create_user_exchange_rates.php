@@ -12,20 +12,23 @@ class CreateUserExchangeRates extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'user_exchange_rates',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->integer('user_id');
-                $table->integer('exchange_rate_id');
-                $table->enum('markup_type',['fixed','percent']);
-                $table->decimal('buy_markup_fixed', 14, 6);
-                $table->decimal('sell_markup_fixed', 14, 6);
-                $table->decimal('buy_markup_percent', 6, 2);
-                $table->decimal('sell_markup_percent', 6, 2);
-                $table->boolean('visible');
-                $table->timestamps();
-            }
+        Schema::create('user_exchange_rates', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('user_id')->unsigned();
+            $table->integer('exchange_rate_id')->unsigned();
+            $table->boolean('visible')->default(0);
+            $table->timestamps();
+
+            $table->unique(['user_id', 'exchange_rate_id']);
+
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('exchange_rate_id')
+                ->references('id')->on('exchange_rates')
+                ->onDelete('cascade');
+        }
         );
     }
 
@@ -36,6 +39,6 @@ class CreateUserExchangeRates extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('user_exchange_rates');
     }
 }

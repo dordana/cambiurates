@@ -74,4 +74,12 @@ class User extends Authenticatable
         $me->confirmation_code = $code;
         $me->save();
     }
+
+    /**
+     * @return $this
+     */
+    public function rates(){
+
+        return $this->belongsToMany(ExchangeRate::class, 'user_exchange_rates', 'user_id', 'exchange_rate_id')->withPivot(['visible'])->orderBy('user_exchange_rates.id', 'asc');;
+    }
 }

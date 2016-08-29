@@ -31,6 +31,9 @@ class ExchangeRate extends BaseModel
     {
         return sprintf('%01.3f', $this->exchangeRate * ((100 - $this->sellMarkup) / 100));
     }
-    
-    
+
+    public function users(){
+
+        return $this->belongsToMany(User::class, 'user_exchange_rates');
+    }
 }
