@@ -49,6 +49,15 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
         Route::get('exchangerate/edit/{iId}', 'ExchangeRateController@edit');
         Route::post('exchangerate/update', 'ExchangeRateController@update');
         Route::get('exchangerate/destroy/{iId}', 'ExchangeRateController@destroy');
+    
+    
+        //Exchange Rates
+        Route::get('my-exchange-rates', 'UserExchangeRateController@index');
+        Route::post('my-exchange-rates/edit', 'UserExchangeRateController@edit');
+        Route::post('my-exchange-rates/edit-collection', 'UserExchangeRateController@editCollection');
+ 
+//        Route::post('my-exchange-rates/increment-margins', 'UserExchangeRateController@incrementMargins');
+//        Route::post('my-exchange-rates/decrement-margins', 'UserExchangeRateController@decrementMargins');
 
     });
 });

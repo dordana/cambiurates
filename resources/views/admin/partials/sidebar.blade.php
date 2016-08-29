@@ -25,6 +25,10 @@
             <li class="@if(Request::is("admin/exchangerate*")) active @endif">
                 <a href="{{ url('admin/exchangerates') }}"><i class="fa fa-dollar"></i> <span class="nav-label">Exchange Rates</span> </a>
             </li>
+
+            <li class="@if(Request::is("admin/my-exchange-rates*")) active @endif">
+                <a href="{{ url('admin/my-exchange-rates') }}"><i class="fa fa-dollar"></i> <span class="nav-label">My Exchange Rates</span> </a>
+            </li>
         </ul>
 
     </div>

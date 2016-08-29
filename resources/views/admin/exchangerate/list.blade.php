@@ -5,14 +5,6 @@
         <div class="col-lg-12">
             <div class="ibox-content forum-container">
 
-                <div class="forum-title">
-                    <div class="pull-right forum-desc">
-                        <small>Total Exchange Rates: {{ number_format($aExchangeRates->total()) }}</small>
-                    </div>
-                    <a class="btn btn-primary btn-xs" href="{{ url('admin/exchangerate/create') }}">Add new
-                        Exchange Rate</a>
-                </div>
-
                 <div class="search-form">
                     <form action="" method="get">
                         <div class="input-group">
@@ -26,20 +18,29 @@
 
                     </form>
                 </div>
-
+                <button id="apply" class="btn-green btn btn-sm" style="margin: 5px">Apply</button>
                 <div class="hr-line-dashed"></div>
                 <div class="table-responsive">
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
-                            <th class="footable-first-column">Symbol</th>
+                            <th class="footable-first-column">
+                                <input type="checkbox" name="check-all" class="i-checks check-all">
+                            </th>
+                            <th>Symbol</th>
                             <th>Title</th>
                             <th>Exchange Rate</th>
+                            <th>Visible</th>
+                            <th style="max-width: 30px">Buy</th>
+                            <th style="max-width: 30px">Sell</th>
                             <th class="text-right footable-last-column">Action</th>
                         </tr>
 
                         @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
                         <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row;">
-                            <td class="footable-first-column">
+                            <td class="check-mail footable-first-column">
+                                <input type="checkbox" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}" class="i-checks">
+                            </td>
+                            <td>
                                 {{ $oExchangeRate->symbol }}
                             </td>
                             <td>
@@ -48,16 +49,44 @@
                             <td>
                                 {{ $oExchangeRate->exchangeRate }}
                             </td>
+                            <td>
+                                <div class="flag-toggle-2">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="true" class="flag-checkbox" data-name="visible" name="visible[]"
+                                               {{ (true) ? 'checked' : '' }}
+                                               data-toggle="toggle"
+                                               data-size="small"
+                                               data-on-text="Visible"
+                                               data-off-text="Hidden"
+                                        >
+                                    </label>
+                                </div>
+                            </td>
+
+                            <td>
+                                <select name="trade_type[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
+                                    <option selected="selected" value="disabled">Disabled</option>
+                                    <option selected="selected" value="percent">Margin(%)</option>
+                                    <option value="flat_rate">Flat Rate</option>
+                                </select>
+                                <input type="text"  value="0" class="form-control margin-rate-input" name="buy_margin[]" data-name="buy" style="width:30%;">
+                            </td>
+                            <td>
+                                <select name="trade_type[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
+                                    <option selected="selected" value="disabled">Disabled</option>
+                                    <option value="percent">Margin(%)</option>
+                                    <option value="flat_rate">Flat Rate</option>
+                                </select>
+                                <input type="text" value="0" class="form-control margin-rate-input" name="sell_margin[]" data-name="sell" style="width:30%;">
+                            </td>
+
+
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">
-                                    <button class="btn-white btn btn-xs"
-                                            onclick="window.location='{{ url('admin/exchangerate/edit/' . $oExchangeRate->id) }}'">
+                                    <button class="btn-green btn btn-md single-row-edit" data-id="{{ $oExchangeRate->id }}">
                                         Edit
                                     </button>
-                                    <button class="btn-white btn btn-xs"
-                                            onclick="window.location='{{ url('admin/exchangerate/destroy/' . $oExchangeRate->id) }}'">
-                                        Delete
-                                    </button>
+
                                 </div>
                             </td>
                         </tr>
@@ -84,3 +113,119 @@
 
     </div>
 @stop
+
+@section('footer')
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $.ajaxSetup({
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+            });
+
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
+
+            $('input[name="visible[]"]').bootstrapSwitch();
+            $('.chosen-select').chosen();
+
+            var cbSelector = $(".flag-checkbox");
+            cbSelector.bootstrapSwitch();
+            cbSelector.on('switchChange.bootstrapSwitch', function (event, state) {
+                $(this).val(state);
+            });
+
+            $('.single-row-edit').click(function () {
+
+                var that = $(this);
+                var row = that.parents('tr').first();
+                var data = {};
+                row.find('input').each(function () {
+                     data[$(this).prop('data-name')] =  $(this).val();
+                });
+                row.find('select').each(function () {
+                    data[$(this).prop('data-name')] =  $(this).val();
+                });
+
+                $.ajax({
+                    method: "POST",
+                    url: "my-exchange-rates/edit",
+                    data: data,
+                    success: function(result) {
+                        row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>All fields must be numeric. </div>');
+                        setTimeout(function(){
+                            $('#msg').remove();
+                        }, 2000);
+
+                    }, error: function (result) {
+                        row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>All fields must be numeric. </div>');
+                        setTimeout(function(){
+                            $('#msg').remove();
+                        }, 2000);
+                    }
+                })
+            });
+
+            $('.check-all').on('ifClicked', function(event){
+                $('.i-checks:not(:first)').iCheck('toggle');
+            });
+
+            $('select[name="trade_type[]"]').on('change',function () {
+                var selected = $(this).val();
+                var row = $(this).parents('tr').first();
+                if(selected == 'flat_rate') {
+                    row.find('.flat-rate-input').prop('disabled', false);
+                    row.find('.margin-rate-input').prop('disabled', true);
+                } else if (selected == 'percent') {
+                    row.find('.flat-rate-input').prop('disabled', true);
+                    row.find('.margin-rate-input').prop('disabled', false);
+                }
+            });
+
+            $('#apply').click(function () {
+
+                var data = {};
+                var that = $(this);
+
+                $('.i-checks').each(function () {
+                    var row_data = {};
+                    var row = $(this).parents('tr').first();
+                    if ($(this).prop("checked")) {
+                        row.find('input').each(function () {
+                            row_data[$(this).prop('data-name')] = $(this).val();
+                        });
+                        row.find('select').each(function () {
+                            row_data[$(this).prop('data-name')] = $(this).val();
+                        });
+                        data[$(this).index()] = row_data;
+                    }
+                });
+
+                if(Object.keys(data).length) {
+                    call_ajax(data);
+                }
+                function call_ajax(data) {
+                    $.ajax({
+                        method: "POST",
+                        url: "my-exchange-rates/edit-collection",
+                        data: data,
+                        success: function (result) {
+                            that.after('<div id="msg"  class="alert alert-danger"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>All fields must be numeric. </div>');
+                            setTimeout(function () {
+                                $('#msg').remove();
+                            }, 5000);
+
+                        }, error: function (result) {
+                            that.after('<div id="msg" class="alert alert-danger"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>All fields must be numeric. </div>');
+                            setTimeout(function () {
+                                $('#msg').remove();
+                            }, 5000);
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
+@endsection
