@@ -37,7 +37,7 @@
                         @foreach($aUserExchangeRates as $iIdx => $userExchangeRate)
                             <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row; background-color: #e1ffe6">
                                 <td class="check-mail footable-first-column">
-                                    <input type="checkbox" name="id[]" data-name="id" value="{{ $userExchangeRate->exchangeRate->id }}" class="i-checks">
+                                    <input type="checkbox" disabled name="id[]" data-name="id" value="{{ $userExchangeRate->exchangeRate->id }}" class="i-checks">
                                 </td>
                                 <td>
                                     {{ $userExchangeRate->exchangeRate->symbol }}
@@ -49,7 +49,7 @@
                                     {{ $userExchangeRate->exchangeRate->exchangeRate }}
                                 </td>
                                 <td>
-                                    <input type="text"
+                                    <input type="number"
                                            value="{{ $userExchangeRate->buy->value or 0 }}"
                                            class="form-control buy col-md-4"
                                            name="buy[]" data-name="buy"
@@ -63,7 +63,7 @@
                                 </td>
                                 <td>
 
-                                    <input type="text"
+                                    <input type="number"
                                            value="{{ $userExchangeRate->sell->value or 0 }}"
                                            class="form-control margin-rate-input col-md-4"
                                            name="sell[]" data-name="sell"
@@ -81,7 +81,7 @@
                                             <input type="checkbox" value="true" class="flag-checkbox" data-name="visible" name="visible[]"
                                                    {{ ($userExchangeRate->visible == 1) ? 'checked' : '' }}
                                                    data-toggle="toggle"
-                                                   data-size="small"
+                                                   data-size="mini"
                                                    data-on-text="Visible"
                                                    data-off-text="Hidden"
                                             >
@@ -90,7 +90,7 @@
                                 </td>
                                 <td class="text-right footable-last-column">
                                     <div class="btn-group">
-                                        <button class="btn-warning btn btn-md single-row-edit">
+                                        <button class="btn-warning btn btn-sm single-row-update">
                                             Update
                                         </button>
 
@@ -99,7 +99,7 @@
                             </tr>
                         @endforeach
                         @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
-                        <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row;">
+                        <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row;" id="rate_{{ $oExchangeRate->id }}">
                             <td class="check-mail footable-first-column">
                                 <input type="checkbox" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}" class="i-checks">
                             </td>
@@ -113,28 +113,29 @@
                                 {{ $oExchangeRate->exchangeRate }}
                             </td>
                             <td>
-                                <select name="buy_trade[]" data-name="buy_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
+                                <input type="number" value="0" class="form-control buy col-md-4" name="buy[]" data-name="buy" style="width:30%;" disabled="disabled">
+                                <select name="buy_trade[]" data-name="buy_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
                                     <option selected="selected" value="disabled">Disabled</option>
                                     <option value="percent">Margin(%)</option>
                                     <option value="flat_rate">Flat Rate</option>
                                 </select>
-                                <input type="text" value="0" class="form-control buy" name="buy[]" data-name="buy" style="width:30%;" disabled="disabled">
                             </td>
                             <td>
+                                <input type="number" value="0" class="form-control margin-rate-input col-md-4" name="sell[]" data-name="sell" style="width:30%;"  disabled="disabled">
                                 <select name="sell_trade[]" data-name="sell_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
                                     <option selected="selected" value="disabled">Disabled</option>
                                     <option value="percent">Margin(%)</option>
                                     <option value="flat_rate">Flat Rate</option>
                                 </select>
-                                <input type="text" value="0" class="form-control margin-rate-input" name="sell[]" data-name="sell" style="width:30%;"  disabled="disabled">
                             </td>
                             <td>
                                 <div class="flag-toggle-2">
                                     <label class="checkbox-inline">
-                                        <input type="checkbox" value="true" class="flag-checkbox" data-name="visible" name="visible[]"
+                                        <input type="checkbox" value="false" class="flag-checkbox" name="visible[]"
+                                               data-name="visible"
                                                {{ (false) ? 'checked' : '' }}
                                                data-toggle="toggle"
-                                               data-size="small"
+                                               data-size="mini"
                                                data-on-text="Visible"
                                                data-off-text="Hidden"
                                         >
@@ -143,7 +144,7 @@
                             </td>
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">
-                                    <button class="btn-green btn btn-md single-row-edit">
+                                    <button class="btn-green btn btn-sm single-row-apply">
                                         Apply
                                     </button>
                                 </div>
@@ -194,27 +195,31 @@
                 $(this).val(state);
             });
 
-            $('.single-row-edit').click(function () {
+            $('.single-row-apply').click(function () {
 
                 var that = $(this);
                 var row = that.parents('tr').first();
                 var data = {};
                 row.find('[data-name]').each(function () {
-                     data[$(this).data('name')] =  $(this).val();
+                     data[$(this).data('name')] =   $(this).val();
                 });
 
                 $.ajax({
                     method: "POST",
-                    url: "my-exchange-rates/edit",
+                    url: "trade/apply",
                     data: data,
                     success: function(result) {
-                        row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>All fields must be numeric. </div>');
-                        setTimeout(function(){
-                            $('#msg').remove();
-                        }, 2000);
+                        if(result.success === true){
+                            row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The field was applied successful. Please refresh when you are ready.</div>');
+                            setTimeout(function(){
+                                $('#msg').remove();
+                                row.remove();
+                            }, 2000);
+                        }
+
 
                     }, error: function (result) {
-                        row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>All fields must be numeric. </div>');
+                        row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>Something is wrong. </div>');
                         setTimeout(function(){
                             $('#msg').remove();
                         }, 2000);
@@ -259,10 +264,13 @@
                 function call_ajax(data) {
                     $.ajax({
                         method: "POST",
-                        url: "my-exchange-rates/edit-collection",
+                        url: "trade/collection",
                         data: data,
                         success: function (result) {
-                            that.after('<div id="msg"  class="alert alert-danger"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>All fields must be numeric. </div>');
+                            for(var i in result.rate_ids){
+                                $("tr[id='rate_" + result.rate_ids[i] + "']").remove();
+                            }
+                            that.after('<div id="msg"  class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The fields was applied successful. Please refresh when you are ready. </div>');
                             setTimeout(function () {
                                 $('#msg').remove();
                             }, 5000);
