@@ -12,7 +12,29 @@ class ExchangeRate extends BaseModel
     ];
     
     protected $appends = ['BuyRate', 'SellRate'];
-    
+
+    public function users(){
+
+        return $this->belongsToMany(User::class, 'user_exchange_rates');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function userExchangeRates(){
+
+        return $this->user_exchange_rates();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function user_exchange_rates()
+    {
+
+        return $this->hasMany(UserExchangeRate::class, 'exchange_rate_id');
+    }
+
     /**
      * Attribute to add the buy rate, calculated from exchange_rate+exchange_rate*buy_markup
      *
@@ -33,11 +55,6 @@ class ExchangeRate extends BaseModel
         return sprintf('%01.3f', $this->exchangeRate * ((100 - $this->sellMarkup) / 100));
     }
 
-    public function users(){
-
-        return $this->belongsToMany(User::class, 'user_exchange_rates');
-    }
-
     public function scopeSearchFor(Builder $query)
     {
         if (\Request::get('search') != '') {
@@ -47,4 +64,6 @@ class ExchangeRate extends BaseModel
                 ->orderBy('symbol', 'asc');
         }
     }
+
+
 }

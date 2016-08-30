@@ -8,6 +8,9 @@
 
 namespace App\Models;
 
+use App\Models\Markups\MarkupBuy;
+use App\Models\Markups\MarkupSell;
+
 class UserExchangeRate extends BaseModel
 {
     protected $table = 'user_exchange_rates';
@@ -15,7 +18,7 @@ class UserExchangeRate extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function sellMarkup(){
+    public function sell(){
 
         return $this->hasOne(MarkupSell::class);
     }
@@ -23,7 +26,7 @@ class UserExchangeRate extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function buyMarkup(){
+    public function buy(){
 
         return $this->hasOne(MarkupBuy::class);
     }
@@ -31,9 +34,17 @@ class UserExchangeRate extends BaseModel
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function rate(){
+    public function exchangeRate(){
 
-        return $this->belongsTo(ExchangeRate::class, 'exchange_rate_id');
+        return $this->exchange_rate();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function exchange_rate(){
+
+        return $this->belongsTo(ExchangeRate::class);
     }
 
     /**

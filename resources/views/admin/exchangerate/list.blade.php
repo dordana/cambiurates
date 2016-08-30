@@ -18,8 +18,8 @@
 
                     </form>
                 </div>
-                <button id="apply" class="btn-green btn btn-sm" style="margin: 5px">Apply</button>
                 <div class="hr-line-dashed"></div>
+                <button id="apply" class="btn-green btn btn-sm" style="margin: 5px">Apply</button>
                 <div class="table-responsive">
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
@@ -29,30 +29,57 @@
                             <th>Symbol</th>
                             <th>Title</th>
                             <th>Exchange Rate</th>
-                            <th>Visible</th>
                             <th style="max-width: 30px">Buy</th>
                             <th style="max-width: 30px">Sell</th>
+                            <th>Visible</th>
                             <th class="text-right footable-last-column">Action</th>
                         </tr>
-                        @foreach($myExchangeRates->all() as $iIdx => $oExchangeRate)
+                        @foreach($aUserExchangeRates as $iIdx => $userExchangeRate)
                             <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row; background-color: #e1ffe6">
                                 <td class="check-mail footable-first-column">
-                                    <input type="checkbox" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}" class="i-checks">
+                                    <input type="checkbox" name="id[]" data-name="id" value="{{ $userExchangeRate->exchangeRate->id }}" class="i-checks">
                                 </td>
                                 <td>
-                                    {{ $oExchangeRate->symbol }}
+                                    {{ $userExchangeRate->exchangeRate->symbol }}
                                 </td>
                                 <td>
-                                    {{ $oExchangeRate->title }}
+                                    {{ $userExchangeRate->exchangeRate->title }}
                                 </td>
                                 <td>
-                                    {{ $oExchangeRate->exchangeRate }}
+                                    {{ $userExchangeRate->exchangeRate->exchangeRate }}
+                                </td>
+                                <td>
+                                    <input type="text"
+                                           value="{{ $userExchangeRate->buy->value or 0 }}"
+                                           class="form-control buy col-md-4"
+                                           name="buy[]" data-name="buy"
+                                           style="width:30%;"
+                                            {{ (!$userExchangeRate->buy || $userExchangeRate->buy && $userExchangeRate->buy->state() == 'disabled') ? 'disabled="disabled"' : '' }}>
+                                    <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
+                                        <option {{ ($userExchangeRate->buy && $userExchangeRate->buy->state() === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
+                                        <option {{ ($userExchangeRate->buy && $userExchangeRate->buy->state() === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
+                                        <option {{ ($userExchangeRate->buy && $userExchangeRate->buy->state() === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
+                                    </select>
+                                </td>
+                                <td>
+
+                                    <input type="text"
+                                           value="{{ $userExchangeRate->sell->value or 0 }}"
+                                           class="form-control margin-rate-input col-md-4"
+                                           name="sell[]" data-name="sell"
+                                           style="width:30%;"
+                                            {{ (!$userExchangeRate->sell || $userExchangeRate->sell && $userExchangeRate->sell->state() == 'disabled') ? 'disabled="disabled"' : '' }}>
+                                    <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
+                                        <option {{ ($userExchangeRate->sell && $userExchangeRate->sell->state() === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
+                                        <option {{ ($userExchangeRate->sell && $userExchangeRate->sell->state() === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
+                                        <option {{ ($userExchangeRate->sell && $userExchangeRate->sell->state() === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
+                                    </select>
                                 </td>
                                 <td>
                                     <div class="flag-toggle-2">
                                         <label class="checkbox-inline">
                                             <input type="checkbox" value="true" class="flag-checkbox" data-name="visible" name="visible[]"
-                                                   {{ (true) ? 'checked' : '' }}
+                                                   {{ ($userExchangeRate->visible == 1) ? 'checked' : '' }}
                                                    data-toggle="toggle"
                                                    data-size="small"
                                                    data-on-text="Visible"
@@ -61,27 +88,10 @@
                                         </label>
                                     </div>
                                 </td>
-                                <td>
-                                    <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
-                                        <option selected="selected" value="disabled">Disabled</option>
-                                        <option value="percent">Margin(%)</option>
-                                        <option value="flat_rate">Flat Rate</option>
-                                    </select>
-                                    <input type="text" value="0" class="form-control buy" name="buy[]" data-name="buy" style="width:30%;" disabled="disabled">
-                                </td>
-                                <td>
-                                    <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
-                                        <option selected="selected" value="disabled">Disabled</option>
-                                        <option value="percent">Margin(%)</option>
-                                        <option value="flat_rate">Flat Rate</option>
-                                    </select>
-                                    <input type="text" value="0" class="form-control margin-rate-input" name="sell[]" data-name="sell" style="width:30%;"  disabled="disabled">
-                                </td>
-
                                 <td class="text-right footable-last-column">
                                     <div class="btn-group">
-                                        <button class="btn-green btn btn-md single-row-edit">
-                                            Edit
+                                        <button class="btn-warning btn btn-md single-row-edit">
+                                            Update
                                         </button>
 
                                     </div>
@@ -103,19 +113,6 @@
                                 {{ $oExchangeRate->exchangeRate }}
                             </td>
                             <td>
-                                <div class="flag-toggle-2">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" value="true" class="flag-checkbox" data-name="visible" name="visible[]"
-                                               {{ (false) ? 'checked' : '' }}
-                                               data-toggle="toggle"
-                                               data-size="small"
-                                               data-on-text="Visible"
-                                               data-off-text="Hidden"
-                                        >
-                                    </label>
-                                </div>
-                            </td>
-                            <td>
                                 <select name="buy_trade[]" data-name="buy_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
                                     <option selected="selected" value="disabled">Disabled</option>
                                     <option value="percent">Margin(%)</option>
@@ -131,11 +128,23 @@
                                 </select>
                                 <input type="text" value="0" class="form-control margin-rate-input" name="sell[]" data-name="sell" style="width:30%;"  disabled="disabled">
                             </td>
-
+                            <td>
+                                <div class="flag-toggle-2">
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="true" class="flag-checkbox" data-name="visible" name="visible[]"
+                                               {{ (false) ? 'checked' : '' }}
+                                               data-toggle="toggle"
+                                               data-size="small"
+                                               data-on-text="Visible"
+                                               data-off-text="Hidden"
+                                        >
+                                    </label>
+                                </div>
+                            </td>
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">
                                     <button class="btn-green btn btn-md single-row-edit">
-                                        Edit
+                                        Apply
                                     </button>
                                 </div>
                             </td>

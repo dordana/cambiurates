@@ -21,7 +21,7 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(App\Models\MarkupBuy::class, function (Faker\Generator $faker) {
+$factory->define(App\Models\Markups\MarkupBuy::class, function (Faker\Generator $faker) {
 
     $tradeType = ['fixed', 'percent'];
     $ids = array_column(\App\Models\UserExchangeRate::all('id')->toArray(), 'id');
@@ -38,14 +38,14 @@ $factory->define(App\Models\MarkupBuy::class, function (Faker\Generator $faker) 
     ];
 });
 
-$factory->define(App\Models\MarkupSell::class, function (Faker\Generator $faker) {
+$factory->define(App\Models\Markups\MarkupSell::class, function (Faker\Generator $faker) {
 
     $tradeType = ['fixed', 'percent'];
-    $ids = array_column(\App\Models\MarkupSell::all('user_exchange_rate_id')->toArray(), 'user_exchange_rate_id');
+    $ids = array_column(\App\Models\Markups\MarkupSell::all('user_exchange_rate_id')->toArray(), 'user_exchange_rate_id');
 
     if(!\App\Models\UserExchangeRate::whereNotIn('id', $ids)->get()->count()){
-        \App\Models\MarkupSell::all()->last()->delete();
-        $ids = array_column(\App\Models\MarkupBuy::all('user_exchange_rate_id')->toArray(), 'user_exchange_rate_id');
+        \App\Models\Markups\MarkupSell::all()->last()->delete();
+        $ids = array_column(\App\Models\Markups\MarkupBuy::all('user_exchange_rate_id')->toArray(), 'user_exchange_rate_id');
     }
 
     return [

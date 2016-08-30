@@ -1,10 +1,15 @@
 <?php
 
+use App\Models\Markups\MarkupBuy;
+use App\Models\Markups\MarkupSell;
 use App\Models\User;
 use App\Models\UserExchangeRate;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
+/**
+ * Class UploadExampleUserRatesData
+ */
 class UploadExampleUserRatesData extends Migration
 {
     /**
@@ -16,21 +21,21 @@ class UploadExampleUserRatesData extends Migration
     {
         //Add some example rates for user with ID 1
         $user = User::find(1);
-        $user->rates()->attach([1 => ['visible' => 1], 2 => ['visible' => 1], 3 => ['visible' => 0]]);
+        $user->exchangeRates()->attach([1 => ['visible' => 1], 2 => ['visible' => 1], 3 => ['visible' => 0]]);
 
         $tradeType = ['fixed', 'percent'];
         $faker = Faker\Factory::create();
-        foreach (UserExchangeRate::all() as $exchangeRate) {
-            \App\Models\MarkupBuy::create([
-                'user_exchange_rate_id' => $exchangeRate->id,
+        foreach (UserExchangeRate::all() as $userExchangeRate) {
+            MarkupBuy::create([
+                'user_exchange_rate_id' => $userExchangeRate->id,
                 'trade_type'            => $tradeType[rand(0, 1)],
-                'value'                 => $faker->randomFloat(6, $exchangeRate->rate->exchangeRate, ($exchangeRate->rate->exchangeRate + 5)),
+                'value'                 => $faker->randomFloat(6, $userExchangeRate->exchangeRate->exchangeRate, ($userExchangeRate->exchangeRate->exchangeRate + 5)),
                 'active'                => rand(0, 1)
             ]);
-            \App\Models\MarkupSell::create([
-                'user_exchange_rate_id' => $exchangeRate->id,
+            MarkupSell::create([
+                'user_exchange_rate_id' => $userExchangeRate->id,
                 'trade_type'            => $tradeType[rand(0, 1)],
-                'value'                 => $faker->randomFloat(6, $exchangeRate->rate->exchangeRate, ($exchangeRate->rate->exchangeRate + 5)),
+                'value'                 => $faker->randomFloat(6, $userExchangeRate->exchangeRate->exchangeRate, ($userExchangeRate->exchangeRate->exchangeRate + 5)),
                 'active'                => rand(0, 1)
             ]);
         }

@@ -78,8 +78,29 @@ class User extends Authenticatable
     /**
      * @return $this
      */
-    public function rates(){
+    public function exchangeRates(){
+
+        return $this->exchange_rates();
+    }
+
+    public function exchange_rates(){
 
         return $this->belongsToMany(ExchangeRate::class, 'user_exchange_rates', 'user_id', 'exchange_rate_id')->withPivot(['visible'])->orderBy('user_exchange_rates.id', 'asc');;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function userExchangeRates(){
+
+        return $this->user_exchange_rates();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function user_exchange_rates()
+    {
+        return $this->hasMany(UserExchangeRate::class);
     }
 }
