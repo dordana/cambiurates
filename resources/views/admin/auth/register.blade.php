@@ -3,19 +3,6 @@
 @section('content')
     <div class="container">
         <div class="row">
-            @if (Session::has('not_found'))
-                <div class="alert alert-danger alert-dismissable">
-                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                    {{ Session::get('not_found') }}
-                </div>
-            @endif
-
-            @if (Session::has('success'))
-                <div class="alert alert-success alert-dismissable">
-                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                    {{ Session::get('success') }}
-                </div>
-            @endif
             <div class="panel panel-default">
                 <div class="panel-heading">{{ isset($oUser) ? 'Update User' : 'Create new User' }}</div>
                 <div class="panel-body">
@@ -45,6 +32,20 @@
                                 @if ($errors->has('email'))
                                     <span class="help-block">
                                     <strong>{{ $errors->first('email') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('cambiu_id') ? ' has-error' : '' }}">
+                            <label class="col-md-2 control-label" for="cambiu_id">Cambiu Id</label>
+
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" name="cambiu_id" id="cambiu_id" value="{{ isset($oUser) ? $oUser->cambiu_id : old('cambiu_id') }}">
+
+                                @if ($errors->has('cambiu_id'))
+                                    <span class="help-block">
+                                    <strong>{{ $errors->first('cambiu_id') }}</strong>
                                 </span>
                                 @endif
                             </div>

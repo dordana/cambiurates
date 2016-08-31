@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Foundation\Auth\User;
 use App\Http\Controllers\Controller;
 
@@ -19,6 +15,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->adminGuard();
     }
 
     /**
@@ -26,8 +23,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        var_dump('fasdf');
-        die;
         $sSearch = \Request::get('search');
 
         return view('admin.users.list',
@@ -82,5 +77,12 @@ class UserController extends Controller
         $oUser->delete();
 
         return redirect('admin/users')->with(['success' => 'User successfully deleted!']);
+    }
+    
+    private function adminGuard()
+    {
+        if(\Auth::user()->role != 'admin') {
+            return redirect()->back()->send();
+        }
     }
 }
