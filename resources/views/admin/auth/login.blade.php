@@ -6,7 +6,7 @@
     <div class="row">
 
         <div class="col-md-6">
-            <h2 class="font-bold">CAMBIU</h2>
+            <h2 class="font-bold">cambiu</h2>
 
             <p>
                 Please enter your email address and password

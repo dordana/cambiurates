@@ -5,7 +5,7 @@
         <div class="col-lg-12">
             <div class="text-center m-t-lg">
                 <h1>
-                    Welcome in CAMBIU
+                    Welcome in cambiu
                 </h1>
             </div>
         </div>

@@ -20,7 +20,7 @@
         <div class="row">
 
             <div class="col-md-6">
-                <h2 class="font-bold">CAMBIU</h2>
+                <h2 class="font-bold">cambiu</h2>
 
                 <p>
                     We sent a confirmation code email to the email address you used
