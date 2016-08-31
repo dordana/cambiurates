@@ -125,7 +125,11 @@ class AuthController extends Controller
                 $this->incrementLoginAttempts($request);
             }
 
-            return redirect()->back();
+            return redirect()->back()->withErrors(
+                [
+                    $this->loginUsername() => $this->getFailedLoginMessage(),
+                ]
+            );
         }
 
         //Update the confirmation code

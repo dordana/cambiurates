@@ -16,7 +16,7 @@
                     </ul>
                 </div>
                 <div class="logo-element">
-                    CAMBIU
+                    cambiu
                 </div>
             </li>
             <li class="@if(Request::is("admin")) active @endif">
