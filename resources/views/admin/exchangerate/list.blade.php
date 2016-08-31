@@ -254,7 +254,7 @@
                         row.find('[data-name]').each(function () {
                             row_data[$(this).data('name')] =  $(this).val();
                         });
-                        data[row.index()] = row_data;
+                        data[row.attr('id').substr(-1)] = row_data;
                     }
                 });
 

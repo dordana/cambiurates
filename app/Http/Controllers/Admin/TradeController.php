@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\TradeRequest;
 use App\Http\Requests\UserExchangeRateRequest;
 use App\Http\Controllers\Controller;
+use App\Models\Markups\MarkupBuy;
+use App\Models\Markups\MarkupSell;
 use App\Models\UserExchangeRate;
 use App\Models\ExchangeRate;
 
@@ -46,10 +48,31 @@ class TradeController extends Controller
 
         $visible = ($request->get('visible') === 'true') ? 1 : 0;
         $user = \Auth::user();
-        $data = $user->userExchangeRates->keyBy('id')->toArray();
+        $data = $user->userExchangeRates->keyBy('exchange_rate_id')->toArray();
         $data[$request->get('id')]['visible'] = $visible;
 
+        //Save the new rates
         $user->exchangeRates()->sync($data);
+
+        //Save the markups
+        $sBuyType = $request->get('buy_trade_type');
+        $iBuyActive = $iSellActive = 0;
+        if($sBuyType === 'disabled'){
+            $sBuyType = '';
+            $iBuyActive = 1;
+        }
+
+        $sSellType = $request->get('sell_trade_type');
+        if($sSellType === 'disabled'){
+
+            $sSellType = '';
+            $iSellActive = 1;
+        }
+        $oBuyMarkup = new MarkupBuy(['trade_type' => $sBuyType, 'value' => $request->get('buy'), 'active' => $iBuyActive]);
+        $oSellMarkup = new MarkupSell(['trade_type' => $sSellType, 'value' => $request->get('sell'), 'active' => $iSellActive]);
+        $oUserExchangeRate = UserExchangeRate::where('user_id', $user->id)->where('exchange_rate_id', $request->get('id'))->first();
+        $oUserExchangeRate->buy()->save($oBuyMarkup);
+        $oUserExchangeRate->sell()->save($oSellMarkup);
 
         return response()->json(['success' => true, 'rate_id' => $request->get('id')]);
     }
@@ -58,13 +81,39 @@ class TradeController extends Controller
 
         $aIds = [];
         $user = \Auth::user();
-        $data = $user->userExchangeRates->keyBy('id')->toArray();
-        foreach ($request->all() as $row) {
+        $aRequestData = $request->all();
+        $data = $user->userExchangeRates->keyBy('exchange_rate_id')->toArray();
+        foreach ($aRequestData as $row) {
             $aIds[] = $row['id'];
             $visible = ($row['visible'] === 'true') ? 1 : 0;
             $data[$row['id']]['visible'] = $visible;
         }
-        $user->exchangeRates()->sync($data);
+
+        //Save the new rates
+        $result = $user->exchangeRates()->sync($data);
+
+        //Save the markups
+        foreach ($result['attached'] as $iExchangeRateId) {
+
+            $sBuyType = $aRequestData[$iExchangeRateId]['buy_trade_type'];
+            $iBuyActive = $iSellActive = 0;
+            if($sBuyType === 'disabled'){
+                $sBuyType = '';
+                $iBuyActive = 1;
+            }
+
+            $sSellType = $aRequestData[$iExchangeRateId]['sell_trade_type'];
+            if($sSellType === 'disabled'){
+
+                $sSellType = '';
+                $iSellActive = 1;
+            }
+            $oBuyMarkup = new MarkupBuy(['trade_type' => $sBuyType, 'value' => $aRequestData[$iExchangeRateId]['buy'], 'active' => $iBuyActive]);
+            $oSellMarkup = new MarkupSell(['trade_type' => $sSellType, 'value' => $aRequestData[$iExchangeRateId]['sell'], 'active' => $iSellActive]);
+            $oUserExchangeRate = UserExchangeRate::where('user_id', $user->id)->where('exchange_rate_id', $aRequestData[$iExchangeRateId]['id'])->first();
+            $oUserExchangeRate->buy()->save($oBuyMarkup);
+            $oUserExchangeRate->sell()->save($oSellMarkup);
+        }
 
         return response()->json(['success' => true, 'rate_ids' => $aIds]);
     }
