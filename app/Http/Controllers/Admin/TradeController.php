@@ -46,10 +46,9 @@ class TradeController extends Controller
      */
     public function apply(TradeRequest $request){
 
-        $visible = ($request->get('visible') === 'true') ? 1 : 0;
         $user = \Auth::user();
         $data = $user->userExchangeRates->keyBy('exchange_rate_id')->toArray();
-        $data[$request->get('id')]['visible'] = $visible;
+        $data[$request->get('id')]['visible'] = $request->get('visible');
 
         //Save the new rates
         $user->exchangeRates()->sync($data);
@@ -85,8 +84,7 @@ class TradeController extends Controller
         $data = $user->userExchangeRates->keyBy('exchange_rate_id')->toArray();
         foreach ($aRequestData as $row) {
             $aIds[] = $row['id'];
-            $visible = ($row['visible'] === 'true') ? 1 : 0;
-            $data[$row['id']]['visible'] = $visible;
+            $data[$row['id']]['visible'] = $row['visible'];
         }
 
         //Save the new rates

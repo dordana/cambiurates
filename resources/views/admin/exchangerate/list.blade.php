@@ -82,13 +82,15 @@
                                 <td>
                                     <div class="flag-toggle-2">
                                         <label class="checkbox-inline">
-                                            <input type="checkbox" value="true" class="flag-checkbox" data-name="visible" name="visible[]"
+                                            <input type="checkbox" class="visible-switch"
                                                    {{ ($userExchangeRate->visible == 1) ? 'checked' : '' }}
+                                                   data-id="{{ $userExchangeRate->id }}"
                                                    data-toggle="toggle"
                                                    data-size="mini"
                                                    data-on-text="Visible"
                                                    data-off-text="Hidden"
                                             >
+                                            <input type="hidden" data-name="visible" name="visible" id="vs_{{ $userExchangeRate->id }}">
                                         </label>
                                     </div>
                                 </td>
@@ -151,14 +153,15 @@
                             <td>
                                 <div class="flag-toggle-2">
                                     <label class="checkbox-inline">
-                                        <input type="checkbox" value="false" class="flag-checkbox" name="visible[]"
-                                               data-name="visible"
+                                        <input type="checkbox" class="visible-switch"
                                                {{ (false) ? 'checked' : '' }}
+                                               data-id="{{ $oExchangeRate->id }}"
                                                data-toggle="toggle"
                                                data-size="mini"
                                                data-on-text="Visible"
                                                data-off-text="Hidden"
                                         >
+                                        <input type="hidden" name="visible" data-name="visible" id="vs_{{ $oExchangeRate->id }}">
                                     </label>
                                 </div>
                             </td>
@@ -206,14 +209,13 @@
                 radioClass: 'iradio_square-green'
             });
 
-            $('input[name="visible[]"]').bootstrapSwitch();
-            $('.chosen-select').chosen();
+            var cbVisible = $('.visible-switch');
+            cbVisible.bootstrapSwitch();
+            cbVisible.on('switchChange.bootstrapSwitch', function(event, state) {
+                $('#vs_' + $(this).data('id')).val(state ? 1 : 0)
+            });
 
-//            var cbSelector = $(".flag-checkbox");
-//            cbSelector.bootstrapSwitch();
-//            cbSelector.on('switchChange.bootstrapSwitch', function (event, state) {
-//                $(this).val(state);
-//            });
+            $('.chosen-select').chosen();
 
             $('.single-row-apply').click(function () {
 
@@ -274,7 +276,7 @@
                         row.find('[data-name]').each(function () {
                             row_data[$(this).data('name')] =  $(this).val();
                         });
-                        data[row.attr('id').substr(-1)] = row_data;
+                        data[row.attr('id').replace("rate_", "")] = row_data;
                     }
                 });
 
