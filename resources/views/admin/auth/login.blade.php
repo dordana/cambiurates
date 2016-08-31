@@ -9,15 +9,7 @@
             <h2 class="font-bold">CAMBIU</h2>
 
             <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id magni modi nulla numquam quaerat quia reprehenderit soluta ullam unde vel. Accusantium amet debitis earum libero maiores nobis reprehenderit sequi vitae!
-            </p>
-
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id magni modi nulla numquam quaerat quia reprehenderit soluta ullam unde vel. Accusantium amet debitis earum libero maiores nobis reprehenderit sequi vitae!
-            </p>
-
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id magni modi nulla numquam quaerat quia reprehenderit soluta ullam unde vel. Accusantium amet debitis earum libero maiores nobis reprehenderit sequi vitae!
+                Please enter your email address and password
             </p>
 
         </div>
@@ -53,9 +45,6 @@
                     <a class="btn btn-sm btn-white btn-block" href="{{ url('admin/password/reset') }}">Forgot password?</a>
 
                 </form>
-                <p class="m-t">
-                    <small>Inspinia we app framework base on Bootstrap 3 &copy; 2014</small>
-                </p>
             </div>
         </div>
     </div>

@@ -16,6 +16,7 @@ class ExchangeRateController extends Controller
      */
     public function index()
     {
+
         return view(
             'admin.exchangerate.list',
             [
