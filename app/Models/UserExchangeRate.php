@@ -36,14 +36,6 @@ class UserExchangeRate extends BaseModel
      */
     public function exchangeRate(){
 
-        return $this->exchange_rate();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function exchange_rate(){
-
         return $this->belongsTo(ExchangeRate::class);
     }
 

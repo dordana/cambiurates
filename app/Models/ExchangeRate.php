@@ -23,15 +23,6 @@ class ExchangeRate extends BaseModel
      */
     public function userExchangeRates(){
 
-        return $this->user_exchange_rates();
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function user_exchange_rates()
-    {
-
         return $this->hasMany(UserExchangeRate::class, 'exchange_rate_id');
     }
 
@@ -64,6 +55,4 @@ class ExchangeRate extends BaseModel
                 ->orderBy('symbol', 'asc');
         }
     }
-
-
 }

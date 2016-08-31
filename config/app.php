@@ -157,6 +157,11 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\ViewComposerServiceProvider::class,
 
+        /*
+         * Custom Service Providers...
+         */
+        Barryvdh\Debugbar\ServiceProvider::class,
+
     ],
 
     /*

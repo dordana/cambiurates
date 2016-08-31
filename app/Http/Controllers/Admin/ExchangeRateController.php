@@ -16,12 +16,11 @@ class ExchangeRateController extends Controller
      */
     public function index()
     {
-
         return view(
             'admin.exchangerate.list',
             [
                 'aExchangeRates'  => ExchangeRate::searchFor()->has('users', '<', 1)->paginate($this->limit),
-                'aUserExchangeRates' => \Auth::user()->userExchangeRates->all()
+                'aUserExchangeRates' => \Auth::user()->userExchangeRates()->with(['buy','sell','exchangeRate'])->get()
             ]
         );
     }

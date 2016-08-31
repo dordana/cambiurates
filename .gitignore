@@ -5,7 +5,6 @@
 /public/storage
 /public/fonts
 /public/build
-/public/fonts
 /public/styles
 /public/scripts
 /public/images
@@ -17,3 +16,4 @@ Homestead.json
 .env
 .idea/
 .DS_Store
+composer.lock
