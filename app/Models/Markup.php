@@ -51,7 +51,7 @@ class Markup extends BaseModel
      */
     public function scopeState(){
 
-        if($this->active === 0){
+        if($this->active === 0 || !$this->tradeType){
 
             return 'disabled';
         }

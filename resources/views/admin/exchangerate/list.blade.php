@@ -49,7 +49,9 @@
                                     {{ $userExchangeRate->exchangeRate->exchangeRate }}
                                 </td>
                                 <td>
-                                    <input type="number"
+                                    <input type="text"
+                                           pattern="[0-9]"
+                                           title="Numbers only"
                                            value="{{ $userExchangeRate->buy->value or 0 }}"
                                            class="form-control buy col-md-4"
                                            name="buy[]" data-name="buy"
@@ -63,7 +65,9 @@
                                 </td>
                                 <td>
 
-                                    <input type="number"
+                                    <input type="text"
+                                           pattern="[0-9]"
+                                           title="Numbers only"
                                            value="{{ $userExchangeRate->sell->value or 0 }}"
                                            class="form-control margin-rate-input col-md-4"
                                            name="sell[]" data-name="sell"
@@ -113,7 +117,15 @@
                                 {{ $oExchangeRate->exchangeRate }}
                             </td>
                             <td>
-                                <input type="number" value="0" class="form-control buy col-md-4" name="buy[]" data-name="buy" style="width:30%;" disabled="disabled">
+                                <input type="text"
+                                       pattern="[0-9]"
+                                       title="Numbers only"
+                                       value="0"
+                                       class="form-control buy col-md-4"
+                                       name="buy[]"
+                                       data-name="buy"
+                                       style="width:30%;"
+                                       disabled="disabled">
                                 <select name="buy_trade[]" data-name="buy_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
                                     <option selected="selected" value="disabled">Disabled</option>
                                     <option value="percent">Margin(%)</option>
@@ -121,7 +133,15 @@
                                 </select>
                             </td>
                             <td>
-                                <input type="number" value="0" class="form-control margin-rate-input col-md-4" name="sell[]" data-name="sell" style="width:30%;"  disabled="disabled">
+                                <input type="text"
+                                       pattern="[0-9]"
+                                       title="Numbers only"
+                                       value="0"
+                                       class="form-control margin-rate-input col-md-4"
+                                       name="sell[]"
+                                       data-name="sell"
+                                       style="width:30%;"
+                                       disabled="disabled">
                                 <select name="sell_trade[]" data-name="sell_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
                                     <option selected="selected" value="disabled">Disabled</option>
                                     <option value="percent">Margin(%)</option>
@@ -189,11 +209,11 @@
             $('input[name="visible[]"]').bootstrapSwitch();
             $('.chosen-select').chosen();
 
-            var cbSelector = $(".flag-checkbox");
-            cbSelector.bootstrapSwitch();
-            cbSelector.on('switchChange.bootstrapSwitch', function (event, state) {
-                $(this).val(state);
-            });
+//            var cbSelector = $(".flag-checkbox");
+//            cbSelector.bootstrapSwitch();
+//            cbSelector.on('switchChange.bootstrapSwitch', function (event, state) {
+//                $(this).val(state);
+//            });
 
             $('.single-row-apply').click(function () {
 
