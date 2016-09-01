@@ -181,14 +181,14 @@
                 var select = {};
 
                 if(trade == 'buy') {
-                    select = row.find('select[name="buy_trade[]"]').val();
+                    select = row.find('select[name="type_buy[]"]').val();
                     if(select == 'percent') {
                         calculateBuyRate(row, value, exchange_rate, false);
                     } else if (select == 'fixed') {
                         calculateBuyRate(row , value , exchange_rate , true);
                     }
                 } else if (trade == 'sell') {
-                    select = row.find('select[name="sell_trade[]"]').val();
+                    select = row.find('select[name="type_sell[]"]').val();
                     if(select == 'percent') {
                         calculateSellRate(row , value , exchange_rate ,false);
                     } else if (select == 'fixed') {
