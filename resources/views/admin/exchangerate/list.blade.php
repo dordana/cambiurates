@@ -19,7 +19,7 @@
                     </form>
                 </div>
                 <div class="hr-line-dashed"></div>
-                <button id="apply" class="btn-green btn btn-sm" style="margin: 5px">Apply</button>
+                <button id="apply" class="btn-green btn btn-sm" style="margin: 5px">Update</button>
                 <div class="table-responsive">
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
@@ -34,76 +34,6 @@
                             <th>Visible</th>
                             <th class="text-right footable-last-column">Action</th>
                         </tr>
-                        @foreach($aUserExchangeRates as $iIdx => $userExchangeRate)
-                            <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row; background-color: #e1ffe6">
-                                <td class="check-mail footable-first-column">
-                                    #
-                                </td>
-                                <td>
-                                    {{ $userExchangeRate->exchangeRate->symbol }}
-                                </td>
-                                <td>
-                                    {{ $userExchangeRate->exchangeRate->title }}
-                                </td>
-                                <td>
-                                    {{ $userExchangeRate->exchangeRate->exchangeRate }}
-                                </td>
-                                <td>
-                                    <input type="text"
-                                           pattern="[0-9]"
-                                           title="Numbers only"
-                                           value="{{ $userExchangeRate->buy or 0 }}"
-                                           class="form-control buy col-md-4"
-                                           name="buy[]" data-name="buy"
-                                           style="width:30%;"
-                                            {{ (!$userExchangeRate->type_buy || $userExchangeRate->type_buy === 'disabled') ? 'disabled' : ''}}>
-                                    <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
-                                        <option {{ $userExchangeRate->type_buy === 'disabled' ? 'selected' : '' }} value="disabled">Disabled</option>
-                                        <option {{ $userExchangeRate->type_buy === 'percent' ? 'selected' : '' }} value="percent">Margin(%)</option>
-                                        <option {{ $userExchangeRate->type_buy === 'fixed' ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
-                                    </select>
-                                </td>
-                                <td>
-
-                                    <input type="text"
-                                           pattern="[0-9]"
-                                           title="Numbers only"
-                                           value="{{ $userExchangeRate->sell or 0 }}"
-                                           class="form-control margin-rate-input col-md-4"
-                                           name="sell[]" data-name="sell"
-                                           style="width:30%;"
-                                            {{ (!$userExchangeRate->type_sell || $userExchangeRate->type_sell === 'disabled') ? 'disabled' : ''}}>
-                                    <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
-                                        <option {{ ( $userExchangeRate->type_sell === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
-                                        <option {{ ($userExchangeRate->type_sell === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
-                                        <option {{ ($userExchangeRate->type_sell === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <div class="flag-toggle-2">
-                                        <label class="checkbox-inline">
-                                            <input type="checkbox" class="visible-switch"
-                                                   {{ ($userExchangeRate->visible == 1) ? 'checked' : '' }}
-                                                   data-id="{{ $userExchangeRate->id }}"
-                                                   data-toggle="toggle"
-                                                   data-size="mini"
-                                                   data-on-text="Visible"
-                                                   data-off-text="Hidden"
-                                            >
-                                            <input type="hidden" data-name="visible" value="0" name="visible" id="vs_{{ $userExchangeRate->id }}">
-                                        </label>
-                                    </div>
-                                </td>
-                                <td class="text-right footable-last-column">
-                                    <div class="btn-group">
-                                        <button class="btn-warning btn btn-sm single-row-update">
-                                            Update
-                                        </button>
-
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
                         @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
                         <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row;" id="rate_{{ $oExchangeRate->id }}">
                             <td class="check-mail footable-first-column">
@@ -122,54 +52,54 @@
                                 <input type="text"
                                        pattern="[0-9]"
                                        title="Numbers only"
-                                       value="0"
+                                       value="{{ $oExchangeRate->buy or 0 }}"
                                        class="form-control buy col-md-4"
-                                       name="buy[]"
-                                       data-name="buy"
+                                       name="buy[]" data-name="buy"
                                        style="width:30%;"
-                                       disabled="disabled">
-                                <select name="buy_trade[]" data-name="buy_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
-                                    <option selected="selected" value="disabled">Disabled</option>
-                                    <option value="percent">Margin(%)</option>
-                                    <option value="flat_rate">Flat Rate</option>
+                                        {{ ($oExchangeRate->type_buy === 'disabled') ? 'disabled' : ''}}>
+                                <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
+                                    <option {{ $oExchangeRate->type_buy === 'disabled' ? 'selected' : '' }} value="disabled">Disabled</option>
+                                    <option {{ $oExchangeRate->type_buy === 'percent' ? 'selected' : '' }} value="percent">Margin(%)</option>
+                                    <option {{ $oExchangeRate->type_buy === 'fixed' ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
                                 </select>
                             </td>
                             <td>
+
                                 <input type="text"
                                        pattern="[0-9]"
                                        title="Numbers only"
-                                       value="0"
+                                       value="{{ $oExchangeRate->sell or 0 }}"
                                        class="form-control margin-rate-input col-md-4"
-                                       name="sell[]"
-                                       data-name="sell"
+                                       name="sell[]" data-name="sell"
                                        style="width:30%;"
-                                       disabled="disabled">
-                                <select name="sell_trade[]" data-name="sell_trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:30%;" tabindex="4">
-                                    <option selected="selected" value="disabled">Disabled</option>
-                                    <option value="percent">Margin(%)</option>
-                                    <option value="flat_rate">Flat Rate</option>
+                                        {{ ($oExchangeRate->type_sell === 'disabled') ? 'disabled' : ''}}>
+                                <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
+                                    <option {{ ($oExchangeRate->type_sell === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
+                                    <option {{ ($oExchangeRate->type_sell === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
+                                    <option {{ ($oExchangeRate->type_sell === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
                                 </select>
                             </td>
                             <td>
                                 <div class="flag-toggle-2">
                                     <label class="checkbox-inline">
                                         <input type="checkbox" class="visible-switch"
-                                               {{ (false) ? 'checked' : '' }}
+                                               {{ ($oExchangeRate->visible == 1) ? 'checked' : '' }}
                                                data-id="{{ $oExchangeRate->id }}"
                                                data-toggle="toggle"
                                                data-size="mini"
                                                data-on-text="Visible"
                                                data-off-text="Hidden"
                                         >
-                                        <input type="hidden" name="visible" value="0" data-name="visible" id="vs_{{ $oExchangeRate->id }}">
+{{--                                        <input type="hidden" data-name="visible" value="0" name="visible" id="vs_{{ $userExchangeRate->id }}">--}}
                                     </label>
                                 </div>
                             </td>
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">
-                                    <button class="btn-green btn btn-sm single-row-apply">
-                                        Apply
+                                    <button class="btn-warning btn btn-sm single-row-update">
+                                        Update
                                     </button>
+
                                 </div>
                             </td>
                         </tr>

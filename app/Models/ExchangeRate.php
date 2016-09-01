@@ -55,4 +55,13 @@ class ExchangeRate extends BaseModel
                 ->orderBy('symbol', 'asc');
         }
     }
+
+    public function scopeByUser(Builder $query)
+    {
+            $query->leftJoin('user_exchange_rates as a', function ($join) {
+                    $join->on('a.exchange_rate_id', '=', 'exchange_rates.id')
+                        ->where('a.user_id', '=', \Auth::user()->id);
+                })
+                ->select('exchange_rates.*', 'a.id AS user_ex_id', 'a.type_buy', 'a.type_sell', 'a.sell', 'a.buy', 'a.visible');
+    }
 }

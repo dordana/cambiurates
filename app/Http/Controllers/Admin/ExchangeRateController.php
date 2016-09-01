@@ -20,8 +20,7 @@ class ExchangeRateController extends Controller
         return view(
             'admin.exchangerate.list',
             [
-                'aExchangeRates'  => ExchangeRate::searchFor()->has('users', '<', 1)->paginate($this->limit),
-                'aUserExchangeRates' => \Auth::user()->userExchangeRates()->with(['exchangeRate'])->get()
+                'aExchangeRates'  => ExchangeRate::searchFor()->byUser()->paginate($this->limit)
             ]
         );
     }

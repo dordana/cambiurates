@@ -30,7 +30,7 @@ class UserExchangeRate extends BaseModel
      */
     public function exchangeRate(){
 
-        return $this->belongsTo(ExchangeRate::class);
+        return $this->belongsTo(ExchangeRate::class, 'exchange_rate_id');
     }
 
     /**

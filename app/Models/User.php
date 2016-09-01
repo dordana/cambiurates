@@ -85,7 +85,7 @@ class User extends Authenticatable
      */
     public function exchangeRates(){
 
-        return $this->belongsToMany(ExchangeRate::class, 'user_exchange_rates', 'user_id', 'exchange_rate_id')->withPivot(['visible'])->orderBy('user_exchange_rates.id', 'asc');;
+        return $this->belongsToMany(ExchangeRate::class, 'user_exchange_rates', 'user_id', 'exchange_rate_id')->withPivot(['visible','sell','buy'])->orderBy('user_exchange_rates.id', 'asc');;
     }
 
     /**
