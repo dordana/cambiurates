@@ -34,8 +34,8 @@ class TradeRequest extends Request
         $rules['visible'] = 'required|in:1,0';
         $rules['type_sell'] = 'required|in:fixed,percent,disabled';
         $rules['type_buy'] = 'required|in:fixed,percent,disabled';
-        $rules['sell'] = 'required|integer';
-        $rules['buy'] = 'required|integer';
+        $rules['sell'] = 'required|numeric';
+        $rules['buy'] = 'required|numeric';
 
         return $rules;
     }
