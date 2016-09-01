@@ -29,13 +29,13 @@ class UploadExampleUserRatesData extends Migration
             MarkupBuy::create([
                 'user_exchange_rate_id' => $userExchangeRate->id,
                 'trade_type'            => $tradeType[rand(0, 1)],
-                'value'                 => $faker->randomFloat(6, $userExchangeRate->exchangeRate->exchangeRate, ($userExchangeRate->exchangeRate->exchangeRate + 5)),
+                'value'                 => $faker->randomFloat(6, $userExchangeRate->exchangeRate()->first()->exchangeRate, ($userExchangeRate->exchangeRate()->first()->exchangeRate + 5)),
                 'active'                => rand(0, 1)
             ]);
             MarkupSell::create([
                 'user_exchange_rate_id' => $userExchangeRate->id,
                 'trade_type'            => $tradeType[rand(0, 1)],
-                'value'                 => $faker->randomFloat(6, $userExchangeRate->exchangeRate->exchangeRate, ($userExchangeRate->exchangeRate->exchangeRate + 5)),
+                'value'                 => $faker->randomFloat(6, $userExchangeRate->exchangeRate()->first()->exchangeRate, ($userExchangeRate->exchangeRate()->first()->exchangeRate + 5)),
                 'active'                => rand(0, 1)
             ]);
         }
