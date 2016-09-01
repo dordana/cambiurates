@@ -52,15 +52,15 @@
                                     <input type="text"
                                            pattern="[0-9]"
                                            title="Numbers only"
-                                           value="{{ $userExchangeRate->buy->value or 0 }}"
+                                           value="{{ $userExchangeRate->buy or 0 }}"
                                            class="form-control buy col-md-4"
                                            name="buy[]" data-name="buy"
                                            style="width:30%;"
-                                            {{ (!$userExchangeRate->buy || $userExchangeRate->buy && $userExchangeRate->buy->state() == 'disabled') ? 'disabled="disabled"' : '' }}>
+                                            {{ $userExchangeRate->type_buy or ''}}>
                                     <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
-                                        <option {{ ($userExchangeRate->buy && $userExchangeRate->buy->state() === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
-                                        <option {{ ($userExchangeRate->buy && $userExchangeRate->buy->state() === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
-                                        <option {{ ($userExchangeRate->buy && $userExchangeRate->buy->state() === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
+                                        <option {{ $userExchangeRate->type_buy === 'disabled' ? 'selected' : '' }} value="disabled">Disabled</option>
+                                        <option {{ $userExchangeRate->type_buy === 'percent' ? 'selected' : '' }} value="percent">Margin(%)</option>
+                                        <option {{ $userExchangeRate->type_buy === 'fixed' ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
                                     </select>
                                 </td>
                                 <td>
@@ -68,15 +68,15 @@
                                     <input type="text"
                                            pattern="[0-9]"
                                            title="Numbers only"
-                                           value="{{ $userExchangeRate->sell->value or 0 }}"
+                                           value="{{ $userExchangeRate->sell or 0 }}"
                                            class="form-control margin-rate-input col-md-4"
                                            name="sell[]" data-name="sell"
                                            style="width:30%;"
-                                            {{ (!$userExchangeRate->sell || $userExchangeRate->sell && $userExchangeRate->sell->state() == 'disabled') ? 'disabled="disabled"' : '' }}>
+                                            {{ $userExchangeRate->type_sell or ''}}>
                                     <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
-                                        <option {{ ($userExchangeRate->sell && $userExchangeRate->sell->state() === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
-                                        <option {{ ($userExchangeRate->sell && $userExchangeRate->sell->state() === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
-                                        <option {{ ($userExchangeRate->sell && $userExchangeRate->sell->state() === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
+                                        <option {{ ($userExchangeRate->type_sell === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
+                                        <option {{ ($userExchangeRate->type_sell === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
+                                        <option {{ ($userExchangeRate->type_sell === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
                                     </select>
                                 </td>
                                 <td>

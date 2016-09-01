@@ -21,7 +21,7 @@ class ExchangeRateController extends Controller
             'admin.exchangerate.list',
             [
                 'aExchangeRates'  => ExchangeRate::searchFor()->has('users', '<', 1)->paginate($this->limit),
-                'aUserExchangeRates' => \Auth::user()->userExchangeRates()->with(['buy','sell','exchangeRate'])->get()
+                'aUserExchangeRates' => \Auth::user()->userExchangeRates()->with(['exchangeRate'])->get()
             ]
         );
     }

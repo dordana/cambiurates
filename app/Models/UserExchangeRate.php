@@ -8,28 +8,22 @@
 
 namespace App\Models;
 
-use App\Models\Markups\MarkupBuy;
-use App\Models\Markups\MarkupSell;
-
 class UserExchangeRate extends BaseModel
 {
     protected $table = 'user_exchange_rates';
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function sell(){
+    protected $fillable = [
+        'type_buy',
+        'buy',
+        'type_sell',
+        'sell',
+        'visible'
+    ];
 
-        return $this->hasOne(MarkupSell::class);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function buy(){
-
-        return $this->hasOne(MarkupBuy::class);
-    }
+    protected $casts = [
+        'sell' => 'float',
+        'buy' => 'float'
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -45,5 +39,33 @@ class UserExchangeRate extends BaseModel
     public function user(){
 
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Returns correct data upon trade type
+     * @param $value
+     * @return string
+     */
+    public function getSellAttribute($value)
+    {
+        if($this->typeSell === 'percent'){
+            return round($value,2);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Returns correct data upon trade type
+     * @param $value
+     * @return string
+     */
+    public function getBuyAttribute($value)
+    {
+        if($this->typeBuy === 'percent'){
+            return round($value,2);
+        }
+
+        return $value;
     }
 }
