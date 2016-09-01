@@ -48,9 +48,9 @@ class TradeController extends Controller
 
         $user = \Auth::user();
         $data = $user->userExchangeRates->keyBy('exchange_rate_id')->toArray();
-        $data[$request->get('id')]['type_buy'] = $request->get('buy_trade_type');
+        $data[$request->get('id')]['type_buy'] = $request->get('type_buy');
         $data[$request->get('id')]['buy'] = $request->get('buy');
-        $data[$request->get('id')]['type_sell'] = $request->get('sell_trade_type');
+        $data[$request->get('id')]['type_sell'] = $request->get('type_sell');
         $data[$request->get('id')]['sell'] = $request->get('sell');
         $data[$request->get('id')]['visible'] = $request->get('visible');
 
@@ -68,9 +68,9 @@ class TradeController extends Controller
         $data = $user->userExchangeRates->keyBy('exchange_rate_id')->toArray();
         foreach ($aRequestData as $row) {
             $aIds[] = $row['id'];
-            $data[$row['id']]['type_buy'] = $row['buy_trade_type'];
+            $data[$row['id']]['type_buy'] = $row['type_buy'];
             $data[$row['id']]['buy'] = $row['buy'];
-            $data[$row['id']]['type_sell'] = $row['sell_trade_type'];
+            $data[$row['id']]['type_sell'] = $row['type_sell'];
             $data[$row['id']]['sell'] = $row['sell'];
             $data[$row['id']]['visible'] = $row['visible'];
         }

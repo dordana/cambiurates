@@ -53,7 +53,6 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 
         //Trade
         Route::get('trade', 'TradeController@index');
-        Route::post('trade/apply', 'TradeController@store');
         Route::post('trade/update', 'TradeController@store');
         Route::post('trade/collection', 'TradeController@collection');
     });

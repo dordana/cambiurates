@@ -19,7 +19,7 @@
                     </form>
                 </div>
                 <div class="hr-line-dashed"></div>
-                <button id="apply" class="btn-green btn btn-sm" style="margin: 5px">Update</button>
+                <button id="update" class="btn-green btn btn-sm" style="margin: 5px">Update</button>
                 <div class="table-responsive" data-first-pos="{{ $aExchangeRates->first()->pos }}">
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
@@ -59,10 +59,10 @@
                                        name="buy[]" data-name="buy"
                                        style="width:30%;"
                                         {{ ($oExchangeRate->type_buy === 'disabled') ? 'disabled' : ''}}>
-                                <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
+                                <select name="type_buy[]" data-name="type_buy" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
                                     <option {{ $oExchangeRate->type_buy === 'disabled' ? 'selected' : '' }} value="disabled">Disabled</option>
                                     <option {{ $oExchangeRate->type_buy === 'percent' ? 'selected' : '' }} value="percent">Margin(%)</option>
-                                    <option {{ $oExchangeRate->type_buy === 'fixed' ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
+                                    <option {{ $oExchangeRate->type_buy === 'fixed' ? 'selected' : '' }} value="fixed">Flat Rate</option>
                                 </select>
                             </td>
                             <td class="buy_rate">
@@ -78,10 +78,10 @@
                                        name="sell[]" data-name="sell"
                                        style="width:30%;"
                                         {{ ($oExchangeRate->type_sell === 'disabled') ? 'disabled' : ''}}>
-                                <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
+                                <select name="type_sell[]" data-name="type_sell" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
                                     <option {{ ($oExchangeRate->type_sell === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
                                     <option {{ ($oExchangeRate->type_sell === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
-                                    <option {{ ($oExchangeRate->type_sell === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
+                                    <option {{ ($oExchangeRate->type_sell === 'fixed') ? 'selected' : '' }} value="fixed">Flat Rate</option>
                                 </select>
                             </td>
                             <td class="sell_rate">
@@ -98,7 +98,7 @@
                                                data-on-text="Visible"
                                                data-off-text="Hidden"
                                         >
-{{--                                        <input type="hidden" data-name="visible" value="0" name="visible" id="vs_{{ $userExchangeRate->id }}">--}}
+                                        <input type="hidden" data-name="visible" value="0" name="visible" id="vs_{{ $oExchangeRate->id }}">
                                     </label>
                                 </div>
                             </td>
@@ -154,38 +154,6 @@
             });
 
             $('.chosen-select').chosen();
-
-            $('.single-row-apply').click(function () {
-
-                var that = $(this);
-                var row = that.parents('tr').first();
-                var data = {};
-                row.find('[data-name]').each(function () {
-                     data[$(this).data('name')] =   $(this).val();
-                });
-
-                $.ajax({
-                    method: "POST",
-                    url: "trade/apply",
-                    data: data,
-                    success: function(result) {
-                        if(result.success === true){
-                            row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The field was applied successful. Please refresh when you are ready.</div>');
-                            setTimeout(function(){
-                                $('#msg').remove();
-                                row.remove();
-                            }, 2000);
-                        }
-
-
-                    }, error: function (result) {
-                        row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>Something is wrong. </div>');
-                        setTimeout(function(){
-                            $('#msg').remove();
-                        }, 2000);
-                    }
-                })
-            });
 
             $('.check-all').on('ifClicked', function(event){
                 $('.i-checks:not(:first)').iCheck('toggle');
@@ -249,7 +217,7 @@
                 }
             }
 
-            $('#apply').click(function () {
+            $('#update').click(function () {
 
                 var data = {};
                 var that = $(this);
@@ -275,10 +243,7 @@
                         url: "trade/collection",
                         data: data,
                         success: function (result) {
-                            for(var i in result.rate_ids){
-                                $("tr[id='rate_" + result.rate_ids[i] + "']").remove();
-                            }
-                            that.after('<div id="msg"  class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The fields was applied successful. Please refresh when you are ready. </div>');
+                            that.after('<div id="msg"  class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The fields has been updated successful.</div>');
                             setTimeout(function () {
                                 $('#msg').remove();
                             }, 5000);
@@ -314,11 +279,16 @@
                         }
 
 
-                    }, error: function (result) {
-                        row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>Something is wrong. </div>');
+                    }, error: function (xhr, status, error) {
+                        var data = JSON.parse(xhr.responseText);
+                        for(var i in data){
+                            for(var ii in data[i]){
+                                row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>' + data[i][ii] + ' </div>');
+                            }
+                        }
                         setTimeout(function(){
                             $('#msg').remove();
-                        }, 2000);
+                        }, 3000);
                     }
                 })
             });
