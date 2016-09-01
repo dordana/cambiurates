@@ -35,9 +35,9 @@ class ExchangeRate extends BaseModel
     public function getBuyRateAttribute()
     {
         if($this->typeBuy == 'percent') {
-            return sprintf('%01.3f', $this->exchangeRate * (($this->buy + 100) / 100));
+            return sprintf('%01.6f', $this->exchangeRate * (($this->buy + 100) / 100));
         } elseif ($this->typeBuy == 'fixed') {
-            return sprintf('%01.3f', $this->buy);
+            return sprintf('%01.6f', $this->buy);
         }
         return 0.00;
     }
@@ -50,9 +50,9 @@ class ExchangeRate extends BaseModel
     public function getSellRateAttribute()
     {
         if ($this->typeSell == 'percent') {
-            return sprintf('%01.3f', $this->exchangeRate * ((100 - $this->sell) / 100));
+            return sprintf('%01.6f', $this->exchangeRate * ((100 - $this->sell) / 100));
         } elseif ($this->typeSell == 'fixed') {
-            return sprintf('%01.3f', $this->sell);
+            return sprintf('%01.6f', $this->sell);
         }
         return 0.00;
     }
@@ -62,7 +62,8 @@ class ExchangeRate extends BaseModel
         if (\Request::get('search') != '') {
 
             $query->where('symbol', 'LIKE', '%'.\Request::get('search').'%')
-                ->orWhere('title', 'LIKE','%'.\Request::get('search').'%');
+                ->orWhere('title', 'LIKE','%'.\Request::get('search').'%')
+                ->orderBy('symbol', 'asc');
         }
     }
 

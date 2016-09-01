@@ -167,6 +167,7 @@
                 } else {
                     input.prop('disabled', false);
                 }
+                input.trigger('change');
             });
 
             $('.rate-value-input').on('change keyup',function () {
@@ -178,7 +179,7 @@
                 var row = $(this).parents('tr').first();
                 var exchange_rate = parseFloat(row.find('.rate').text());
                 var trade = $(this).data('name');
-                var select = {};
+                var select = '';
 
                 if(trade == 'buy') {
                     select = row.find('select[name="type_buy[]"]').val();
@@ -198,12 +199,11 @@
             });
 
             function calculateBuyRate(row, value, exchange_rate, flatRate) {
-
                 var field = row.find('.buy_rate');
                 if(flatRate) {
-                    field.text(value.toFixed(5));
+                    field.text(value.toFixed(6));
                 } else {
-                    field.text( (exchange_rate * ((value + 100) / 100)).toFixed(5) );
+                    field.text( (exchange_rate * ((value + 100) / 100)).toFixed(6) );
                 }
             }
 
@@ -211,9 +211,9 @@
 
                 var field = row.find('.sell_rate');
                 if(flatRate) {
-                    field.text(value.toFixed(5));
+                    field.text(value.toFixed(6));
                 } else {
-                    field.text( (exchange_rate * ((100 - value) / 100)).toFixed(5) );
+                    field.text( (exchange_rate * ((100 - value) / 100)).toFixed(6) );
                 }
             }
 
