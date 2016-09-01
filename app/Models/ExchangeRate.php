@@ -9,6 +9,7 @@ class ExchangeRate extends BaseModel
         'symbol',
         'exchange_rate',
         'title',
+        'pos'
     ];
     
     protected $appends = ['BuyRate', 'SellRate'];
@@ -29,21 +30,31 @@ class ExchangeRate extends BaseModel
     /**
      * Attribute to add the buy rate, calculated from exchange_rate+exchange_rate*buy_markup
      *
-     * @return decimal
+     * @return float
      */
     public function getBuyRateAttribute()
     {
-        return sprintf('%01.3f', $this->exchangeRate * (($this->buyMarkup + 100) / 100));
+        if($this->typeBuy == 'percent') {
+            return sprintf('%01.3f', $this->exchangeRate * (($this->buy + 100) / 100));
+        } elseif ($this->typeBuy == 'fixed') {
+            return sprintf('%01.3f', $this->buy);
+        }
+        return 0.00;
     }
     
     /**
      * Attribute to add the sell rate, calculated from exchange_rate+exchange_rate*sell_markup
      *
-     * @return decimal
+     * @return float
      */
     public function getSellRateAttribute()
     {
-        return sprintf('%01.3f', $this->exchangeRate * ((100 - $this->sellMarkup) / 100));
+        if ($this->typeSell == 'percent') {
+            return sprintf('%01.3f', $this->exchangeRate * ((100 - $this->sell) / 100));
+        } elseif ($this->typeSell == 'fixed') {
+            return sprintf('%01.3f', $this->sell);
+        }
+        return 0.00;
     }
 
     public function scopeSearchFor(Builder $query)
@@ -51,8 +62,7 @@ class ExchangeRate extends BaseModel
         if (\Request::get('search') != '') {
 
             $query->where('symbol', 'LIKE', '%'.\Request::get('search').'%')
-                ->orWhere('title', 'LIKE','%'.\Request::get('search').'%')
-                ->orderBy('symbol', 'asc');
+                ->orWhere('title', 'LIKE','%'.\Request::get('search').'%');
         }
     }
 
