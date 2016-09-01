@@ -40,11 +40,11 @@ class TradeController extends Controller
     }
 
     /**
-     * Applies users trade rates
+     * Store users trade rates
      * @param TradeRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function apply(TradeRequest $request){
+    public function store(TradeRequest $request){
 
         $user = \Auth::user();
         $data = $user->userExchangeRates->keyBy('exchange_rate_id')->toArray();

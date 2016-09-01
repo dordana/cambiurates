@@ -20,7 +20,7 @@ class UploadExampleUserRatesData extends Migration
     public function up()
     {
         //Add some example rates for user with ID 1
-        $user = User::find(1);
+        $user = User::find(2);
         $user->exchangeRates()->attach([1 => ['visible' => 1], 2 => ['visible' => 1], 3 => ['visible' => 0]]);
 
         $tradeType = ['fixed', 'percent'];

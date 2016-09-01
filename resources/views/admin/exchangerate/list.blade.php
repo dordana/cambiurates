@@ -37,7 +37,7 @@
                         @foreach($aUserExchangeRates as $iIdx => $userExchangeRate)
                             <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row; background-color: #e1ffe6">
                                 <td class="check-mail footable-first-column">
-                                    <input type="checkbox" disabled name="id[]" data-name="id" value="{{ $userExchangeRate->exchangeRate->id }}" class="i-checks">
+                                    #
                                 </td>
                                 <td>
                                     {{ $userExchangeRate->exchangeRate->symbol }}
@@ -56,7 +56,7 @@
                                            class="form-control buy col-md-4"
                                            name="buy[]" data-name="buy"
                                            style="width:30%;"
-                                            {{ $userExchangeRate->type_buy or ''}}>
+                                            {{ (!$userExchangeRate->type_buy || $userExchangeRate->type_buy === 'disabled') ? 'disabled' : ''}}>
                                     <select name="buy_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
                                         <option {{ $userExchangeRate->type_buy === 'disabled' ? 'selected' : '' }} value="disabled">Disabled</option>
                                         <option {{ $userExchangeRate->type_buy === 'percent' ? 'selected' : '' }} value="percent">Margin(%)</option>
@@ -72,9 +72,9 @@
                                            class="form-control margin-rate-input col-md-4"
                                            name="sell[]" data-name="sell"
                                            style="width:30%;"
-                                            {{ $userExchangeRate->type_sell or ''}}>
+                                            {{ (!$userExchangeRate->type_sell || $userExchangeRate->type_sell === 'disabled') ? 'disabled' : ''}}>
                                     <select name="sell_trade[]" data-name="trade_type" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
-                                        <option {{ ($userExchangeRate->type_sell === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
+                                        <option {{ ( $userExchangeRate->type_sell === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
                                         <option {{ ($userExchangeRate->type_sell === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
                                         <option {{ ($userExchangeRate->type_sell === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
                                     </select>
@@ -90,7 +90,7 @@
                                                    data-on-text="Visible"
                                                    data-off-text="Hidden"
                                             >
-                                            <input type="hidden" data-name="visible" name="visible" id="vs_{{ $userExchangeRate->id }}">
+                                            <input type="hidden" data-name="visible" value="0" name="visible" id="vs_{{ $userExchangeRate->id }}">
                                         </label>
                                     </div>
                                 </td>
@@ -161,7 +161,7 @@
                                                data-on-text="Visible"
                                                data-off-text="Hidden"
                                         >
-                                        <input type="hidden" name="visible" data-name="visible" id="vs_{{ $oExchangeRate->id }}">
+                                        <input type="hidden" name="visible" value="0" data-name="visible" id="vs_{{ $oExchangeRate->id }}">
                                     </label>
                                 </div>
                             </td>
@@ -305,6 +305,38 @@
                         }
                     });
                 }
+            });
+
+            $(".single-row-update").on('click', function(){
+                console.log('slap');
+                var that = $(this);
+                var row = that.parents('tr').first();
+                var data = {};
+                row.find('[data-name]').each(function () {
+                    data[$(this).data('name')] =   $(this).val();
+                });
+
+                console.log(data);
+                $.ajax({
+                    method: "POST",
+                    url: "trade/update",
+                    data: data,
+                    success: function(result) {
+                        if(result.success === true){
+                            row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The field has been updated successful.</div>');
+                            setTimeout(function(){
+                                $('#msg').remove();
+                            }, 2000);
+                        }
+
+
+                    }, error: function (result) {
+                        row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>Something is wrong. </div>');
+                        setTimeout(function(){
+                            $('#msg').remove();
+                        }, 2000);
+                    }
+                })
             });
         });
     </script>
