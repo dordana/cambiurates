@@ -17,9 +17,9 @@ class ChangeMarkupStrategy extends Migration
 
         Schema::table('user_exchange_rates', function(Blueprint $table)
         {
-            $table->enum('type_buy', ['fixed', 'percent', 'disabled'])->after('exchange_rate_id');
+            $table->enum('type_buy', ['fixed', 'percent', 'disabled'])->default('disabled')->after('exchange_rate_id');
             $table->decimal('buy', 14, 6)->after('type_buy');
-            $table->enum('type_sell', ['fixed', 'percent', 'disabled'])->after('type_buy');
+            $table->enum('type_sell', ['fixed', 'percent', 'disabled'])->default('disabled')->after('type_buy');
             $table->decimal('sell', 14, 6)->after('type_sell');
         });
     }
