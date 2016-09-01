@@ -20,7 +20,7 @@
                 </div>
                 <div class="hr-line-dashed"></div>
                 <button id="apply" class="btn-green btn btn-sm" style="margin: 5px">Update</button>
-                <div class="table-responsive">
+                <div class="table-responsive" data-first-pos="{{ $aExchangeRates->first()->pos }}">
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
                             <th class="footable-first-column">
@@ -30,7 +30,9 @@
                             <th>Title</th>
                             <th>Exchange Rate</th>
                             <th style="max-width: 30px">Buy</th>
+                            <th style="max-width: 30px">Buy Rate</th>
                             <th style="max-width: 30px">Sell</th>
+                            <th style="max-width: 30px">Sell Rate</th>
                             <th>Visible</th>
                             <th class="text-right footable-last-column">Action</th>
                         </tr>
@@ -45,7 +47,7 @@
                             <td>
                                 {{ $oExchangeRate->title }}
                             </td>
-                            <td>
+                            <td class="rate">
                                 {{ $oExchangeRate->exchangeRate }}
                             </td>
                             <td>
@@ -53,7 +55,7 @@
                                        pattern="[0-9]"
                                        title="Numbers only"
                                        value="{{ $oExchangeRate->buy or 0 }}"
-                                       class="form-control buy col-md-4"
+                                       class="form-control buy col-md-4 rate-value-input"
                                        name="buy[]" data-name="buy"
                                        style="width:30%;"
                                         {{ ($oExchangeRate->type_buy === 'disabled') ? 'disabled' : ''}}>
@@ -63,13 +65,16 @@
                                     <option {{ $oExchangeRate->type_buy === 'fixed' ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
                                 </select>
                             </td>
+                            <td class="buy_rate">
+                                {{ $oExchangeRate->getBuyRateAttribute() }}
+                            </td>
                             <td>
 
                                 <input type="text"
                                        pattern="[0-9]"
                                        title="Numbers only"
                                        value="{{ $oExchangeRate->sell or 0 }}"
-                                       class="form-control margin-rate-input col-md-4"
+                                       class="form-control margin-rate-input col-md-4 rate-value-input"
                                        name="sell[]" data-name="sell"
                                        style="width:30%;"
                                         {{ ($oExchangeRate->type_sell === 'disabled') ? 'disabled' : ''}}>
@@ -78,6 +83,9 @@
                                     <option {{ ($oExchangeRate->type_sell === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
                                     <option {{ ($oExchangeRate->type_sell === 'fixed') ? 'selected' : '' }} value="flat_rate">Flat Rate</option>
                                 </select>
+                            </td>
+                            <td class="sell_rate">
+                                {{ $oExchangeRate->getSellRateAttribute() }}
                             </td>
                             <td>
                                 <div class="flag-toggle-2">
@@ -193,6 +201,54 @@
                 }
             });
 
+            $('.rate-value-input').on('change keyup',function () {
+
+                var value = parseFloat($(this).val());
+                if(isNaN(value)) {
+                    value = 0;
+                }
+                var row = $(this).parents('tr').first();
+                var exchange_rate = parseFloat(row.find('.rate').text());
+                var trade = $(this).data('name');
+                var select = {};
+
+                if(trade == 'buy') {
+                    select = row.find('select[name="buy_trade[]"]').val();
+                    if(select == 'percent') {
+                        calculateBuyRate(row, value, exchange_rate, false);
+                    } else if (select == 'fixed') {
+                        calculateBuyRate(row , value , exchange_rate , true);
+                    }
+                } else if (trade == 'sell') {
+                    select = row.find('select[name="sell_trade[]"]').val();
+                    if(select == 'percent') {
+                        calculateSellRate(row , value , exchange_rate ,false);
+                    } else if (select == 'fixed') {
+                        calculateSellRate(row , value , exchange_rate, true);
+                    }
+                }
+            });
+
+            function calculateBuyRate(row, value, exchange_rate, flatRate) {
+
+                var field = row.find('.buy_rate');
+                if(flatRate) {
+                    field.text(value.toFixed(5));
+                } else {
+                    field.text( (exchange_rate * ((value + 100) / 100)).toFixed(5) );
+                }
+            }
+
+            function calculateSellRate(row, value, exchange_rate, flatRate) {
+
+                var field = row.find('.sell_rate');
+                if(flatRate) {
+                    field.text(value.toFixed(5));
+                } else {
+                    field.text( (exchange_rate * ((100 - value) / 100)).toFixed(5) );
+                }
+            }
+
             $('#apply').click(function () {
 
                 var data = {};
@@ -238,7 +294,6 @@
             });
 
             $(".single-row-update").on('click', function(){
-                console.log('slap');
                 var that = $(this);
                 var row = that.parents('tr').first();
                 var data = {};
@@ -246,7 +301,6 @@
                     data[$(this).data('name')] =   $(this).val();
                 });
 
-                console.log(data);
                 $.ajax({
                     method: "POST",
                     url: "trade/update",
@@ -268,6 +322,27 @@
                     }
                 })
             });
+
+            {{--$('tbody').sortable(--}}
+                    {{--{--}}
+                        {{--axis: 'y',--}}
+                        {{--stop: function (event, ui) {--}}
+                            {{--var data = $(this).sortable('serialize');--}}
+                            {{--data += '&_token=' + "{!! csrf_token() !!}";--}}
+                            {{--data += '&first=' + $('.table-responsive').data('first-pos');--}}
+
+                            {{--// POST to server using $.post or $.ajax--}}
+                            {{--$.ajax({--}}
+                                {{--data: data,--}}
+                                {{--type: 'POST',--}}
+                                {{--url: "{{ url('admin/exchangerate/reorder') }}"--}}
+                            {{--});--}}
+                        {{--},--}}
+                        {{--tolerance: 'pointer',--}}
+                        {{--forcePlaceholderSize: true,--}}
+                        {{--opacity: 0.8--}}
+                    {{--}--}}
+            {{--);--}}
         });
     </script>
 @endsection
