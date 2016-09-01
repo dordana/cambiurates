@@ -161,11 +161,27 @@
 
             $('.chosen-select').on('change',function () {
                 var selected = $(this).val();
-                var input = $(this).parent().find('input');
+                var input = $(this).prev("input[name^=buy],input[name^=sell]");
                 if(selected == 'disabled') {
                     input.prop('disabled', true);
+                    if (!input.val()) {
+                        input.val('0.000000');
+                    }
                 } else {
                     input.prop('disabled', false);
+                    setTimeout(function () {
+                        input.focus();
+                        if (input.val() == 0) {
+                            input.val('');
+                        }
+                    }, 1);
+
+                }
+            });
+
+            $("input[name^=buy],input[name^=sell]").focusout(function(){
+                if (!$(this).val()) {
+                    $(this).val('0.000000');
                 }
                 input.trigger('change');
             });
