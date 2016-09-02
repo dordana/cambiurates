@@ -11,7 +11,7 @@
     <body>
         <div class="container">
             <div class="content">
-                <div class="title">cambiu rates Home</div>
+                <div class="title">cambiu rates</div>
             </div>
         </div>
     </body>
