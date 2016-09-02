@@ -183,7 +183,6 @@
                 if (!$(this).val()) {
                     $(this).val('0.000000');
                 }
-                input.trigger('change');
             });
 
             $('.rate-value-input').on('change keyup',function () {
