@@ -229,8 +229,6 @@
 
             function calculateBuyRate(row, value, exchange_rate, flatRate) {
                 var field = row.find('.buy_rate');
-                console.log(exchange_rate);
-                console.log(value);
                 if(flatRate) {
                     field.text((exchange_rate + value).toFixed(6));
                 } else {
