@@ -18,7 +18,6 @@ Route::get('/', function () {
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 {
     Route::get('/', 'AdminController@index');
-    Route::get('/users', 'UserController@index');
 
     // Authentication Routes...
     Route::get('login', 'Auth\AuthController@showLoginForm');
@@ -35,12 +34,16 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
     //Every different admin rout need to be authenticate
     Route::group(['middleware' => 'auth'], function()
     {
-        // Registration Routes...
-        Route::get('users/register', 'Auth\AuthController@showRegistrationForm');
-        Route::post('users/register', 'Auth\AuthController@register');
-        Route::get('users/edit/{id}', 'UserController@edit');
-        Route::post('users/update', 'Auth\AuthController@update');
-        Route::get('users/destroy/{id}', 'UserController@destroy');
+        Route::group(['middleware' => 'permit'], function()
+        {
+            // Registration Routes...
+            Route::get('/users', 'UserController@index');
+            Route::get('users/register', 'Auth\AuthController@showRegistrationForm');
+            Route::post('users/register', 'Auth\AuthController@register');
+            Route::get('users/edit/{id}', 'UserController@edit');
+            Route::post('users/update', 'Auth\AuthController@update');
+            Route::get('users/destroy/{id}', 'UserController@destroy');
+        });
 
         //Exchange Rates
         Route::get('exchangerates', 'ExchangeRateController@index');

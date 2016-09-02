@@ -10,15 +10,6 @@ class UserController extends Controller
     protected $module = 'admin';
 
     /**
-     * UserController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->adminGuard();
-    }
-
-    /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
@@ -77,12 +68,5 @@ class UserController extends Controller
         $oUser->delete();
 
         return redirect('admin/users')->with(['success' => 'User successfully deleted!']);
-    }
-    
-    private function adminGuard()
-    {
-        if(\Auth::user()->role != 'admin') {
-            return redirect()->back()->send();
-        }
     }
 }
