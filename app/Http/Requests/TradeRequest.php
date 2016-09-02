@@ -27,15 +27,26 @@ class TradeRequest extends Request
 
         if(substr(parent::route()->getUri(), -10) === 'collection'){
 
+            $rules = [
+                '*.id' => 'required|numeric',
+                '*.visible' => 'required|in:1,0',
+                '*.type_sell' => 'required|in:fixed,percent,disabled',
+                '*.type_buy' => 'required|in:fixed,percent,disabled',
+                '*.sell' => 'required|numeric',
+                '*.buy' => 'required|numeric'
+            ];
+
             return $rules;
         }
 
-        $rules['id'] = 'required|numeric';
-        $rules['visible'] = 'required|in:1,0';
-        $rules['type_sell'] = 'required|in:fixed,percent,disabled';
-        $rules['type_buy'] = 'required|in:fixed,percent,disabled';
-        $rules['sell'] = 'required|numeric';
-        $rules['buy'] = 'required|numeric';
+        $rules = [
+            'id' => 'required|numeric',
+            'visible' => 'required|in:1,0',
+            'type_sell' => 'required|in:fixed,percent,disabled',
+            'type_buy' => 'required|in:fixed,percent,disabled',
+            'sell' => 'required|numeric',
+            'buy' => 'required|numeric'
+        ];
 
         return $rules;
     }
