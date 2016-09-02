@@ -24,15 +24,15 @@
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
                             <th class="footable-first-column">
-                                <input type="checkbox" name="check-all" class="i-checks check-all">
+                                <input type="checkbox" name="check-all" class="i-checks">
                             </th>
                             <th>Symbol</th>
                             <th>Title</th>
                             <th>Exchange Rate</th>
-                            <th style="max-width: 30px">Buy</th>
-                            <th style="max-width: 30px">Buy Rate</th>
-                            <th style="max-width: 30px">Sell</th>
-                            <th style="max-width: 30px">Sell Rate</th>
+                            <th>Buy</th>
+                            <th>Buy Rate</th>
+                            <th>Sell</th>
+                            <th>Sell Rate</th>
                             <th>Visible</th>
                             <th class="text-right footable-last-column">Action</th>
                         </tr>
@@ -57,7 +57,7 @@
                                        value="{{ sprintf('%01.6f', $oExchangeRate->buy) }}"
                                        class="form-control buy col-md-4 rate-value-input"
                                        name="buy[]" data-name="buy"
-                                       style="width:30%;"
+                                       style="width:50%;"
                                         {{ ($oExchangeRate->type_buy === 'disabled') ? 'disabled' : ''}}>
                                 <select name="type_buy[]" data-name="type_buy" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
                                     <option {{ $oExchangeRate->type_buy === 'disabled' ? 'selected' : '' }} value="disabled">Disabled</option>
@@ -76,7 +76,7 @@
                                        value="{{ sprintf('%01.6f', $oExchangeRate->sell) }}"
                                        class="form-control margin-rate-input col-md-4 rate-value-input"
                                        name="sell[]" data-name="sell"
-                                       style="width:30%;"
+                                       style="width:50%;"
                                         {{ ($oExchangeRate->type_sell === 'disabled') ? 'disabled' : ''}}>
                                 <select name="type_sell[]" data-name="type_sell" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
                                     <option {{ ($oExchangeRate->type_sell === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
@@ -142,76 +142,81 @@
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
             });
 
+            $('.visible-switch')
+                .bootstrapSwitch()
+                .on('switchChange.bootstrapSwitch', function(event, state) {
+                    $('#vs_' + $(this).data('id')).val(state ? 1 : 0)
+                });
+
             $('.i-checks').iCheck({
                 checkboxClass: 'icheckbox_square-green',
                 radioClass: 'iradio_square-green'
             });
 
-            var cbVisible = $('.visible-switch');
-            cbVisible.bootstrapSwitch();
-            cbVisible.on('switchChange.bootstrapSwitch', function(event, state) {
-                $('#vs_' + $(this).data('id')).val(state ? 1 : 0)
-            });
+            $('.i-checks:first')
+                .on('ifChecked', function(event) {
+                    $('.i-checks:not(:first)').iCheck('check');
+                })
+                .on('ifUnchecked', function(event) {
+                    $('.i-checks:not(:first)').iCheck('uncheck');
+                });
 
-            $('.chosen-select').chosen();
-
-            $('.check-all').on('ifClicked', function(event){
-                $('.i-checks:not(:first)').iCheck('toggle');
-            });
-
-            $('.chosen-select').on('change',function () {
-                var selected = $(this).val();
-                var input = $(this).prev("input[name^=buy],input[name^=sell]");
-                if(selected == 'disabled') {
-                    input.prop('disabled', true);
-                    if (!input.val()) {
-                        input.val('0.000000');
-                    }
-                } else {
-                    input.prop('disabled', false);
-                    setTimeout(function () {
-                        input.focus();
-                        if (input.val() == 0) {
-                            input.val('');
+            $('.chosen-select')
+                .chosen({ width: '40%' })
+                .on('change',function () {
+                    var selected = $(this).val();
+                    var input = $(this).prev(".rate-value-input");
+                    if(selected == 'disabled') {
+                        input.prop('disabled', true);
+                        if (input.val() == '') {
+                            input.val('0.000000');
                         }
-                    }, 1);
+                    } else {
+                        input.prop('disabled', false);
+                        setTimeout(function () {
+                            input.focus();
+                            if (input.val() == 0) {
+                                input.val('');
+                            }
+                        }, 1);
 
-                }
-            });
-
-            $("input[name^=buy],input[name^=sell]").focusout(function(){
-                if (!$(this).val()) {
-                    $(this).val('0.000000');
-                }
-            });
-
-            $('.rate-value-input').on('change keyup',function () {
-
-                var value = parseFloat($(this).val());
-                if(isNaN(value)) {
-                    value = 0;
-                }
-                var row = $(this).parents('tr').first();
-                var exchange_rate = parseFloat(row.find('.rate').text());
-                var trade = $(this).data('name');
-                var select = '';
-
-                if(trade == 'buy') {
-                    select = row.find('select[name="type_buy[]"]').val();
-                    if(select == 'percent') {
-                        calculateBuyRate(row, value, exchange_rate, false);
-                    } else if (select == 'fixed') {
-                        calculateBuyRate(row , value , exchange_rate , true);
                     }
-                } else if (trade == 'sell') {
-                    select = row.find('select[name="type_sell[]"]').val();
-                    if(select == 'percent') {
-                        calculateSellRate(row , value , exchange_rate ,false);
-                    } else if (select == 'fixed') {
-                        calculateSellRate(row , value , exchange_rate, true);
+                    input.trigger('change');
+                });
+
+            $('.rate-value-input')
+                .focusout(function(){
+                    if ($(this).val() == '') {
+                        $(this).val('0.000000');
                     }
-                }
-            });
+                })
+                .on('change keyup',function () {
+
+                    var value = parseFloat($(this).val());
+                    if(isNaN(value)) {
+                        value = 0;
+                    }
+                    var row = $(this).parents('tr').first();
+                    var exchange_rate = parseFloat(row.find('.rate').text());
+                    var trade = $(this).data('name');
+                    var select = '';
+
+                    if(trade == 'buy') {
+                        select = row.find('select[name="type_buy[]"]').val();
+                        if(select == 'percent') {
+                            calculateBuyRate(row, value, exchange_rate, false);
+                        } else if (select == 'fixed') {
+                            calculateBuyRate(row , value , exchange_rate , true);
+                        }
+                    } else if (trade == 'sell') {
+                        select = row.find('select[name="type_sell[]"]').val();
+                        if(select == 'percent') {
+                            calculateSellRate(row , value , exchange_rate ,false);
+                        } else if (select == 'fixed') {
+                            calculateSellRate(row , value , exchange_rate, true);
+                        }
+                    }
+                });
 
             function calculateBuyRate(row, value, exchange_rate, flatRate) {
                 var field = row.find('.buy_rate');
@@ -307,27 +312,6 @@
                     }
                 })
             });
-
-            {{--$('tbody').sortable(--}}
-                    {{--{--}}
-                        {{--axis: 'y',--}}
-                        {{--stop: function (event, ui) {--}}
-                            {{--var data = $(this).sortable('serialize');--}}
-                            {{--data += '&_token=' + "{!! csrf_token() !!}";--}}
-                            {{--data += '&first=' + $('.table-responsive').data('first-pos');--}}
-
-                            {{--// POST to server using $.post or $.ajax--}}
-                            {{--$.ajax({--}}
-                                {{--data: data,--}}
-                                {{--type: 'POST',--}}
-                                {{--url: "{{ url('admin/exchangerate/reorder') }}"--}}
-                            {{--});--}}
-                        {{--},--}}
-                        {{--tolerance: 'pointer',--}}
-                        {{--forcePlaceholderSize: true,--}}
-                        {{--opacity: 0.8--}}
-                    {{--}--}}
-            {{--);--}}
         });
     </script>
 @endsection

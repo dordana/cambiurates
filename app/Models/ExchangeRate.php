@@ -39,7 +39,7 @@ class ExchangeRate extends BaseModel
         } elseif ($this->typeBuy == 'fixed') {
             return sprintf('%01.6f', $this->buy);
         }
-        return 0.00;
+        return sprintf('%01.6f', 0);
     }
     
     /**
@@ -54,7 +54,7 @@ class ExchangeRate extends BaseModel
         } elseif ($this->typeSell == 'fixed') {
             return sprintf('%01.6f', $this->sell);
         }
-        return 0.00;
+        return sprintf('%01.6f', 0);
     }
 
     public function scopeSearchFor(Builder $query)
