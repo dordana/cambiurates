@@ -145,7 +145,8 @@
             $('.visible-switch')
                 .bootstrapSwitch()
                 .on('switchChange.bootstrapSwitch', function(event, state) {
-                    $('#vs_' + $(this).data('id')).val(state ? 1 : 0)
+                   var elem = $('#vs_' + $(this).data('id')).val(state ? 1 : 0);
+                    somethingIsGoingOn(elem.parents('tr').first());
                 });
 
             $('.i-checks').iCheck({
@@ -164,6 +165,9 @@
             $('.chosen-select')
                 .chosen({ width: '40%' })
                 .on('change',function () {
+
+                    somethingIsGoingOn($(this).parents('tr').first());
+
                     var selected = $(this).val();
                     var input = $(this).prev(".rate-value-input");
                     if(selected == 'disabled') {
@@ -190,13 +194,18 @@
                         $(this).val('0.000000');
                     }
                 })
-                .on('change keyup',function () {
+                .on('change keyup',function (event) {
 
                     var value = parseFloat($(this).val());
                     if(isNaN(value)) {
                         value = 0;
                     }
                     var row = $(this).parents('tr').first();
+
+                    if(event.type == 'keyup') {
+                        somethingIsGoingOn(row);
+                    }
+
                     var exchange_rate = parseFloat(row.find('.rate').text());
                     var trade = $(this).data('name');
                     var select = '';
@@ -237,6 +246,10 @@
                 }
             }
 
+            function somethingIsGoingOn(row) {
+                row.css('background-color','lightyellow').addClass('triggered');
+            }
+
             $('#update').click(function () {
 
                 var data = {};
@@ -263,6 +276,7 @@
                         url: "trade/collection",
                         data: data,
                         success: function (result) {
+                            $('.triggered').css('background-color','white');
                             that.after('<div id="msg"  class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The fields has been updated successful.</div>');
                             setTimeout(function () {
                                 $('#msg').remove();
@@ -291,7 +305,8 @@
                     url: "trade/update",
                     data: data,
                     success: function(result) {
-                        if(result.success === true){
+                        if(result.success === true) {
+                            row.css('background-color','white');
                             row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The field has been updated successful.</div>');
                             setTimeout(function(){
                                 $('#msg').remove();

@@ -20,7 +20,11 @@ class ExchangeRateController extends Controller
         return view(
             'admin.exchangerate.list',
             [
-                'aExchangeRates'  => ExchangeRate::searchFor()->byUser()->paginate($this->limit)
+                'aExchangeRates'  => ExchangeRate::searchFor()
+                    ->byUser()
+                    ->orderBy('visible','DESC')
+                    ->orderBy('symbol','ASC')
+                    ->paginate($this->limit)
             ]
         );
     }

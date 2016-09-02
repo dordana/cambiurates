@@ -62,8 +62,7 @@ class ExchangeRate extends BaseModel
         if (\Request::get('search') != '') {
 
             $query->where('symbol', 'LIKE', '%'.\Request::get('search').'%')
-                ->orWhere('title', 'LIKE','%'.\Request::get('search').'%')
-                ->orderBy('symbol', 'asc');
+                ->orWhere('title', 'LIKE','%'.\Request::get('search').'%');
         }
     }
 
