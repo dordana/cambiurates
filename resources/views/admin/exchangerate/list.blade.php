@@ -19,7 +19,7 @@
                     </form>
                 </div>
                 <div class="hr-line-dashed"></div>
-                <button id="update" class="btn-green btn btn-sm" style="margin: 5px">Update</button>
+                <button id="update" class="btn-green btn btn-md" style="margin: 5px;background-color: #2C8F7B;border-color: #2C8F7B;">Update</button>
                 <div class="table-responsive" data-first-pos="{{ $aExchangeRates->first()->pos }}">
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
