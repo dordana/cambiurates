@@ -20,20 +20,11 @@
         <div class="row">
 
             <div class="col-md-6">
-                <h2 class="font-bold">ACE FX</h2>
+                <h2 class="font-bold">cambiu</h2>
 
                 <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id magni modi nulla numquam quaerat quia reprehenderit soluta ullam unde vel. Accusantium amet debitis earum libero maiores nobis reprehenderit sequi vitae!
+                    We sent a confirmation code email to the email address you used
                 </p>
-
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id magni modi nulla numquam quaerat quia reprehenderit soluta ullam unde vel. Accusantium amet debitis earum libero maiores nobis reprehenderit sequi vitae!
-                </p>
-
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Id magni modi nulla numquam quaerat quia reprehenderit soluta ullam unde vel. Accusantium amet debitis earum libero maiores nobis reprehenderit sequi vitae!
-                </p>
-
             </div>
             <div class="col-md-6">
                 <div class="ibox-content">
@@ -51,9 +42,6 @@
                         </div>
                         <button type="submit" class="btn btn-primary block full-width m-b">Confirm</button>
                     </form>
-                    <p class="m-t">
-                        <small>Inspinia we app framework base on Bootstrap 3 &copy; 2014</small>
-                    </p>
                 </div>
             </div>
         </div>

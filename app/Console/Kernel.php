@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\XE\SyncRates as SyncRatesXE;
+use App\Console\Commands\OpenExchangeRates\SyncRates as SyncRatesOER;
 
 class Kernel extends ConsoleKernel
 {
@@ -14,6 +16,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         // Commands\Inspire::class,
+        SyncRatesXE::class,
+        SyncRatesOER::class,
     ];
 
     /**
@@ -24,7 +28,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        
+//        if (config('app.env') == 'production') {
+//            $schedule->command('syncrates-xe')
+//                ->withoutOverlapping()
+//                ->cron('0 * * * 1-5')
+//                ->appendOutputTo(storage_path('logs/command.log'));
+//        }
     }
 }

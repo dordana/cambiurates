@@ -14,6 +14,10 @@ Laravel is accessible, yet powerful, providing tools needed for large, robust ap
 
 Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
 
+## Mail Config
+
+.env file must have MAIL_FROM_ADDRESS & MAIL_FROM_NAME constants 
+
 ## Contributing
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).

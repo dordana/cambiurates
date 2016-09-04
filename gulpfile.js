@@ -16,8 +16,6 @@ elixir(function(mix) {
         .styles('site/plugins/*.css', 'public/styles/site/')
         .scripts('site/*.js', 'public/scripts/site/vendor.js')
         .scripts('site/global/*.js', 'public/scripts/site/app.js')
-        .scripts('site/buyback/*.js', 'public/scripts/site/app.js')
-        .scripts('site/contacts/*.js', 'public/scripts/site/app.js')
         .copy('resources/assets/js/site/**/*.js', 'public/scripts/site')
         .copy('resources/assets/img/site', 'public/images/')
         .copy('resources/assets/img/email', 'public/images/email')

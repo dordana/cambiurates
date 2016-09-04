@@ -20,33 +20,4 @@ class Controller extends BaseController
     protected $module = '';
 
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
-    /**
-     * @param $view
-     * @param array $params
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
-     */
-    public function view($view, $params = array())
-    {
-
-        $reflection = new \ReflectionClass(__CLASS__);
-        $viewPath = str_replace($reflection->getNamespaceName(), '', static::class);
-        $viewPath = strtolower(str_replace('\\', '.', substr($viewPath, 1)));
-        $viewParam = strstr($viewPath, 'controller', true) ;
-
-        if (view()->exists($viewParam. '.' . $view)) {
-
-            return view($viewParam. '.' . $view, $params);
-        } else {
-            $viewParam = substr($viewParam, 0, strrpos($viewParam, '.'));
-            if (view()->exists($viewParam . '.' . $view)) {
-
-                return view($viewParam. '.' . $view, $params);
-            }else{
-
-                $viewParam = substr($viewParam, 0, strrpos($viewParam, '.'));
-                return view($viewParam. '.' . $view, $params);
-            }
-        }
-    }
 }

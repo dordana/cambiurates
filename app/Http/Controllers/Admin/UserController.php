@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Foundation\Auth\User;
 use App\Http\Controllers\Controller;
 
@@ -14,20 +10,10 @@ class UserController extends Controller
     protected $module = 'admin';
 
     /**
-     * UserController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        var_dump('fasdf');
-        die;
         $sSearch = \Request::get('search');
 
         return view('admin.users.list',

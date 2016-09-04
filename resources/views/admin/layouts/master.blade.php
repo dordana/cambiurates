@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-    <title>CAMBIU - Administration</title>
+    <title>cambiu - Administration</title>
 
     <link href="{!! asset('styles/admin/all.css') !!}" rel="stylesheet">
     <link href="{!! asset('styles/admin/app.css') !!}" rel="stylesheet">
@@ -66,17 +66,8 @@
 <script src="{!! asset('scripts/admin/plugins/jquery-ui/jquery-ui.js') !!}"></script>
 <script src="{!! asset('scripts/admin/plugins/metisMenu/jquery.metisMenu.js') !!}"></script>
 <script src="{!! asset('scripts/admin/plugins/slimscroll/jquery.slimscroll.min.js') !!}"></script>
-<script src="{!! asset('scripts/admin/plugins/pace/pace.min.js') !!}"></script>
-<script src="{!! asset('scripts/admin/plugins/summernote/summernote.min.js') !!}"></script>
-<script src="{!! asset('scripts/admin/plugins/summernote/summernote-ext-template.js') !!}"></script>
-<script src="{!! asset('scripts/admin/plugins/select2/select2.full.min.js') !!}"></script>
 <script src="{!! asset('scripts/admin/plugins/chosen/chosen.jquery.js') !!}"></script>
-<script src="{!! asset('scripts/admin/plugins/clockpicker/clockpicker.js') !!}"></script>
 <script src="{!! asset('scripts/admin/plugins/iCheck/icheck.min.js') !!}"></script>
-<script src="{!! asset('scripts/admin/plugins/sweetalert/sweetalert.min.js') !!}"></script>
-<script src="{!! asset('scripts/admin/plugins/footable/footable.all.min.js') !!}"></script>
-<script src="{!! asset('scripts/admin/plugins/editable/jquery.jeditable.min.js') !!}"></script>
-<script src="{!! asset('scripts/admin/plugins/editable/jquery.jeditable.datepicker.js') !!}"></script>
 <script src="{!! asset('scripts/admin/plugins/switch/bootstrap-switch.min.js') !!}"></script>
 <script type="text/javascript">
     (function(i,s,q,l){for(q=window.__q(),l=q.length;i<l;){$.apply(this,s.call(q[i++]));}window.__q=undefined;}(0,Array.prototype.slice));

@@ -15,7 +15,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','confirmation_code', 'confirmed'
+        'name',
+        'email',
+        'password',
+        'confirmation_code',
+        'confirmed',
+        'cambiu_id'
     ];
 
     /**
@@ -73,5 +78,21 @@ class User extends Authenticatable
         $me = $this;
         $me->confirmation_code = $code;
         $me->save();
+    }
+
+    /**
+     * @return $this
+     */
+    public function exchangeRates(){
+
+        return $this->belongsToMany(ExchangeRate::class, 'user_exchange_rates', 'user_id', 'exchange_rate_id')->withPivot(['visible','sell','buy'])->orderBy('user_exchange_rates.id', 'asc');;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function userExchangeRates(){
+
+        return $this->hasMany(UserExchangeRate::class);
     }
 }

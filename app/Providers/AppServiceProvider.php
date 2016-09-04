@@ -53,7 +53,6 @@ class AppServiceProvider extends ServiceProvider
             'setMinutes' => date('i'),
             'min_date' => 'new Date()',
             'currencies' => json_encode($data),
-            'disabledDeliveryDates' => json_encode(Delivery::getDisabledDeliveryDates( date('Y-m-d H:i:s'), true, true ))
         ]);
         
         view()->share('cards', [
