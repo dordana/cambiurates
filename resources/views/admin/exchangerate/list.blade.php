@@ -277,7 +277,7 @@
                         data: data,
                         success: function (result) {
                             $('.triggered').css('background-color','white');
-                            that.after('<div id="msg"  class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The fields has been updated successful.</div>');
+                            that.after('<div id="msg"  class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The fields have been updated successfully.</div>');
                             setTimeout(function () {
                                 $('#msg').remove();
                             }, 5000);
@@ -307,7 +307,7 @@
                     success: function(result) {
                         if(result.success === true) {
                             row.css('background-color','white');
-                            row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The field has been updated successful.</div>');
+                            row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The field has been updated successfully.</div>');
                             setTimeout(function(){
                                 $('#msg').remove();
                             }, 2000);

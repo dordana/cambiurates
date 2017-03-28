@@ -12,7 +12,8 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                        <li><a href="{{ url('admin/logout') }}">Logout</a></li>
+                        <li><a href="{{ route('user-edit') }}">Settings</a></li>
+                        <li><a href="{{ route('logout') }}">Logout</a></li>
                     </ul>
                 </div>
                 <div class="logo-element">

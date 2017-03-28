@@ -15,7 +15,7 @@
         </div>
         <div class="col-md-6">
             <div class="ibox-content">
-                <form class="m-t" role="form" method="POST" action="{{ url('admin/login/confirm') }}">
+                <form class="m-t" role="form" method="POST" action="{{ url('admin/login') }}">
                     {!! csrf_field() !!}
 
                     <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">

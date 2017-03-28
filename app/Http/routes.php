@@ -12,20 +12,21 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/admin');
 });
 
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
 {
-    Route::get('/', 'AdminController@index');
+    Route::get('/',['as' => 'home', 'uses'    => 'AdminController@index']);
 
     // Authentication Routes...
     Route::get('login', 'Auth\AuthController@showLoginForm');
-    Route::post('confirm/code', ['as' => 'confirm', 'uses' => 'Auth\AuthController@confirm']);
-    Route::get('confirm/code', ['as' => 'getConfirm', 'uses' => function(){return view('admin.auth.confirm');}]);
-    Route::post('login/confirm', 'Auth\AuthController@authenticate');
-    Route::get('logout', 'Auth\AuthController@logout');
-
+    Route::post('login', 'Auth\AuthController@authenticate');
+    Route::get('logout',['as' => 'logout', 'uses' =>'Auth\AuthController@logout']);
+    Route::get('user/edit', ['as' => 'user-edit', 'uses' => 'UserController@edit']);
+    Route::post('user/update', ['as' => 'user-update', 'uses' => 'Auth\AuthController@update']);
+    
+    
     // Password Reset Routes...
     Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
     Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
@@ -37,12 +38,10 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
         Route::group(['middleware' => 'permit'], function()
         {
             // Registration Routes...
-            Route::get('/users', 'UserController@index');
-            Route::get('users/register', 'Auth\AuthController@showRegistrationForm');
-            Route::post('users/register', 'Auth\AuthController@register');
-            Route::get('users/edit/{id}', 'UserController@edit');
-            Route::post('users/update', 'Auth\AuthController@update');
-            Route::get('users/destroy/{id}', 'UserController@destroy');
+            Route::get('users', ['as' => 'users', 'uses' => 'UserController@index']);
+            Route::get('user/register',['as' => 'user-register-form', 'uses' => 'Auth\AuthController@showRegistrationForm']);
+            Route::post('user/register', ['as' => 'user-register', 'uses' => 'Auth\AuthController@register']);
+            Route::get('user/destroy/{id}', ['as' => 'user-destroy', 'uses' => 'UserController@destroy']);
         });
 
         //Exchange Rates

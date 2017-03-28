@@ -25,13 +25,13 @@ class AuthRequest extends Request
         $rules = [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:'.app('App\Models\User')->getTable().',email,|max:255',
-            'password' => 'required|confirmed|min:6',
-            'cambiu_id' => 'required'
+//            'password' => 'required|confirmed|min:6',
+//            'cambiu_id' => 'required'
         ];
 
-        if ($this->input('id') != null) {
-            $rules['email'] = 'required|unique:'.app('App\Models\User')->getTable().',email,' . $this->input('id').'|max:255';
-        }
+//        if ($this->input('id') != null) {
+//            $rules['email'] = 'required|unique:'.app('App\Models\User')->getTable().',email,' . $this->input('id').'|max:255';
+//        }
 
         return $rules;
     }

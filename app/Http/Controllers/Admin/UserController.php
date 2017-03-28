@@ -27,24 +27,17 @@ class UserController extends Controller
     }
 
     /**
-     * @param $iUserId
-     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    public function edit($iUserId)
+    public function edit()
     {
-        $oUser = User::find($iUserId);
+        $oUser = \Auth::user();
 
         if (!$oUser) {
-            return redirect('admin/users');
+            return route('users');
         }
-
-        // if you try edit master admin by mistake
-        if ($oUser->id != \Auth::user()->id && $oUser->role == 'admin') {
-            return redirect('admin/users')->with(['not_found' => 'Sorry, you couldn\'t edit that user.']);
-        }
-
-        return view('admin.auth.register', ['oUser' => $oUser]);
+        
+        return view('admin.auth.edit', ['oUser' => $oUser]);
     }
 
     /**

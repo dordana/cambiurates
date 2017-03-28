@@ -10,7 +10,7 @@
                     <div class="pull-right forum-desc">
                         <small>Total Users: {{ number_format(App\Models\User::count()) }}</small>
                     </div>
-                    <a class="btn btn-primary btn-xs" href="{{url('admin/users/register')}}">Add new User</a>
+                    <a class="btn btn-primary btn-xs" href="{{ route('user-register')}}">Add new User</a>
                 </div>
 
                 <div class="search-form">
@@ -34,7 +34,7 @@
                     <tr>
                         <th class="footable-first-column">Name</th>
                         <th>Email</th>
-                        <th>Cambiu Id</th>
+                        {{--<th>Cambiu Id</th>--}}
                         <th class="text-right footable-last-column">Action</th>
                     </tr>
 
@@ -46,24 +46,24 @@
                             <td>
                                 {{ $oUser->email }}
                             </td>
-                            <td>
-                                {{ $oUser->cambiu_id }}
-                            </td>
+                            {{--<td>--}}
+                                {{--{{ $oUser->cambiu_id }}--}}
+                            {{--</td>--}}
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">
                                     @if(Auth::user()->role == 'admin')
-                                        <a type="button" class="btn-white btn btn-xs" href="{{url('admin/users/edit/' . $oUser->id)}}"> Edit</a>
+                                        {{--<a type="button" class="btn-white btn btn-xs" href="{{url('admin/users/edit/' . $oUser->id)}}"> Edit</a>--}}
                                         @if($oUser->id != Auth::user()->id)
-                                            <a type="button" class="btn-white btn btn-xs" href="{{url('admin/users/destroy/' . $oUser->id)}}"> Delete</a>
+                                            <a type="button" class="btn-white btn btn-xs" onclick="return confirm('Are you sure you want to delete this item?');" href="{{ route('user-destroy', ['id' => $oUser->id] )}}"> Delete</a>
                                         @endif
                                     @endif
 
-                                    @if(Auth::user()->role == 'user' && $oUser->role != 'admin')
-                                        <a type="button" class="btn-white btn btn-xs" href="{{url('admin/users/edit/' . $oUser->id)}}"> Edit</a>
-                                        @if($oUser->id != Auth::user()->id)
-                                            <a type="button" class="btn-white btn btn-xs" href="{{url('admin/users/destroy/' . $oUser->id)}}"> Delete</a>
-                                        @endif
-                                    @endif
+                                    {{--@if(Auth::user()->role == 'user' && $oUser->role != 'admin')--}}
+                                        {{--<a type="button" class="btn-white btn btn-xs" href="{{url('admin/users/edit/' . $oUser->id)}}"> Edit</a>--}}
+                                        {{--@if($oUser->id != Auth::user()->id)--}}
+                                            {{--<a type="button" class="btn-white btn btn-xs" href="{{url('admin/users/destroy/' . $oUser->id)}}"> Delete</a>--}}
+                                        {{--@endif--}}
+                                    {{--@endif--}}
                                 </div>
                             </td>
                         </tr>

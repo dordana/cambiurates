@@ -18,9 +18,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'confirmation_code',
-        'confirmed',
-        'cambiu_id'
+        'remember_token',
     ];
 
     /**
@@ -31,54 +29,34 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    protected $casts = ['confirmed' => 'integer'];
-
-    /**
-     * @return self
-     */
-    public function deliverConfirmationCode()
-    {
-
-        $this->generateConfirmationCode();
-        $this->sendConfirmationCodeEmail();
-    }
+    
 
     /**
+     * @param $password
      * @return self
      */
-    private function sendConfirmationCodeEmail()
+    public function sendRegistationEmail($password = '')
     {
 
         try {
             $me = $this;
             $emailContent = '';
-            $emailContent .= "Your confirmation code is: " . $me->confirmation_code . "<br />";
+            $emailContent .= "Username : ". $this->email.'</br>';
+            $emailContent .= "Password : ". $password;
 
             Mail::send([], [], function ($message) use ($emailContent, $me) {
 
                 $from = config('mail.from');
                 $message->from($from['address'], $from['name']);
                 $message->to($me->email, $me->email)
-                    ->subject('Confirm your login attempt.')
+                    ->subject('Cambiu Rates Registration.')
                     ->setBody($emailContent, 'text/html');
             });
         } catch (\Exception $e) {
             Log::error($e->getFile() . ' | ' . $e->getLine() . ' | ' . $e->getMessage());
         }
     }
-
-    /**
-     * @return self
-     */
-    private function generateConfirmationCode()
-    {
-
-        $code = substr(bin2hex(random_bytes(72)), 0, 8);
-        $me = $this;
-        $me->confirmation_code = $code;
-        $me->save();
-    }
+    
 
     /**
      * @return $this

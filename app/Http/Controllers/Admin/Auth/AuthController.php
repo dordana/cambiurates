@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\AuthRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
@@ -57,31 +58,37 @@ class AuthController extends Controller
      */
     public function register(AuthRequest $request)
     {
-        $request->offsetSet('password', bcrypt($request->get('password')));
+        $password = str_random(8);
+        $request->offsetSet('password', bcrypt($password));
+    
+        $user = User::create($request->all());
+        
+        $user->sendRegistationEmail($password);
 
-        User::create($request->all());
-
-        return redirect('admin/users')->with(['success' => 'User successfully created!']);
+        return redirect()->route('users')->with(['success' => 'User successfully created!']);
     }
 
     /**
-     * @param AuthRequest $request
+     * @param UpdateUserRequest $request
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(AuthRequest $request)
+    public function update(UpdateUserRequest $request)
     {
         $oUser = User::find($request->get('id'));
 
         if (!$oUser) {
             return redirect()->back()->with(['not_found' => 'Sorry, we couldn\'t find that record.']);
         }
-
-        $request->offsetSet('password', bcrypt($request->get('password')));
-
-        $oUser->update($request->all());
-
-        return redirect('admin/users')->with(['success' => 'User successfully updated!']);
+        
+        if(trim($request->get('password')) != '') {
+            $request->offsetSet('password', bcrypt($request->get('password')));
+            $oUser->update($request->all());
+        } else {
+            $oUser->update($request->except('password'));
+        }
+        
+        return redirect()->route('home')->with(['success' => 'Settings successfully updated!']);
     }
 
     public function confirm(Request $request)
@@ -132,15 +139,6 @@ class AuthController extends Controller
             );
         }
 
-        //Update the confirmation code
-        User::where(['email' => $request->input('email')])->first()->deliverConfirmationCode();
-        User::where(['email' => $request->input('email')])->update(['confirmed' => 0]);
-
-        return view(
-            'admin.auth.confirm',
-            [
-                'message'  => 'Thanks for logging in. Please check your email for confirmation code!',
-            ]
-        );
+        return redirect()->route('home');
     }
 }

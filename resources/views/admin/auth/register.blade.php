@@ -6,7 +6,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">{{ isset($oUser) ? 'Update User' : 'Create new User' }}</div>
                 <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ isset($oUser) ? url('admin/users/update') : url('admin/users/register') }}">
+                    <form class="form-horizontal" role="form" method="POST" action="{{ isset($oUser) ? route('user-update') : route('user-register') }}">
                         {!! csrf_field() !!}
 
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
@@ -37,47 +37,47 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('cambiu_id') ? ' has-error' : '' }}">
-                            <label class="col-md-2 control-label" for="cambiu_id">Cambiu Id</label>
+                        {{--<div class="form-group{{ $errors->has('cambiu_id') ? ' has-error' : '' }}">--}}
+                            {{--<label class="col-md-2 control-label" for="cambiu_id">Cambiu Id</label>--}}
 
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" name="cambiu_id" id="cambiu_id" value="{{ isset($oUser) ? $oUser->cambiu_id : old('cambiu_id') }}">
+                            {{--<div class="col-md-10">--}}
+                                {{--<input type="text" class="form-control" name="cambiu_id" id="cambiu_id" value="{{ isset($oUser) ? $oUser->cambiu_id : old('cambiu_id') }}">--}}
 
-                                @if ($errors->has('cambiu_id'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('cambiu_id') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
+                                {{--@if ($errors->has('cambiu_id'))--}}
+                                    {{--<span class="help-block">--}}
+                                    {{--<strong>{{ $errors->first('cambiu_id') }}</strong>--}}
+                                {{--</span>--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
 
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label class="col-md-2 control-label" for="password">Password</label>
+                        {{--<div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">--}}
+                            {{--<label class="col-md-2 control-label" for="password">Password</label>--}}
 
-                            <div class="col-md-10">
-                                <input type="password" class="form-control" name="password" id="password">
+                            {{--<div class="col-md-10">--}}
+                                {{--<input type="password" class="form-control" name="password" id="password">--}}
 
-                                @if ($errors->has('password'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('password') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
+                                {{--@if ($errors->has('password'))--}}
+                                    {{--<span class="help-block">--}}
+                                    {{--<strong>{{ $errors->first('password') }}</strong>--}}
+                                {{--</span>--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
 
-                        <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-                            <label class="col-md-2 control-label" for="password_confirmation">Confirm Password</label>
+                        {{--<div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">--}}
+                            {{--<label class="col-md-2 control-label" for="password_confirmation">Confirm Password</label>--}}
 
-                            <div class="col-md-10">
-                                <input type="password" class="form-control" name="password_confirmation" id="password_confirmation">
+                            {{--<div class="col-md-10">--}}
+                                {{--<input type="password" class="form-control" name="password_confirmation" id="password_confirmation">--}}
 
-                                @if ($errors->has('password_confirmation'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('password_confirmation') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
+                                {{--@if ($errors->has('password_confirmation'))--}}
+                                    {{--<span class="help-block">--}}
+                                    {{--<strong>{{ $errors->first('password_confirmation') }}</strong>--}}
+                                {{--</span>--}}
+                                {{--@endif--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
 
                         <div class="form-group">
                             <div class="col-md-10 col-md-offset-2">
