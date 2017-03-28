@@ -25,8 +25,7 @@ class AuthRequest extends Request
         $rules = [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:'.app('App\Models\User')->getTable().',email,|max:255',
-//            'password' => 'required|confirmed|min:6',
-//            'cambiu_id' => 'required'
+            'cambiu_id' => 'required'
         ];
 
 //        if ($this->input('id') != null) {
@@ -44,7 +43,7 @@ class AuthRequest extends Request
     public function messages()
     {
         $aMessages = [
-            'cambiu_id.required' => 'The Cambiu Id field is required.',
+            'cambiu_id.required' => 'The Exchange Id field is required.',
         ];
         
         return $aMessages;

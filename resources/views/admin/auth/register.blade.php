@@ -37,19 +37,19 @@
                             </div>
                         </div>
 
-                        {{--<div class="form-group{{ $errors->has('cambiu_id') ? ' has-error' : '' }}">--}}
-                            {{--<label class="col-md-2 control-label" for="cambiu_id">Cambiu Id</label>--}}
+                        <div class="form-group{{ $errors->has('cambiu_id') ? ' has-error' : '' }}">
+                            <label class="col-md-2 control-label" for="cambiu_id">Exchange Id</label>
 
-                            {{--<div class="col-md-10">--}}
-                                {{--<input type="text" class="form-control" name="cambiu_id" id="cambiu_id" value="{{ isset($oUser) ? $oUser->cambiu_id : old('cambiu_id') }}">--}}
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" name="cambiu_id" id="cambiu_id" value="{{ isset($oUser) ? $oUser->cambiu_id : old('cambiu_id') }}">
 
-                                {{--@if ($errors->has('cambiu_id'))--}}
-                                    {{--<span class="help-block">--}}
-                                    {{--<strong>{{ $errors->first('cambiu_id') }}</strong>--}}
-                                {{--</span>--}}
-                                {{--@endif--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
+                                @if ($errors->has('cambiu_id'))
+                                    <span class="help-block">
+                                    <strong>{{ $errors->first('cambiu_id') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+                        </div>
 
                         {{--<div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">--}}
                             {{--<label class="col-md-2 control-label" for="password">Password</label>--}}

@@ -34,7 +34,7 @@
                     <tr>
                         <th class="footable-first-column">Name</th>
                         <th>Email</th>
-                        {{--<th>Cambiu Id</th>--}}
+                        <th>Exchange Id</th>
                         <th class="text-right footable-last-column">Action</th>
                     </tr>
 
@@ -46,9 +46,9 @@
                             <td>
                                 {{ $oUser->email }}
                             </td>
-                            {{--<td>--}}
-                                {{--{{ $oUser->cambiu_id }}--}}
-                            {{--</td>--}}
+                            <td>
+                                {{ $oUser->cambiu_id }}
+                            </td>
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">
                                     @if(Auth::user()->role == 'admin')
