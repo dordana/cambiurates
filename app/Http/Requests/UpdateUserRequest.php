@@ -23,7 +23,6 @@ class UpdateUserRequest extends Request
     public function rules()
     {
         $rules = [
-            'name'  => 'required|max:255',
             'email' => 'required|unique:' . app('App\Models\User')->getTable() . ',email,' . $this->input('id') . '|max:255'
         ];
         

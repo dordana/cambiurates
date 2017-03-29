@@ -50,9 +50,19 @@
                             </div>
                         </div>
 
-                        <input type="text" class="form-control" name="name" id="name" value="">
+                        <input type="hidden" class="form-control" name="name" id="name" value="">
 
                     </form>
+                </div>
+                <div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-header">
+                        <h1>Please Wait</h1>
+                    </div>
+                    <div class="modal-body">
+                        <div id="ajax_loader">
+                            <img src="{!! asset('images/ellipsis.gif') !!}" style="display: block; margin-left: auto; margin-right: auto;">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,15 +86,19 @@
     <script>
         var select = $('#cambiu_id');
 
+        var modal = $('#pleaseWaitDialog');
+        modal.modal();
+
         var apigClient = apigClientFactory.newClient({
-            accessKey: 'AKIAIY6K5IKEXG7EGC6A',
-            secretKey: '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',
-            region: 'us-west-2'
+            accessKey: '{{ env('ACCESS_KEY') }}',
+            secretKey: '{{ env('SECRET_KEY') }}',
+            region: '{{ env('REGION') }}'
         });
 
         apigClient.exchangesGet({city : 'London', country : 'UK'}, {}, {})
             .then(function(result){
                     $.each(result.data, function( index, value ) {
+                        modal.modal('hide');
                         select.append("<option value='"+value.id+"'>"+value.name+"</option>");
                     });
                     select.trigger("chosen:updated");
@@ -94,7 +108,7 @@
             });
 
         select.change(function () {
-            console.log(select.find('option:selected').attr(''));
+            $('#name').val(select.find('option:selected').text());
         })
 
     </script>

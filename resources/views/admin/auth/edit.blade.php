@@ -8,20 +8,21 @@
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" method="POST" action="{{ route('user-update') }}">
                         {!! csrf_field() !!}
+                        @if(Auth::user()->role == 'admin')
+                            <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                                <label class="col-md-2 control-label" for="name">Name</label>
 
-                        <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                            <label class="col-md-2 control-label" for="name">Name</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" name="name" id="name" value="{{ isset($oUser) ? $oUser->name : old('name') }}">
 
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" name="name" id="name" value="{{ isset($oUser) ? $oUser->name : old('name') }}">
-
-                                @if ($errors->has('name'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('name') }}</strong>
-                                </span>
-                                @endif
+                                    @if ($errors->has('name'))
+                                        <span class="help-block">
+                                        <strong>{{ $errors->first('name') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                             <label class="col-md-2 control-label" for="email">E-Mail Address</label>
