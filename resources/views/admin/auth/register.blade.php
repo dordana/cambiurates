@@ -118,12 +118,5 @@
         })
 
 
-        apigClient.exchangesGet({city : 'London', country : 'UK'}, {}, {})
-                .then(function(result){
-                    console.log(result);
-                }).catch( function(result){
-            alert('API remoting web service problem');
-        });
-
     </script>
 @endsection

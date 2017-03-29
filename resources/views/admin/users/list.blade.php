@@ -32,8 +32,8 @@
 
                 <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                     <tr>
-                        <th class="footable-first-column">Name</th>
-                        <th>Email</th>
+                        <th class="footable-first-column">Email</th>
+                        <th>Exchange</th>
                         <th>Exchange Id</th>
                         <th class="text-right footable-last-column">Action</th>
                     </tr>
@@ -41,10 +41,10 @@
                     @foreach($aUsers as $iIdx => $oUser)
                         <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row;">
                             <td class="footable-first-column">
-                                {{ $oUser->name }}
+                                {{ $oUser->email }}
                             </td>
                             <td>
-                                {{ $oUser->email }}
+                                {{ $oUser->name }}
                             </td>
                             <td>
                                 {{ $oUser->cambiu_id }}
