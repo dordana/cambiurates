@@ -59,11 +59,10 @@
                                        name="buy[]" data-name="buy"
                                        style="width:50%;"
                                         {{ ($oExchangeRate->type_buy === 'disabled') ? 'disabled' : ''}}>
-                                <select name="type_buy[]" data-name="type_buy" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
-                                    <option {{ $oExchangeRate->type_buy === 'disabled' ? 'selected' : '' }} value="disabled">Disabled</option>
-                                    <option {{ $oExchangeRate->type_buy === 'percent' ? 'selected' : '' }} value="percent">Margin(%)</option>
-                                    <option {{ $oExchangeRate->type_buy === 'fixed' ? 'selected' : '' }} value="fixed">Flat Rate</option>
-                                </select>
+                                    <input type="radio" name="type_buy_{{$oExchangeRate->id}}" class="rate-type buy-type" {{ $oExchangeRate->type_buy === 'disabled' ? 'checked' : '' }} value="disabled"/>Disabled
+                                    <input type="radio" name="type_buy_{{$oExchangeRate->id}}" class="rate-type buy-type" {{ $oExchangeRate->type_buy === 'percent' ? 'checked' : '' }} value="percent"/>Margin(%)
+                                    <input type="radio" name="type_buy_{{$oExchangeRate->id}}" class="rate-type buy-type" {{ $oExchangeRate->type_buy === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat Rate
+
                             </td>
                             <td class="buy_rate">
                                 {{ $oExchangeRate->getBuyRateAttribute() }}
@@ -78,11 +77,9 @@
                                        name="sell[]" data-name="sell"
                                        style="width:50%;"
                                         {{ ($oExchangeRate->type_sell === 'disabled') ? 'disabled' : ''}}>
-                                <select name="type_sell[]" data-name="type_sell" data-placeholder="Choose a trade type..." class="chosen-select col-md-6" style="width:40%;" tabindex="4">
-                                    <option {{ ($oExchangeRate->type_sell === 'disabled') ? 'selected' : '' }} value="disabled">Disabled</option>
-                                    <option {{ ($oExchangeRate->type_sell === 'percent') ? 'selected' : '' }} value="percent">Margin(%)</option>
-                                    <option {{ ($oExchangeRate->type_sell === 'fixed') ? 'selected' : '' }} value="fixed">Flat Rate</option>
-                                </select>
+                                <input type="radio" name="type_sell_{{$oExchangeRate->id}}" class="rate-type sell-type" {{ $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="disabled"/>Disabled
+                                <input type="radio" name="type_sell_{{$oExchangeRate->id}}" class="rate-type sell-type" {{ $oExchangeRate->type_sell === 'percent' ? 'checked' : '' }} value="percent"/>Margin(%)
+                                <input type="radio" name="type_sell_{{$oExchangeRate->id}}" class="rate-type sell-type" {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat Rate
                             </td>
                             <td class="sell_rate">
                                 {{ $oExchangeRate->getSellRateAttribute() }}
@@ -162,14 +159,13 @@
                     $('.i-checks:not(:first)').iCheck('uncheck');
                 });
 
-            $('.chosen-select')
-                .chosen({ width: '40%' })
+            $('.rate-type')
                 .on('change',function () {
 
                     somethingIsGoingOn($(this).parents('tr').first());
 
                     var selected = $(this).val();
-                    var input = $(this).prev(".rate-value-input");
+                    var input = $(this).parent().find(".rate-value-input");
                     if(selected == 'disabled') {
                         input.prop('disabled', true);
                         if (input.val() == '') {
@@ -209,16 +205,15 @@
                     var exchange_rate = parseFloat(row.find('.rate').text());
                     var trade = $(this).data('name');
                     var select = '';
-
                     if(trade == 'buy') {
-                        select = row.find('select[name="type_buy[]"]').val();
+                        select = row.find('.buy-type:checked').val();
                         if(select == 'percent') {
                             calculateBuyRate(row, value, exchange_rate, false);
                         } else if (select == 'fixed') {
                             calculateBuyRate(row , value , exchange_rate , true);
                         }
                     } else if (trade == 'sell') {
-                        select = row.find('select[name="type_sell[]"]').val();
+                        select = row.find('.sell-type:checked').val();
                         if(select == 'percent') {
                             calculateSellRate(row , value , exchange_rate ,false);
                         } else if (select == 'fixed') {
@@ -230,7 +225,7 @@
             function calculateBuyRate(row, value, exchange_rate, flatRate) {
                 var field = row.find('.buy_rate');
                 if(flatRate) {
-                    field.text((exchange_rate + value).toFixed(6));
+                    field.text(value.toFixed(6));
                 } else {
                     field.text( (exchange_rate * ((value + 100) / 100)).toFixed(6) );
                 }
@@ -240,7 +235,7 @@
 
                 var field = row.find('.sell_rate');
                 if(flatRate) {
-                    field.text((exchange_rate - value).toFixed(6));
+                    field.text(value.toFixed(6));
                 } else {
                     field.text( (exchange_rate * ((100 - value) / 100)).toFixed(6) );
                 }
@@ -262,6 +257,8 @@
                     if ($(this).prop("checked")) {
                         row.find('[data-name]').each(function () {
                             row_data[$(this).data('name')] =  $(this).val();
+                            row_data.type_sell = row.find('.sell-type:checked').val();
+                            row_data.type_buy = row.find('.buy-type:checked').val();
                         });
                         data[row.attr('id').replace("rate_", "")] = row_data;
                     }
@@ -269,6 +266,11 @@
 
                 if(Object.keys(data).length) {
                     call_ajax(data);
+                } else {
+                    that.after('<div id="msg" class="alert alert-danger"> <button type="button" class="close" data-dismiss="alert">x</button>Please select at least one exchange rate!</div>');
+                    setTimeout(function () {
+                        $('#msg').remove();
+                    }, 5000);
                 }
                 function call_ajax(data) {
                     $.ajax({
@@ -299,7 +301,8 @@
                 row.find('[data-name]').each(function () {
                     data[$(this).data('name')] =   $(this).val();
                 });
-
+                data.type_sell = row.find('.sell-type:checked').val();
+                data.type_buy = row.find('.buy-type:checked').val();
                 $.ajax({
                     method: "POST",
                     url: "trade/update",

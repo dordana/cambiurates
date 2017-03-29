@@ -38,7 +38,7 @@ class ExchangeRate extends BaseModel
         if($this->typeBuy == 'percent') {
             return sprintf('%01.6f', $this->exchangeRate * (($this->buy + 100) / 100));
         } elseif ($this->typeBuy == 'fixed') {
-            return sprintf('%01.6f', $this->exchangeRate + $this->buy);
+            return sprintf('%01.6f',$this->buy);
         }
         return sprintf('%01.6f', 0);
     }
@@ -53,7 +53,7 @@ class ExchangeRate extends BaseModel
         if ($this->typeSell == 'percent') {
             return sprintf('%01.6f', $this->exchangeRate * ((100 - $this->sell) / 100));
         } elseif ($this->typeSell == 'fixed') {
-            return sprintf('%01.6f', $this->exchangeRate - $this->sell);
+            return sprintf('%01.6f',$this->sell);
         }
         return sprintf('%01.6f', 0);
     }

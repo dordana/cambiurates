@@ -77,6 +77,7 @@
     if ($('body').width() < 1380) {
         $('body').addClass('mini-navbar');
     }
+    $('.chosen-select').chosen();
 </script>
 
 @include('admin.javascript.custom-javascript')
