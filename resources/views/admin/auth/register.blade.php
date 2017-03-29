@@ -85,7 +85,7 @@
 
     <script>
         var select = $('#cambiu_id');
-
+        var old_id = '{{ old('cambiu_id') }}';
         var modal = $('#pleaseWaitDialog');
         modal.modal();
 
@@ -100,8 +100,14 @@
                     $.each(result.data, function( index, value ) {
                         modal.modal('hide');
                         select.append("<option value='"+value.id+"'>"+value.name+"</option>");
+                        if(parseInt(old_id) == parseInt(value.id)) {
+                            select.val(value.id);
+                        }
                     });
                     select.trigger("chosen:updated");
+                    if(parseInt(select.val()) > 0) {
+                        select.trigger('change');
+                    }
                     // Add success callback code here.
             }).catch( function(result){
                 alert('API remoting web service problem');
@@ -110,6 +116,14 @@
         select.change(function () {
             $('#name').val(select.find('option:selected').text());
         })
+
+
+        apigClient.exchangesGet({city : 'London', country : 'UK'}, {}, {})
+                .then(function(result){
+                    console.log(result);
+                }).catch( function(result){
+            alert('API remoting web service problem');
+        });
 
     </script>
 @endsection
