@@ -70,6 +70,8 @@ class ExchangeRate extends BaseModel
         if(\Auth::user()->role != 'admin'){
         	$query->whereIn('symbol', config('currencies.supported'));
         }
+    
+        $query->where(['is_visible' => 1]);
     }
 
     public function scopeByUser(Builder $query)
