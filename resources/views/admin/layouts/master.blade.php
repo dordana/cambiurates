@@ -10,6 +10,7 @@
 
     <link href="{!! asset('styles/admin/all.css') !!}" rel="stylesheet">
     <link href="{!! asset('styles/admin/app.css') !!}" rel="stylesheet">
+    <link href="{!! asset('scripts/admin/plugins/sweetalert/sweetalert.css') !!}">
 
     <script type="text/javascript">
         (function(a){__q=function(){return a;};$=function(f){typeof f==="function"&&a.push(arguments);return $;};jQuery=$.ready=$;}([]));
@@ -69,6 +70,7 @@
 <script src="{!! asset('scripts/admin/plugins/chosen/chosen.jquery.js') !!}"></script>
 <script src="{!! asset('scripts/admin/plugins/iCheck/icheck.min.js') !!}"></script>
 <script src="{!! asset('scripts/admin/plugins/switch/bootstrap-switch.min.js') !!}"></script>
+<script src="{!! asset('scripts/admin/plugins/sweetalert/sweetalert.min.js') !!}"></script>
 <script type="text/javascript">
     (function(i,s,q,l){for(q=window.__q(),l=q.length;i<l;){$.apply(this,s.call(q[i++]));}window.__q=undefined;}(0,Array.prototype.slice));
 </script>

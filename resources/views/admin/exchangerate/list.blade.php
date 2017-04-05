@@ -41,7 +41,7 @@
                             <td class="check-mail footable-first-column">
                                 <input type="checkbox" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}" class="i-checks">
                             </td>
-                            <td>
+                            <td class="currency-symbol">
                                 {{ $oExchangeRate->symbol }}
                             </td>
                             <td>
@@ -69,7 +69,6 @@
                                 {{ $oExchangeRate->getBuyRateAttribute() }}
                             </td>
                             <td>
-
                                 <input type="text"
                                        pattern="[0-9]"
                                        title="Numbers only"
@@ -229,6 +228,7 @@
                 var field = row.find('.buy_rate');
                 if(flatRate) {
                     field.text(value.toFixed(6));
+
                 } else {
                     field.text( (exchange_rate * ((value + 100) / 100)).toFixed(6) );
                 }
@@ -262,6 +262,12 @@
                             row_data[$(this).data('name')] =  $(this).val();
                             row_data.type_sell = row.find('.sell-type:checked').val();
                             row_data.type_buy = row.find('.buy-type:checked').val();
+                            var rate_sell = parseFloat(row.find('.sell_rate').text());
+                            var rate_buy = parseFloat(row.find('.buy_rate').text());
+                            var currency = row.find('.currency-symbol').text().trim();
+
+                            //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
+                            sendUpdateRateRequest(currency, {sell:(rate_sell>0)?rate_sell:null,buy:(rate_buy>0)?rate_buy:null});
                         });
                         data[row.attr('id').replace("rate_", "")] = row_data;
                     }
@@ -300,26 +306,35 @@
             $(".single-row-update").on('click', function(){
                 var that = $(this);
                 var row = that.parents('tr').first();
+                var rate_sell = parseFloat(row.find('.sell_rate').text());
+                var rate_buy = parseFloat(row.find('.buy_rate').text());
+                var currency = row.find('.currency-symbol').text().trim();
                 var data = {};
                 row.find('[data-name]').each(function () {
                     data[$(this).data('name')] =   $(this).val();
                 });
                 data.type_sell = row.find('.sell-type:checked').val();
                 data.type_buy = row.find('.buy-type:checked').val();
+
+                if(data.type_buy == 'disabled' && data.type_sell == 'disabled'){
+                    //Here we know that the user have not changed anything
+                    swal("Ups!", "You do not have any changes for that field.", "error");
+                    return false;
+                }
+
+                var success = false;
+
+                //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
+                sendUpdateRateRequest(currency, {sell:(rate_sell>0)?rate_sell:null,buy:(rate_buy>0)?rate_buy:null});
+
                 $.ajax({
                     method: "POST",
                     url: "trade/update",
                     data: data,
                     success: function(result) {
                         if(result.success === true) {
-                            row.css('background-color','white');
-                            row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-success"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The field has been updated successfully.</div>');
-                            setTimeout(function(){
-                                $('#msg').remove();
-                            }, 2000);
+                            swal('Good job!', 'The field has been updated successfully.', 'success');
                         }
-
-
                     }, error: function (xhr, status, error) {
                         var data = JSON.parse(xhr.responseText);
                         for(var i in data){
@@ -334,5 +349,33 @@
                 })
             });
         });
+    </script>
+
+    <script>
+        //Cambiu API
+        var exchange_name = '{{ \Auth::user()->name }}';
+        function sendUpdateRateRequest(currency, rates) {
+
+            var success = false;
+            var body = {
+                currency: currency,
+                name: exchange_name
+            };
+            for(var i in rates){
+
+                if(rates[i]){
+                    body[i] = rates[i];
+                }
+            }
+            apigClient.ratesPost({city: 'London', country: 'UK'}, body, {})
+                    .then(function (result) {
+                        if (result.data.status == 'ok') {
+                            success = true;
+                        }
+                        return success;
+                    }).catch(function (result) {
+                alert('API remoting web service problem');
+            });
+        }
     </script>
 @endsection
