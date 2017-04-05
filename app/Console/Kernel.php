@@ -16,9 +16,6 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        // Commands\Inspire::class,
-        SyncRatesXE::class,
-        SyncRatesOER::class,
         SyncRatesCambiu::class
     ];
 
