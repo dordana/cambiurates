@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\XE\SyncRates as SyncRatesXE;
 use App\Console\Commands\OpenExchangeRates\SyncRates as SyncRatesOER;
+use App\Console\Commands\Cambiu\SyncRates as SyncRatesCambiu;
 
 class Kernel extends ConsoleKernel
 {
@@ -18,6 +19,7 @@ class Kernel extends ConsoleKernel
         // Commands\Inspire::class,
         SyncRatesXE::class,
         SyncRatesOER::class,
+        SyncRatesCambiu::class
     ];
 
     /**
@@ -29,11 +31,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         
-//        if (config('app.env') == 'production') {
-//            $schedule->command('syncrates-xe')
-//                ->withoutOverlapping()
-//                ->cron('0 * * * 1-5')
-//                ->appendOutputTo(storage_path('logs/command.log'));
-//        }
+        if (config('app.env') == 'production') {
+            $schedule->command('syncrates-cambiu')
+                ->withoutOverlapping()
+                ->hourly()
+                ->appendOutputTo(storage_path('logs/command.log'));
+        }
     }
 }

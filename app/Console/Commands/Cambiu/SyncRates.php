@@ -1,8 +1,8 @@
 <?php namespace App\Console\Commands\Cambiu;
 
 use Illuminate\Console\Command;
-use App\Models\ExchangeRate;
-use GuzzleHttp;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * Class SyncRates
@@ -31,10 +31,17 @@ class SyncRates extends Command
      */
     public function handle()
     {
-        $this->comment(date('Y-m-d H:i:s')." - Start exchange Rate synchronization");
+    
+    
+        $process = new Process('node ./app/Console/Commands/Cambiu/SyncRates.js');
+        $process->run();
+    
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+    
+        echo $process->getOutput();
         
-        //
-        
-        $this->comment(date('Y-m-d H:i:s')." - Done");
     }
 }

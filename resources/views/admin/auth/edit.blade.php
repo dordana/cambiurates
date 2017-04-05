@@ -82,7 +82,7 @@
 
                         <div class="form-group">
                             <div class="col-md-10 col-md-offset-2">
-                                <a href="{{ route('users') }}" class="btn btn-white" type="submit">Cancel</a>
+                                <a href="{{ route('home') }}" class="btn btn-white" type="submit">Cancel</a>
                                 <button type="submit" class="btn btn-primary">
                                    Update
                                 </button>

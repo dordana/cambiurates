@@ -14,6 +14,8 @@ class ExchangeRate extends BaseModel
     ];
     
     protected $appends = ['BuyRate', 'SellRate'];
+    
+    public $timestamps = false; // a must !
 
     public function users(){
 

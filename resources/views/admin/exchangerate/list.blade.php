@@ -29,6 +29,7 @@
                             <th>Symbol</th>
                             <th>Title</th>
                             <th>Exchange Rate</th>
+                            <th>Updated at</th>
                             <th>Buy</th>
                             <th>Buy Rate</th>
                             <th>Sell</th>
@@ -49,6 +50,9 @@
                             </td>
                             <td class="rate">
                                 {{ $oExchangeRate->exchangeRate }}
+                            </td>
+                            <td>
+                                {{ $oExchangeRate->updatedAt }}
                             </td>
                             <td>
                                 <input type="text"

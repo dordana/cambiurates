@@ -43,7 +43,7 @@
 
                         <div class="form-group">
                             <div class="col-md-10 col-md-offset-2">
-                                <a href="{{ url('admin/users') }}" class="btn btn-white" type="submit">Cancel</a>
+                                <a href="{{ route('home') }}" class="btn btn-white" type="submit">Cancel</a>
                                 <button type="submit" class="btn btn-primary">
                                     {{isset($oUser) ? 'Update' : 'Create'}}
                                 </button>
@@ -99,7 +99,7 @@
             .then(function(result){
                     $.each(result.data, function( index, value ) {
                         modal.modal('hide');
-                        select.append("<option value='"+value.id+"'>"+value.name+"</option>");
+                        select.append("<option value='"+value.id+"'>"+value.name+"("+value.address+")</option>");
                         if(parseInt(old_id) == parseInt(value.id)) {
                             select.val(value.id);
                         }
