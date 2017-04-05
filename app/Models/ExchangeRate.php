@@ -65,6 +65,9 @@ class ExchangeRate extends BaseModel
             $query->where('symbol', 'LIKE', '%'.\Request::get('search').'%')
                 ->orWhere('title', 'LIKE','%'.\Request::get('search').'%');
         }
+        if(\Auth::user()->role != 'admin'){
+        	$query->whereIn('symbol', config('currencies.supported'));
+        }
     }
 
     public function scopeByUser(Builder $query)
