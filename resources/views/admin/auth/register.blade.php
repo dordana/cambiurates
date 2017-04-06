@@ -54,16 +54,6 @@
 
                     </form>
                 </div>
-                <div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
-                    <div class="modal-header">
-                        <h1>Please Wait</h1>
-                    </div>
-                    <div class="modal-body">
-                        <div id="ajax_loader">
-                            <img src="{!! asset('images/ellipsis.gif') !!}" style="display: block; margin-left: auto; margin-right: auto;">
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -71,11 +61,13 @@
 
 @section('footer')
     <script>
+        showPleaseWait();
         apigClient.exchangesGet({city : 'London', country : 'UK'}, {}, {})
             .then(function(result){
                     $.each(result.data, function( index, value ) {
-                        modal.modal('hide');
-                        select.append("<option value='"+value.id+"'>"+value.name+"("+value.address+")</option>");
+                        hidePleaseWait();
+                        var address = value.address;
+                        select.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-nearest_station='"+value.nearest_station+"'>"+value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
                         if(parseInt(old_id) == parseInt(value.id)) {
                             select.val(value.id);
                         }
@@ -86,11 +78,22 @@
                     }
                     // Add success callback code here.
             }).catch( function(result){
-                alert('API remoting web service problem');
+                swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
             });
 
         select.change(function () {
-            $('#name').val(select.find('option:selected').text());
+            var name = $('#name');
+            name.val(select.find('option:selected').data('name'));
+            var station = select.find('option:selected').data('nearest_station');
+
+            var $nearestStation = $('#nearest_station');
+            if($nearestStation.length > 0){
+                $nearestStation.remove();
+            }
+
+            if(station){
+                name.after('<input type="hidden" class="form-control" name="nearest_station" id="nearest_station" value="'+station+'">');
+            }
         })
     </script>
 @endsection

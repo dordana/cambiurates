@@ -38,7 +38,7 @@
                             <th class="text-right footable-last-column">Action</th>
                         </tr>
                         @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
-                        <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: table-row;" id="rate_{{ $oExchangeRate->id }}">
+                        <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" style="display: none;" id="rate_{{ $oExchangeRate->id }}" data-symbol="{{ $oExchangeRate->symbol }}">
                             <td class="check-mail footable-first-column">
                                 <input type="checkbox" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}" class="i-checks">
                             </td>
@@ -356,8 +356,11 @@
     </script>
 
     <script>
+        showPleaseWait();
         //Cambiu API
+        var cambiuId = '{{ \Auth::user()->cambiu_id }}';
         var exchange_name = '{{ \Auth::user()->name }}';
+        var nearest_station = '{{ \Auth::user()->nearest_station }}';
         function sendUpdateRateRequest(currency, rates) {
 
             var success = false;
@@ -378,8 +381,30 @@
                         }
                         return success;
                     }).catch(function (result) {
+                    swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+            });
+        }
+        if(cambiuId > 0){
+
+            apigClient.ratesGet({city: 'London', country: 'UK', type: '', exchange_id: 63}, {}, {})
+                    .then(function (result) {
+                        $.each(result.data, function (index, value) {
+                            if (value.exchange_id == cambiuId) {
+                                $.each(value.rates, function(key, value){
+                                    var tableRow = $('tr[data-symbol='+value.currency+']');
+                                    if(tableRow.length == 1){
+                                        tableRow.css('display','table-row')
+                                    }
+                                });
+                                hidePleaseWait();
+                                return;
+                            }
+                        });
+                    }).catch(function (result) {
                 alert('API remoting web service problem');
             });
+        }else{
+            $('tr').css('display','table-row');
         }
     </script>
 @endsection
