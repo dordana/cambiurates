@@ -27,11 +27,7 @@ class AuthRequest extends Request
             'email' => 'required|email|unique:'.app('App\Models\User')->getTable().',email,|max:255',
             'cambiu_id' => 'required|unique:'.app('App\Models\User')->getTable().',cambiu_id,|max:255'
         ];
-
-//        if ($this->input('id') != null) {
-//            $rules['email'] = 'required|unique:'.app('App\Models\User')->getTable().',email,' . $this->input('id').'|max:255';
-//        }
-
+        
         return $rules;
     }
     

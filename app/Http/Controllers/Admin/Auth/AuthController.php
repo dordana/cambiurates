@@ -60,7 +60,7 @@ class AuthController extends Controller
     {
         $password = str_random(8);
         $request->offsetSet('password', bcrypt($password));
-    
+      
         $user = User::create($request->all());
         
         $user->sendRegistationEmail($password);

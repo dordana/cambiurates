@@ -17,6 +17,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
 	    'nearest_station',
+        'rates_policy',
+        'chain',
         'email',
         'password',
         'remember_token',

@@ -29,7 +29,6 @@ class TradeRequest extends Request
 
             $rules = [
                 '*.id' => 'required|numeric',
-                '*.visible' => 'required|in:1,0',
                 '*.type_sell' => 'required|in:fixed,percent,disabled',
                 '*.type_buy' => 'required|in:fixed,percent,disabled',
                 '*.sell' => 'required|numeric',
@@ -41,7 +40,6 @@ class TradeRequest extends Request
 
         $rules = [
             'id' => 'required|numeric',
-            'visible' => 'required|in:1,0',
             'type_sell' => 'required|in:fixed,percent,disabled',
             'type_buy' => 'required|in:fixed,percent,disabled',
             'sell' => 'required|numeric',

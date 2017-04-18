@@ -34,7 +34,6 @@
                             <th>Buy Rate</th>
                             <th>Sell</th>
                             <th>Sell Rate</th>
-                            <th>Visible</th>
                             <th class="text-right footable-last-column">Action</th>
                         </tr>
                         @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
@@ -90,21 +89,7 @@
                             <td class="sell_rate">
                                 {{ $oExchangeRate->getSellRateAttribute() }}
                             </td>
-                            <td>
-                                <div class="flag-toggle-2">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" class="visible-switch"
-                                               {{ ($oExchangeRate->visible == 1) ? 'checked' : '' }}
-                                               data-id="{{ $oExchangeRate->id }}"
-                                               data-toggle="toggle"
-                                               data-size="mini"
-                                               data-on-text="Visible"
-                                               data-off-text="Hidden"
-                                        >
-                                        <input type="hidden" data-name="visible" value="0" name="visible" id="vs_{{ $oExchangeRate->id }}">
-                                    </label>
-                                </div>
-                            </td>
+
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">
                                     <button class="btn-warning btn btn-sm single-row-update">
@@ -266,12 +251,22 @@
                             row_data[$(this).data('name')] =  $(this).val();
                             row_data.type_sell = row.find('.sell-type:checked').val();
                             row_data.type_buy = row.find('.buy-type:checked').val();
+
                             var rate_sell = parseFloat(row.find('.sell_rate').text());
                             var rate_buy = parseFloat(row.find('.buy_rate').text());
+
+                            if(row_data.type_buy == 'disabled' || rate_buy < 0){
+                                rate_buy = 0;
+                            }
+
+                            if(row_data.type_sell == 'disabled' || rate_sell < 0){
+                                rate_sell = 0;
+                            }
+
                             var currency = row.find('.currency-symbol').text().trim();
 
                             //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
-                            sendUpdateRateRequest(currency, {sell:(rate_sell>0)?rate_sell:null,buy:(rate_buy>0)?rate_buy:null});
+                            sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy});
                         });
                         data[row.attr('id').replace("rate_", "")] = row_data;
                     }
@@ -320,16 +315,18 @@
                 data.type_sell = row.find('.sell-type:checked').val();
                 data.type_buy = row.find('.buy-type:checked').val();
 
-                if(data.type_buy == 'disabled' && data.type_sell == 'disabled'){
-                    //Here we know that the user have not changed anything
-                    swal("Ups!", "You do not have any changes for that field.", "error");
-                    return false;
+                if(data.type_buy == 'disabled' || rate_buy < 0){
+                    rate_buy = 0;
+                }
+
+                if( data.type_sell == 'disabled' || rate_sell < 0){
+                    rate_sell = 0;
                 }
 
                 var success = false;
 
                 //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
-                sendUpdateRateRequest(currency, {sell:(rate_sell>0)?rate_sell:null,buy:(rate_buy>0)?rate_buy:null});
+                sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy});
 
                 $.ajax({
                     method: "POST",
@@ -361,18 +358,27 @@
         var cambiuId = '{{ \Auth::user()->cambiu_id }}';
         var exchange_name = '{{ \Auth::user()->name }}';
         var nearest_station = '{{ \Auth::user()->nearest_station }}';
+        var rates_policy = '{{ \Auth::user()->rates_policy }}';
+        var chain = '{{ \Auth::user()->chain }}';
+
         function sendUpdateRateRequest(currency, rates) {
 
             var success = false;
             var body = {
                 currency: currency,
-                name: exchange_name
             };
-            for(var i in rates){
 
-                if(rates[i]){
-                    body[i] = rates[i];
-                }
+            if(rates_policy == 'chain') {
+                body.chain = chain;
+            } else {
+                body.name = exchange_name;
+//                if(nearest_station) {
+//                    body.nearest_station = nearest_station;
+//                }
+            }
+            console.log(rates);
+            for(var i in rates){
+                body[i] = rates[i];
             }
             apigClient.ratesPost({city: 'London', country: 'UK'}, body, {})
                     .then(function (result) {
@@ -385,7 +391,6 @@
             });
         }
         if(cambiuId > 0){
-
             apigClient.ratesGet({city: 'London', country: 'UK', type: '', exchange_id: 63}, {}, {})
                     .then(function (result) {
                         $.each(result.data, function (index, value) {

@@ -27,7 +27,6 @@ class TradeController extends Controller
         $data[$request->get('id')]['buy'] = $request->get('buy');
         $data[$request->get('id')]['type_sell'] = $request->get('type_sell');
         $data[$request->get('id')]['sell'] = $request->get('sell');
-        $data[$request->get('id')]['visible'] = $request->get('visible');
 
         //Save the new rates
         $this->user->exchangeRates()->sync($data);
@@ -46,7 +45,6 @@ class TradeController extends Controller
             $data[$row['id']]['buy'] = $row['buy'];
             $data[$row['id']]['type_sell'] = $row['type_sell'];
             $data[$row['id']]['sell'] = $row['sell'];
-            $data[$row['id']]['visible'] = $row['visible'];
         }
 
         //Save the new rates

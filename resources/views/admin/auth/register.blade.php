@@ -62,12 +62,26 @@
 @section('footer')
     <script>
         showPleaseWait();
+        var chains;
+        var exchanges;
+        apigClient.chainsGet({city : 'London', country : 'UK'}, {}, {})
+                .then(function(result){
+                    chains = result.data;
+                    // Add success callback code here.
+                }).catch( function(result){
+            swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+        });
         apigClient.exchangesGet({city : 'London', country : 'UK'}, {}, {})
             .then(function(result){
+                    exchanges = result.data;
                     $.each(result.data, function( index, value ) {
                         hidePleaseWait();
                         var address = value.address;
-                        select.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-nearest_station='"+value.nearest_station+"'>"+value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
+                        var chain = false;
+                        if(value.chain_id != null) {
+                            chain = value.chain_id;
+                        }
+                        select.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-rates_policy='"+ value.rates_policy +"' data-chain-id='"+ chain +"' data-nearest_station='"+value.nearest_station+"'>"+value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
                         if(parseInt(old_id) == parseInt(value.id)) {
                             select.val(value.id);
                         }
@@ -85,15 +99,56 @@
             var name = $('#name');
             name.val(select.find('option:selected').data('name'));
             var station = select.find('option:selected').data('nearest_station');
-
+            var rates_policy = select.find('option:selected').data('rates_policy');
+            var chain_id = select.find('option:selected').data('chain-id');
+            var chain;
+            if(chain_id > 0) {
+                chain  = (getChainById(chain_id));
+            }
             var $nearestStation = $('#nearest_station');
             if($nearestStation.length > 0){
                 $nearestStation.remove();
             }
 
-            if(station){
+            var $rates_policy_input = $('#rates_policy');
+            if($rates_policy_input.length > 0){
+                $rates_policy_input.remove();
+            }
+
+            var $chain_input = $('#chain');
+            if($chain_input.length > 0){
+                $chain_input.remove();
+            }
+            var isUnique = (isExchangeUnique(name.val()));
+            if(station && isUnique === false) {
                 name.after('<input type="hidden" class="form-control" name="nearest_station" id="nearest_station" value="'+station+'">');
             }
-        })
+            if(rates_policy){
+                name.after('<input type="hidden" class="form-control" name="rates_policy" id="rates_policy" value="'+rates_policy+'">');
+                if(rates_policy == 'chain') {
+                    name.after('<input type="hidden" class="form-control" name="chain" id="chain" value="'+chain[0]["name"]+'">');
+                }
+            }
+        });
+
+        function getChainById(id) {
+            return chains.filter(
+                    function(data){ return data.id == id }
+            );
+        }
+
+        function isExchangeUnique(name) {
+            var counter = 0;
+            for (var i = 0; i < exchanges.length; i++){
+                // look for the entry with a matching `code` value
+                if (exchanges[i].name == name){
+                   counter++;
+                }
+            }
+            if(counter > 1) {
+                return false;
+            }
+            return true;
+        }
     </script>
 @endsection
