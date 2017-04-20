@@ -1,6 +1,6 @@
 var apigClientFactory = require('aws-api-gateway-client');
 
-var apigClient = apigClientFactory.newClient({
+var apigClient = apigClientFactory.default.newClient({
     accessKey: 'AKIAIY6K5IKEXG7EGC6A',
     secretKey: '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',
     region: 'us-west-2',
@@ -38,7 +38,6 @@ var ratesQuery = '';
 var visibleRates = [];
 apigClient.invokeApi({}, pathTemplate, method, additionalParams, {})
     .then(function (result) {
-
         // Add success callback code here.
         var rates = result.data[0].rates;
 
