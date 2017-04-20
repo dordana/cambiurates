@@ -10,45 +10,46 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
-Route::get('/', function () {
-    return redirect('/admin');
-});
-
-Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
-{
-    Route::get('/',['as' => 'home', 'uses'    => 'AdminController@index']);
-
-    // Authentication Routes...
-    Route::get('login', 'Auth\AuthController@showLoginForm');
-    Route::post('login', 'Auth\AuthController@authenticate');
-    Route::get('logout',['as' => 'logout', 'uses' =>'Auth\AuthController@logout']);
-    Route::get('user/edit', ['as' => 'user-edit', 'uses' => 'UserController@edit']);
-    Route::post('user/update', ['as' => 'user-update', 'uses' => 'Auth\AuthController@update']);
+Route::group(['middleware' => 'cors'], function() {
+    Route::get('/', function () {
+        return redirect('/admin');
+    });
     
-    
-    // Password Reset Routes...
-    Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
-    Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
-    Route::post('password/reset', 'Auth\PasswordController@reset');
-
-    //Every different admin rout need to be authenticate
-    Route::group(['middleware' => 'auth'], function()
+    Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function()
     {
-        Route::group(['middleware' => 'permit'], function()
+        Route::get('/',['as' => 'home', 'uses'    => 'AdminController@index']);
+    
+        // Authentication Routes...
+        Route::get('login', 'Auth\AuthController@showLoginForm');
+        Route::post('login', 'Auth\AuthController@authenticate');
+        Route::get('logout',['as' => 'logout', 'uses' =>'Auth\AuthController@logout']);
+        Route::get('user/edit', ['as' => 'user-edit', 'uses' => 'UserController@edit']);
+        Route::post('user/update', ['as' => 'user-update', 'uses' => 'Auth\AuthController@update']);
+        
+        
+        // Password Reset Routes...
+        Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
+        Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
+        Route::post('password/reset', 'Auth\PasswordController@reset');
+    
+        //Every different admin rout need to be authenticate
+        Route::group(['middleware' => 'auth'], function()
         {
-            // Registration Routes...
-            Route::get('users', ['as' => 'users', 'uses' => 'UserController@index']);
-            Route::get('user/register',['as' => 'user-register-form', 'uses' => 'Auth\AuthController@showRegistrationForm']);
-            Route::post('user/register', ['as' => 'user-register', 'uses' => 'Auth\AuthController@register']);
-            Route::get('user/destroy/{id}', ['as' => 'user-destroy', 'uses' => 'UserController@destroy']);
+            Route::group(['middleware' => 'permit'], function()
+            {
+                // Registration Routes...
+                Route::get('users', ['as' => 'users', 'uses' => 'UserController@index']);
+                Route::get('user/register',['as' => 'user-register-form', 'uses' => 'Auth\AuthController@showRegistrationForm']);
+                Route::post('user/register', ['as' => 'user-register', 'uses' => 'Auth\AuthController@register']);
+                Route::get('user/destroy/{id}', ['as' => 'user-destroy', 'uses' => 'UserController@destroy']);
+            });
+    
+            //Exchange Rates
+            Route::get('exchangerates', 'ExchangeRateController@index');
+    
+            //Trade
+            Route::post('trade/update', 'TradeController@store');
+            Route::post('trade/collection', 'TradeController@collection');
         });
-
-        //Exchange Rates
-        Route::get('exchangerates', 'ExchangeRateController@index');
-
-        //Trade
-        Route::post('trade/update', 'TradeController@store');
-        Route::post('trade/collection', 'TradeController@collection');
     });
 });
