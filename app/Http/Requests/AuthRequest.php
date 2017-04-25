@@ -23,9 +23,9 @@ class AuthRequest extends Request
     public function rules()
     {
         $rules = [
-            'name' => 'required|max:255',
+            'name' => 'required|unique:'.app('App\Models\User')->getTable().',name,|max:255',
             'email' => 'required|email|unique:'.app('App\Models\User')->getTable().',email,|max:255',
-            'cambiu_id' => 'required|unique:'.app('App\Models\User')->getTable().',cambiu_id,|max:255'
+            'cambiu_id' => 'required|max:255'
         ];
         
         return $rules;
@@ -40,7 +40,7 @@ class AuthRequest extends Request
     {
         $aMessages = [
             'cambiu_id.required' => 'The Exchange or Chain field is required.',
-            'cambiu_id.unique' => 'This Exchange or Chain has already been taken.'
+            'name.unique' => 'This Exchange or Chain has already been taken.'
         ];
         
         return $aMessages;

@@ -33,9 +33,9 @@
                                     <option value="">Select</option>
                                 </select>
 
-                                @if ($errors->has('cambiu_id'))
+                                @if ($errors->has('name'))
                                     <span class="help-block">
-                                    <strong>{{ $errors->first('cambiu_id') }}</strong>
+                                    <strong>{{ $errors->first('name') }}</strong>
                                 </span>
                                 @endif
                             </div>
@@ -49,12 +49,6 @@
                                 <select  id="select-exchange" data-placeholder="Choose a exchange..." class="chosen-select col-md-6" style="width:100%;" tabindex="4">
                                     <option value="">Select</option>
                                 </select>
-
-                                @if ($errors->has('cambiu_id'))
-                                    <span class="help-block">
-                                    <strong>{{ $errors->first('cambiu_id') }}</strong>
-                                </span>
-                                @endif
                             </div>
                         </div>
 
@@ -80,6 +74,9 @@
 @section('footer')
     <script>
         showPleaseWait();
+        var old_id = '<?php echo e(old('cambiu_id')); ?>';
+        var rates_policy = '<?php echo e(old('rates_policy')); ?>';
+        console.log(rates_policy);
         var chainSelect = $('#select-chain');
         var chains;
         var exchangeSelect = $('#select-exchange');
@@ -90,7 +87,7 @@
                     $.each(result.data, function( index, value ) {
                         hidePleaseWait();
                         chainSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"'>"+value.name+ "</option>");
-                        if(parseInt(old_id) == parseInt(value.id)) {
+                        if(parseInt(old_id) == parseInt(value.id) && rates_policy == 'chain') {
                             chainSelect.val(value.id);
                         }
                     });
@@ -138,7 +135,7 @@
                             return;
                         }
                         exchangeSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-rates_policy='"+ value.rates_policy +"'  data-nearest_station='"+value.nearest_station+"'>"+value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
-                        if(parseInt(old_id) == parseInt(value.id)) {
+                        if(parseInt(old_id) == parseInt(value.id) && rates_policy != 'chain') {
                             exchangeSelect.val(value.id);
                         }
                     });
