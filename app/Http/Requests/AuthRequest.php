@@ -39,8 +39,8 @@ class AuthRequest extends Request
     public function messages()
     {
         $aMessages = [
-            'cambiu_id.required' => 'The Exchange field is required.',
-            'cambiu_id.unique' => 'This Exchange has already been taken.'
+            'cambiu_id.required' => 'The Exchange or Chain field is required.',
+            'cambiu_id.unique' => 'This Exchange or Chain has already been taken.'
         ];
         
         return $aMessages;

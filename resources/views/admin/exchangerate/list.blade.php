@@ -355,11 +355,55 @@
     <script>
         showPleaseWait();
         //Cambiu API
+        var select = $('#cambiu_id');
         var cambiuId = '{{ \Auth::user()->cambiu_id }}';
-        var exchange_name = '{{ \Auth::user()->name }}';
+        var name = '{{ \Auth::user()->name }}';
         var nearest_station = '{{ \Auth::user()->nearest_station }}';
         var rates_policy = '{{ \Auth::user()->rates_policy }}';
         var chain = '{{ \Auth::user()->chain }}';
+        var exchanges;
+
+        apigClient.exchangesGet({city : 'London', country : 'UK'}, {}, {})
+                .then(function(result){
+                    exchanges = result.data;
+
+                    if(cambiuId > 0){
+                        apigClient.ratesGet({city: 'London', country: 'UK', type: ''}, {}, {})
+                                .then(function (result) {
+                                    var exchange_id = cambiuId;
+                                    if(rates_policy == 'chain'){
+
+                                        var exchange = getFirstExchangeByChain(cambiuId);
+
+                                        //If there is no any Exchanges for this chain trow error, cause we do not know which rates to show
+                                        if(!exchange){
+                                            swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+                                            return;
+                                        }
+
+                                        exchange_id = exchange.id;
+                                    }
+                                    $.each(result.data, function (index, value) {
+                                        if (value.exchange_id == exchange_id) {
+                                            $.each(value.rates, function(key, value){
+                                                var tableRow = $('tr[data-symbol='+value.currency+']');
+                                                if(tableRow.length == 1){
+                                                    tableRow.css('display','table-row')
+                                                }
+                                            });
+                                            hidePleaseWait();
+                                            return;
+                                        }
+                                    });
+                                }).catch(function (result) {
+                            alert('API remoting web service problem');
+                        });
+                    }else{
+                        $('tr').css('display','table-row');
+                    }
+                }).catch( function(result){
+            swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+        });
 
         function sendUpdateRateRequest(currency, rates) {
 
@@ -371,7 +415,7 @@
             if(rates_policy == 'chain') {
                 body.chain = chain;
             } else {
-                body.name = exchange_name;
+                body.name = name;
 //                if(nearest_station) {
 //                    body.nearest_station = nearest_station;
 //                }
@@ -390,26 +434,14 @@
                     swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
             });
         }
-        if(cambiuId > 0){
-            apigClient.ratesGet({city: 'London', country: 'UK', type: '', exchange_id: 63}, {}, {})
-                    .then(function (result) {
-                        $.each(result.data, function (index, value) {
-                            if (value.exchange_id == cambiuId) {
-                                $.each(value.rates, function(key, value){
-                                    var tableRow = $('tr[data-symbol='+value.currency+']');
-                                    if(tableRow.length == 1){
-                                        tableRow.css('display','table-row')
-                                    }
-                                });
-                                hidePleaseWait();
-                                return;
-                            }
-                        });
-                    }).catch(function (result) {
-                alert('API remoting web service problem');
-            });
-        }else{
-            $('tr').css('display','table-row');
+        function getFirstExchangeByChain(id) {
+            var exchangesPerChain = exchanges.filter(
+                    function(data){ return data.chain_id == id }
+            );
+            if(exchangesPerChain.length > 0){
+                return exchangesPerChain[0];
+            }
+            return false;
         }
     </script>
 @endsection

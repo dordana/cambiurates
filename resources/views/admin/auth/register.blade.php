@@ -25,11 +25,28 @@
                         </div>
 
                         <div class="form-group{{ $errors->has('cambiu_id') ? ' has-error' : '' }}">
-                            <label class="col-md-2 control-label" for="cambiu_id">Exchange Id</label>
+                            <label class="col-md-2 control-label" for="cambiu_id">Chain</label>
 
                             <div class="col-md-10">
 
-                                <select  name="cambiu_id" id="cambiu_id" data-placeholder="Choose a exchange..." class="chosen-select col-md-6" style="width:100%;" tabindex="4">
+                                <select id="select-chain" data-placeholder="Choose a chain..." class="chosen-select col-md-6" style="width:100%;" tabindex="4">
+                                    <option value="">Select</option>
+                                </select>
+
+                                @if ($errors->has('cambiu_id'))
+                                    <span class="help-block">
+                                    <strong>{{ $errors->first('cambiu_id') }}</strong>
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group{{ $errors->has('cambiu_id') ? ' has-error' : '' }}">
+                            <label class="col-md-2 control-label" for="cambiu_id">Exchange</label>
+
+                            <div class="col-md-10">
+
+                                <select  id="select-exchange" data-placeholder="Choose a exchange..." class="chosen-select col-md-6" style="width:100%;" tabindex="4">
                                     <option value="">Select</option>
                                 </select>
 
@@ -51,6 +68,7 @@
                         </div>
 
                         <input type="hidden" class="form-control" name="name" id="name" value="">
+                        <input type="hidden" class="form-control" name="cambiu_id" id="name" value="">
 
                     </form>
                 </div>
@@ -62,14 +80,53 @@
 @section('footer')
     <script>
         showPleaseWait();
+        var chainSelect = $('#select-chain');
         var chains;
+        var exchangeSelect = $('#select-exchange');
         var exchanges;
         apigClient.chainsGet({city : 'London', country : 'UK'}, {}, {})
                 .then(function(result){
                     chains = result.data;
-                    // Add success callback code here.
+                    $.each(result.data, function( index, value ) {
+                        hidePleaseWait();
+                        chainSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"'>"+value.name+ "</option>");
+                        if(parseInt(old_id) == parseInt(value.id)) {
+                            chainSelect.val(value.id);
+                        }
+                    });
+                    chainSelect.trigger("chosen:updated");
+                    if(parseInt(chainSelect.val()) > 0) {
+                        chainSelect.trigger('change');
+                    }
                 }).catch( function(result){
             swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+        });
+
+        chainSelect.change(function () {
+
+            //First we need to reset exchange select
+            exchangeSelect.val('').trigger('chosen:updated');
+
+            var option = chainSelect.find('option:selected');
+            var chainName = option.data('name');
+
+            //Update the cambiu_id
+            $('input[name=cambiu_id]').val(option.val());
+
+            var name = $('#name');
+            name.val(chainName);
+
+            var $rates_policy_input = $('#rates_policy');
+            if($rates_policy_input.length > 0){
+                $rates_policy_input.remove();
+            }
+            name.after('<input type="hidden" class="form-control" name="rates_policy" id="rates_policy" value="chain">');
+
+            var $chain_input = $('#chain');
+            if($chain_input.length > 0){
+                $chain_input.remove();
+            }
+            name.after('<input type="hidden" class="form-control" name="chain" id="chain" value="'+chainName+'">');
         });
         apigClient.exchangesGet({city : 'London', country : 'UK'}, {}, {})
             .then(function(result){
@@ -77,34 +134,37 @@
                     $.each(result.data, function( index, value ) {
                         hidePleaseWait();
                         var address = value.address;
-                        var chain = false;
                         if(value.chain_id != null) {
-                            chain = value.chain_id;
+                            return;
                         }
-                        select.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-rates_policy='"+ value.rates_policy +"' data-chain-id='"+ chain +"' data-nearest_station='"+value.nearest_station+"'>"+value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
+                        exchangeSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-rates_policy='"+ value.rates_policy +"'  data-nearest_station='"+value.nearest_station+"'>"+value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
                         if(parseInt(old_id) == parseInt(value.id)) {
-                            select.val(value.id);
+                            exchangeSelect.val(value.id);
                         }
                     });
-                    select.trigger("chosen:updated");
-                    if(parseInt(select.val()) > 0) {
-                        select.trigger('change');
+                    exchangeSelect.trigger("chosen:updated");
+                    if(parseInt(exchangeSelect.val()) > 0) {
+                        exchangeSelect.trigger('change');
                     }
                     // Add success callback code here.
             }).catch( function(result){
                 swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
             });
 
-        select.change(function () {
+        exchangeSelect.change(function () {
+            //First we need to reset chain select
+            chainSelect.val('').trigger('chosen:updated');
+
+            var option = exchangeSelect.find('option:selected');
+
+            //Update the cambiu_id
+            $('input[name=cambiu_id]').val(option.val());
+
             var name = $('#name');
-            name.val(select.find('option:selected').data('name'));
-            var station = select.find('option:selected').data('nearest_station');
-            var rates_policy = select.find('option:selected').data('rates_policy');
-            var chain_id = select.find('option:selected').data('chain-id');
-            var chain;
-            if(chain_id > 0) {
-                chain  = (getChainById(chain_id));
-            }
+            name.val(option.data('name'));
+            var station = option.data('nearest_station');
+            var rates_policy = option.data('rates_policy');
+
             var $nearestStation = $('#nearest_station');
             if($nearestStation.length > 0){
                 $nearestStation.remove();
@@ -125,17 +185,12 @@
             }
             if(rates_policy){
                 name.after('<input type="hidden" class="form-control" name="rates_policy" id="rates_policy" value="'+rates_policy+'">');
-                if(rates_policy == 'chain') {
-                    name.after('<input type="hidden" class="form-control" name="chain" id="chain" value="'+chain[0]["name"]+'">');
-                }
+//                if(rates_policy == 'chain') {
+//                    name.after('<input type="hidden" class="form-control" name="chain" id="chain" value="'+chain[0]["name"]+'">');
+//                }
             }
         });
 
-        function getChainById(id) {
-            return chains.filter(
-                    function(data){ return data.id == id }
-            );
-        }
 
         function isExchangeUnique(name) {
             var counter = 0;
