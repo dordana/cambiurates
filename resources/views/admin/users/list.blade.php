@@ -34,7 +34,6 @@
                     <tr>
                         <th class="footable-first-column">Email</th>
                         <th>Exchange</th>
-                        <th>Exchange Id</th>
                         <th class="text-right footable-last-column">Action</th>
                     </tr>
 
@@ -45,9 +44,6 @@
                             </td>
                             <td>
                                 {{ $oUser->name }}
-                            </td>
-                            <td>
-                                {{ $oUser->cambiu_id }}
                             </td>
                             <td class="text-right footable-last-column">
                                 <div class="btn-group">
