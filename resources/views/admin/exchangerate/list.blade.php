@@ -266,7 +266,7 @@
                             var currency = row.find('.currency-symbol').text().trim();
 
                             //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
-                            sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy});
+                            sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy}, false);
                         });
                         data[row.attr('id').replace("rate_", "")] = row_data;
                     }
@@ -323,48 +323,39 @@
                     rate_sell = 0;
                 }
 
-                var success = false;
-
                 //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
-                sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy});
-
-                $.ajax({
-                    method: "POST",
-                    url: "trade/update",
-                    data: data,
-                    success: function(result) {
-                        if(result.success === true) {
-                            swal('Good job!', 'The field has been updated successfully.', 'success');
-                        }
-                    }, error: function (xhr, status, error) {
-                        var data = JSON.parse(xhr.responseText);
-                        for(var i in data){
-                            for(var ii in data[i]){
-                                row.after('<div id="msg" style="position: absolute;left:30%;z-index: 1000;" class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>' + data[i][ii] + ' </div>');
+                sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy}, function(){
+                    $.ajax({
+                        method: "POST",
+                        url: "trade/update",
+                        data: data,
+                        success: function(result) {
+                            if(result.success === true) {
+                                swal('Good job!', 'The field has been updated successfully.', 'success');
+                            }
+                        }, error: function (xhr, status, error) {
+                            var data = JSON.parse(xhr.responseText);
+                            for(var i in data){
+                                for(var ii in data[i]){
+                                    swal('Warning!', data[i], 'warning');
+                                }
                             }
                         }
-                        setTimeout(function(){
-                            $('#msg').remove();
-                        }, 3000);
-                    }
-                })
+                    });
+                });
             });
         });
-    </script>
 
-    <script>
         //Cambiu API
         var name = '{{ \Auth::user()->name }}';
         var nearest_station = '{{ \Auth::user()->nearest_station }}';
         var rates_policy = '{{ \Auth::user()->rates_policy }}';
         var chain = '{{ \Auth::user()->chain }}';
-        var exchanges;
 
-        function sendUpdateRateRequest(currency, rates) {
+        function sendUpdateRateRequest(currency, rates, callMe) {
 
-            var success = false;
             var body = {
-                currency: currency,
+                currency: currency
             };
 
             if(rates_policy == 'chain') {
@@ -381,13 +372,22 @@
             }
             apigClient.ratesPost({city: 'London', country: 'UK'}, body, {})
                     .then(function (result) {
-                        if (result.data.status == 'ok') {
-                            success = true;
+                        if (result.data.status == 'ok' && callMe) {
+                            //The promise is done so call the provided function
+                            callMe();
+                        }else{
+                            var data = result.data.errors;
+                            for(var i in data){
+                                for(var ii in data[i]){
+                                    //We just throw the error
+                                    throw data[i];
+                                }
+                            }
                         }
-                        return success;
                     }).catch(function (result) {
-                    swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
-            });
+                        var errorMsg =  (result) ? result : 'Try refreshing the page or contact your web dev';
+                        swal('Ups!', 'API remoting web service problem. Message: ' + errorMsg, 'warning');
+                    });
         }
     </script>
 @endsection
