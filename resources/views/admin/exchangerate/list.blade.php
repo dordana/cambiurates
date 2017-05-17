@@ -19,36 +19,21 @@
                     </form>
                 </div>
                 <div class="hr-line-dashed"></div>
-                <button id="update" class="btn-green btn btn-md" style="margin: 5px;background-color: #2C8F7B;border-color: #2C8F7B;">Update</button>
                 <div class="table-responsive" data-first-pos="{{ $aExchangeRates->first()->pos }}">
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
-                            <th class="footable-first-column">
-                                <input type="checkbox" name="check-all" class="i-checks">
-                            </th>
                             <th>Symbol</th>
-                            <th>Title</th>
-                            <th>Exchange Rate</th>
                             <th>Updated at</th>
                             <th>Buy</th>
                             <th>Buy Rate</th>
                             <th>Sell</th>
                             <th>Sell Rate</th>
-                            <th class="text-right footable-last-column">Action</th>
+                            <th class="text-center footable-last-column" style="min-width: 10%;">Action</th>
                         </tr>
                         @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
                         <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" id="rate_{{ $oExchangeRate->id }}" data-symbol="{{ $oExchangeRate->symbol }}">
-                            <td class="check-mail footable-first-column">
-                                <input type="checkbox" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}" class="i-checks">
-                            </td>
                             <td class="currency-symbol">
                                 {{ $oExchangeRate->symbol }}
-                            </td>
-                            <td>
-                                {{ $oExchangeRate->title }}
-                            </td>
-                            <td class="rate">
-                                {{ $oExchangeRate->exchangeRate }}
                             </td>
                             <td>
                                 {{ $oExchangeRate->updatedAt }}
@@ -86,12 +71,12 @@
                                 {{ $oExchangeRate->getSellRateAttribute() }}
                             </td>
 
-                            <td class="text-right footable-last-column">
+                            <td class="text-center footable-last-column">
+                                <input type="hidden" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}">
                                 <div class="btn-group">
                                     <button class="btn-warning btn btn-sm single-row-update">
                                         Update
                                     </button>
-
                                 </div>
                             </td>
                         </tr>
@@ -131,19 +116,6 @@
                 .on('switchChange.bootstrapSwitch', function(event, state) {
                    var elem = $('#vs_' + $(this).data('id')).val(state ? 1 : 0);
                     somethingIsGoingOn(elem.parents('tr').first());
-                });
-
-            $('.i-checks').iCheck({
-                checkboxClass: 'icheckbox_square-green',
-                radioClass: 'iradio_square-green'
-            });
-
-            $('.i-checks:first')
-                .on('ifChecked', function(event) {
-                    $('.i-checks:not(:first)').iCheck('check');
-                })
-                .on('ifUnchecked', function(event) {
-                    $('.i-checks:not(:first)').iCheck('uncheck');
                 });
 
             $('.rate-type')
@@ -233,71 +205,6 @@
                 row.css('background-color','lightyellow').addClass('triggered');
             }
 
-            $('#update').click(function () {
-
-                var data = {};
-                var that = $(this);
-
-                $('.i-checks').each(function () {
-
-                    var row_data = {};
-                    var row = $(this).parents('tr').first();
-                    if ($(this).prop("checked")) {
-                        row.find('[data-name]').each(function () {
-                            row_data[$(this).data('name')] =  $(this).val();
-                            row_data.type_sell = row.find('.sell-type:checked').val();
-                            row_data.type_buy = row.find('.buy-type:checked').val();
-
-                            var rate_sell = parseFloat(row.find('.sell_rate').text());
-                            var rate_buy = parseFloat(row.find('.buy_rate').text());
-
-                            if(row_data.type_buy == 'disabled' || rate_buy < 0){
-                                rate_buy = 0;
-                            }
-
-                            if(row_data.type_sell == 'disabled' || rate_sell < 0){
-                                rate_sell = 0;
-                            }
-
-                            var currency = row.find('.currency-symbol').text().trim();
-
-                            //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
-                            sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy}, false);
-                        });
-                        data[row.attr('id').replace("rate_", "")] = row_data;
-                    }
-                });
-
-                if(Object.keys(data).length) {
-                    call_ajax(data);
-                } else {
-                    that.after('<div id="msg" class="alert alert-danger"> <button type="button" class="close" data-dismiss="alert">x</button>Please select at least one exchange rate!</div>');
-                    setTimeout(function () {
-                        $('#msg').remove();
-                    }, 5000);
-                }
-                function call_ajax(data) {
-                    $.ajax({
-                        method: "POST",
-                        url: "trade/collection",
-                        data: data,
-                        success: function (result) {
-                            $('.triggered').css('background-color','white');
-                            that.after('<div id="msg"  class="alert alert-success"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Done! </strong>The fields have been updated successfully.</div>');
-                            setTimeout(function () {
-                                $('#msg').remove();
-                            }, 5000);
-
-                        }, error: function (result) {
-                            that.after('<div id="msg" class="alert alert-danger"> <button type="button" class="close" data-dismiss="alert">x</button> <strong>Error! </strong>All fields must be numeric. </div>');
-                            setTimeout(function () {
-                                $('#msg').remove();
-                            }, 5000);
-                        }
-                    });
-                }
-            });
-
             $(".single-row-update").on('click', function(){
                 var that = $(this);
                 var row = that.parents('tr').first();
@@ -331,7 +238,7 @@
                         success: function(result) {
                             if(result.success === true) {
                                 that.prop('disabled',false).html('Update');
-                                that.after('<p style="position: absolute; top:28px;" class="text text-success update-indicator">Done <i class="fa fa-check" aria-hidden="true"></i></p>');
+                                that.after('<p style="position: absolute; top:28px; left:8px; font-size:11px; font-weight: 900" class="text text-success update-indicator">Done <i class="fa fa-check" aria-hidden="true"></i></p>');
                             }
                         }, error: function (xhr, status, error) {
                             var data = JSON.parse(xhr.responseText);
@@ -340,6 +247,7 @@
                                     swal('Warning!', data[i], 'warning');
                                 }
                             }
+                            that.prop('disabled',false).html('Update');
                         }
                     });
                 });
