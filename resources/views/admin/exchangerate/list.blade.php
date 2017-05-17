@@ -27,7 +27,7 @@
                             <th class="text-center footable-last-column" style="min-width: 10%;">Action</th>
                         </tr>
                         @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
-                        <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" id="rate_{{ $oExchangeRate->id }}" data-symbol="{{ $oExchangeRate->symbol }}">
+                        <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" id="rate_{{ $oExchangeRate->id }}" data-symbol="{{ $oExchangeRate->symbol }}" data-rate="{{ $oExchangeRate->exchangeRate }}">
                             <td class="currency-symbol">
                                 {{ $oExchangeRate->symbol }}
                             </td>
@@ -157,7 +157,7 @@
                         somethingIsGoingOn(row);
                     }
 
-                    var exchange_rate = parseFloat(row.find('.rate').text());
+                    var exchange_rate = parseFloat(row.data('rate'));
                     var trade = $(this).data('name');
                     var select = '';
                     if(trade == 'buy') {
@@ -181,7 +181,6 @@
                 var field = row.find('.buy_rate');
                 if(flatRate) {
                     field.text(value.toFixed(6));
-
                 } else {
                     field.text( (exchange_rate * ((value + 100) / 100)).toFixed(6) );
                 }
