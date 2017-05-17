@@ -45,7 +45,7 @@ Route::group(['middleware' => 'cors'], function() {
             });
     
             //Exchange Rates
-            Route::get('exchangerates', 'ExchangeRateController@index');
+            Route::get('exchangerates', 'ExchangeRateController@index')->name('exchangeRates');
     
             //Trade
             Route::post('trade/update', 'TradeController@store');

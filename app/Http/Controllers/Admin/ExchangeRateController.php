@@ -23,7 +23,8 @@ class ExchangeRateController extends Controller
                     ->byUser()
                     ->orderBy('visible','DESC')
                     ->orderBy('symbol','ASC')
-                    ->paginate($this->limit)
+                    ->paginate($this->limit),
+	            'title' => 'Exchange Rates'
             ]
         );
     }

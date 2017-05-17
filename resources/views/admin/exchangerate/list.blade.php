@@ -1,4 +1,5 @@
 @extends('admin.layouts.master')
+@section('title', 'Exchange Rate')
 
 @section('content')
     <div class="row">
