@@ -20,6 +20,7 @@
                         <tr>
                             <th>Symbol</th>
                             <th>Updated at</th>
+                            <th>Margin/Flat</th>
                             <th>Buy</th>
                             <th>Buy Rate</th>
                             <th>Sell</th>
@@ -34,6 +35,13 @@
                             <td>
                                 {{ $oExchangeRate->updatedAt }}
                             </td>
+                            @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
+                                <td>
+                                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type change-type" {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
+                                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type change-type" {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat Rate
+                                </td>
+                            @endif
+
                             <td>
                                 <input type="text"
                                        pattern="[0-9]"
@@ -42,10 +50,6 @@
                                        class="form-control buy col-md-4 rate-value-input"
                                        name="buy[]" data-name="buy"
                                        style="width:50%;">
-                                @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
-                                    <input type="radio" name="type_buy_{{$oExchangeRate->id}}" class="rate-type buy-type" {{ $oExchangeRate->type_buy === 'percent' || $oExchangeRate->type_buy === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
-                                    <input type="radio" name="type_buy_{{$oExchangeRate->id}}" class="rate-type buy-type" {{ $oExchangeRate->type_buy === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat Rate
-                                @endif
                             </td>
                             <td class="buy_rate">
                                 {{ $oExchangeRate->getBuyRateAttribute() }}
@@ -58,15 +62,10 @@
                                        class="form-control margin-rate-input col-md-4 rate-value-input"
                                        name="sell[]" data-name="sell"
                                        style="width:50%;">
-                                @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
-                                    <input type="radio" name="type_sell_{{$oExchangeRate->id}}" class="rate-type sell-type" {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
-                                    <input type="radio" name="type_sell_{{$oExchangeRate->id}}" class="rate-type sell-type" {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat Rate
-                                @endif
                             </td>
                             <td class="sell_rate">
                                 {{ $oExchangeRate->getSellRateAttribute() }}
                             </td>
-
                             <td class="text-center footable-last-column">
                                 <input type="hidden" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}">
                                 <div class="btn-group">
@@ -117,26 +116,9 @@
             $('.rate-type')
                 .on('change',function () {
 
-                    somethingIsGoingOn($(this).parents('tr').first());
-
-                    var selected = $(this).val();
-                    var input = $(this).parent().find(".rate-value-input");
-                    if(selected == 'disabled') {
-                        input.prop('disabled', true);
-                        if (input.val() == '') {
-                            input.val('0.000000');
-                        }
-                    } else {
-                        input.prop('disabled', false);
-                        setTimeout(function () {
-                            input.focus();
-                            if (input.val() == 0) {
-                                input.val('');
-                            }
-                        }, 1);
-
-                    }
-                    input.trigger('change');
+                    var row = $(this).parents('tr').first();
+                    somethingIsGoingOn(row);
+                    applyCalculationForCurrency(row);
                 });
 
             $('.rate-value-input')
@@ -147,35 +129,34 @@
                 })
                 .on('change keyup',function (event) {
 
-                    var value = parseFloat($(this).val());
-                    if(isNaN(value)) {
-                        value = 0;
-                    }
                     var row = $(this).parents('tr').first();
 
                     if(event.type == 'keyup') {
                         somethingIsGoingOn(row);
                     }
+                    applyCalculationForCurrency(row);
+            });
 
-                    var exchange_rate = parseFloat(row.data('rate'));
-                    var trade = $(this).data('name');
-                    var select = '';
-                    if(trade == 'buy') {
-                        select = row.find('.buy-type:checked').val();
-                        if(select == 'percent') {
-                            calculateBuyRate(row, value, exchange_rate, false);
-                        } else if (select == 'fixed') {
-                            calculateBuyRate(row , value , exchange_rate , true);
-                        }
-                    } else if (trade == 'sell') {
-                        select = row.find('.sell-type:checked').val();
-                        if(select == 'percent') {
-                            calculateSellRate(row , value , exchange_rate ,false);
-                        } else if (select == 'fixed') {
-                            calculateSellRate(row , value , exchange_rate, true);
-                        }
-                    }
-                });
+            function applyCalculationForCurrency(row){
+                var buy_val = parseFloat(row.find('input[name^=buy]').val());
+                var sell_val = parseFloat(row.find('input[name^=sell]').val());
+                if(isNaN(buy_val)) {
+                    buy_val = 0;
+                }
+                if(isNaN(sell_val)) {
+                    sell_val = 0;
+                }
+
+                var exchange_rate = parseFloat(row.data('rate'));
+                var select = row.find('.change-type:checked').val();
+                if(select == 'percent') {
+                    calculateBuyRate(row, buy_val, exchange_rate, false);
+                    calculateSellRate(row, sell_val, exchange_rate, false);
+                } else if (select == 'fixed') {
+                    calculateBuyRate(row , buy_val , exchange_rate , true);
+                    calculateSellRate(row , sell_val , exchange_rate , true);
+                }
+            }
 
             function calculateBuyRate(row, value, exchange_rate, flatRate) {
                 var field = row.find('.buy_rate');
@@ -210,8 +191,8 @@
                 row.find('[data-name]').each(function () {
                     data[$(this).data('name')] =   $(this).val();
                 });
-                data.type_sell = row.find('.sell-type:checked').val();
-                data.type_buy = row.find('.buy-type:checked').val();
+                data.type_sell = row.find('.change-type:checked').val();
+                data.type_buy = row.find('.change-type:checked').val();
 
                 if(data.type_buy == 'disabled' || rate_buy < 0){
                     rate_buy = 0;
