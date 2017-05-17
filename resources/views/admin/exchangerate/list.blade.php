@@ -8,13 +8,8 @@
 
                 <div class="search-form">
                     <form action="" method="get">
-                        <div class="input-group">
-                            <input type="text" placeholder="Search ..." name="search" class="form-control input-lg" value="{{\Illuminate\Support\Facades\Input::get('search')}}">
-                            <div class="input-group-btn">
-                                <button class="btn btn-lg btn-primary" type="submit">
-                                    Search
-                                </button>
-                            </div>
+                        <div class="input-group" style="width: 100%">
+                            <input type="text" autocomplete="off" placeholder="Filter by symbol ..." name="search" style="width: 100%" class="form-control input-lg" value="{{\Illuminate\Support\Facades\Input::get('search')}}">
                         </div>
 
                     </form>
@@ -298,5 +293,21 @@
                         swal('Ups!', 'API remoting web service problem. Message: ' + errorMsg, 'warning');
                     });
         }
+
+        $("input[name=search]").on('keyup mouseup', function(){
+            var term = $(this).val();
+            if(term.length > 0){
+                $("tr[id^=rate_]").each(function(key, val){
+                    var symbol = $(val).data('symbol');
+                    if(symbol.toLowerCase().indexOf(term.toLowerCase()) < 0){
+                        $(val).hide();
+                    }else{
+                        $(val).show();
+                    }
+                });
+            }else{
+                $("tr[id^=rate_]").show();
+            }
+        });
     </script>
 @endsection
