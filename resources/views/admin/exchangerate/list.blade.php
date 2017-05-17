@@ -60,11 +60,9 @@
                                        value="{{ sprintf('%01.6f', $oExchangeRate->buy) }}"
                                        class="form-control buy col-md-4 rate-value-input"
                                        name="buy[]" data-name="buy"
-                                       style="width:50%;"
-                                        {{ ($oExchangeRate->type_buy === 'disabled') ? 'disabled' : ''}}>
+                                       style="width:50%;">
                                 @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
-                                    <input type="radio" name="type_buy_{{$oExchangeRate->id}}" class="rate-type buy-type" {{ $oExchangeRate->type_buy === 'disabled' ? 'checked' : '' }} value="disabled"/>Disabled
-                                    <input type="radio" name="type_buy_{{$oExchangeRate->id}}" class="rate-type buy-type" {{ $oExchangeRate->type_buy === 'percent' ? 'checked' : '' }} value="percent"/>Margin(%)
+                                    <input type="radio" name="type_buy_{{$oExchangeRate->id}}" class="rate-type buy-type" {{ $oExchangeRate->type_buy === 'percent' || $oExchangeRate->type_buy === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
                                     <input type="radio" name="type_buy_{{$oExchangeRate->id}}" class="rate-type buy-type" {{ $oExchangeRate->type_buy === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat Rate
                                 @endif
                             </td>
@@ -78,11 +76,9 @@
                                        value="{{ sprintf('%01.6f', $oExchangeRate->sell) }}"
                                        class="form-control margin-rate-input col-md-4 rate-value-input"
                                        name="sell[]" data-name="sell"
-                                       style="width:50%;"
-                                        {{ ($oExchangeRate->type_sell === 'disabled') ? 'disabled' : ''}}>
+                                       style="width:50%;">
                                 @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
-                                    <input type="radio" name="type_sell_{{$oExchangeRate->id}}" class="rate-type sell-type" {{ $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="disabled"/>Disabled
-                                    <input type="radio" name="type_sell_{{$oExchangeRate->id}}" class="rate-type sell-type" {{ $oExchangeRate->type_sell === 'percent' ? 'checked' : '' }} value="percent"/>Margin(%)
+                                    <input type="radio" name="type_sell_{{$oExchangeRate->id}}" class="rate-type sell-type" {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
                                     <input type="radio" name="type_sell_{{$oExchangeRate->id}}" class="rate-type sell-type" {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat Rate
                                 @endif
                             </td>
