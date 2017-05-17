@@ -102,6 +102,9 @@ $(document).ready(function () {
 
     // Minimalize menu
     $('.navbar-minimalize').click(function () {
+        var arrowDirection = ($(this).attr('data-arrow') == 'left' ? 'right' : 'left');
+        $(this).html('<i class="fa fa-caret-' + arrowDirection + '" aria-hidden="true"></i>');
+        $(this).attr('data-arrow', arrowDirection);
         $("body").toggleClass("mini-navbar");
         SmoothlyMenu();
 
