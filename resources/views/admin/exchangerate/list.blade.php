@@ -323,6 +323,9 @@
                     rate_sell = 0;
                 }
 
+                that.parent().find('.update-indicator').remove();
+                that.html('<i class="fa fa-circle-o-notch fa-spin"></i> Updating').prop('disabled',true);
+
                 //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
                 sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy}, function(){
                     $.ajax({
@@ -331,7 +334,8 @@
                         data: data,
                         success: function(result) {
                             if(result.success === true) {
-                                swal('Good job!', 'The field has been updated successfully.', 'success');
+                                that.prop('disabled',false).html('Update');
+                                that.after('<p style="position: absolute; top:28px;" class="text text-success update-indicator">Done <i class="fa fa-check" aria-hidden="true"></i></p>');
                             }
                         }, error: function (xhr, status, error) {
                             var data = JSON.parse(xhr.responseText);
