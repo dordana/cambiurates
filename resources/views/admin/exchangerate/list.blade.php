@@ -19,8 +19,8 @@
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
                             <th>Symbol</th>
-                            <th>Updated at</th>
                             <th>Margin/Flat</th>
+                            <th>Updated at</th>
                             <th>Buy</th>
                             <th>Buy Rate</th>
                             <th>Sell</th>
@@ -32,9 +32,6 @@
                             <td class="currency-symbol">
                                 {{ $oExchangeRate->symbol }}
                             </td>
-                            <td>
-                                {{ $oExchangeRate->updatedAt }}
-                            </td>
                             @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
                                 <td>
                                     <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type change-type" {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
@@ -42,6 +39,9 @@
                                 </td>
                             @endif
 
+                            <td>
+                                {{ $oExchangeRate->updatedAt }}
+                            </td>
                             <td>
                                 <input type="text"
                                        pattern="[0-9]"
@@ -188,25 +188,18 @@
                 var rate_buy = parseFloat(row.find('.buy_rate').text());
                 var currency = row.find('.currency-symbol').text().trim();
                 var data = {};
+                var change_type = 'fixed';
                 row.find('[data-name]').each(function () {
                     data[$(this).data('name')] =   $(this).val();
                 });
 
-                data.type_sell = data.type_buy = row.find('.change-type:checked').val();
-
-                if(data.type_buy == 'disabled' || rate_buy < 0){
-                    rate_buy = 0;
-                }
-
-                if( data.type_sell == 'disabled' || rate_sell < 0){
-                    rate_sell = 0;
-                }
+                change_type = data.type_sell = data.type_buy = row.find('.change-type:checked').val();
 
                 that.parent().find('.update-indicator').remove();
                 that.html('<i class="fa fa-circle-o-notch fa-spin"></i> Updating').prop('disabled',true);
 
                 //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
-                sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy}, function(){
+                sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy}, change_type, function(){
                     $.ajax({
                         method: "POST",
                         url: "trade/update",
@@ -236,11 +229,16 @@
         var rates_policy = '{{ \Auth::user()->rates_policy }}';
         var chain = '{{ \Auth::user()->chain }}';
 
-        function sendUpdateRateRequest(currency, rates, callMe) {
+        function sendUpdateRateRequest(currency, rates, type, callMe) {
 
             var body = {
                 currency: currency
             };
+
+            //if we do margin provide "type: reference" param http://redmine.zenlime.com/redmine/issues/1086
+            if(type == 'percent'){
+                body.type = 'reference'
+            }
 
             if(rates_policy == 'chain') {
                 body.chain = chain;
