@@ -191,8 +191,8 @@
                 row.find('[data-name]').each(function () {
                     data[$(this).data('name')] =   $(this).val();
                 });
-                data.type_sell = row.find('.change-type:checked').val();
-                data.type_buy = row.find('.change-type:checked').val();
+
+                data.type_sell = data.type_buy = row.find('.change-type:checked').val();
 
                 if(data.type_buy == 'disabled' || rate_buy < 0){
                     rate_buy = 0;
