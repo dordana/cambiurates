@@ -14,12 +14,22 @@
 
                     </form>
                 </div>
+
+                <div class="hr-line-dashed"></div>
+                @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
+                    <h4>Change type</h4>
+                    <div>
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="button" value="percent" class="btn btn-primary change-type">Margin(%)</button>
+                            <button type="button" value="fixed" class="btn btn-default change-type">Flat</button>
+                        </div>
+                    </div>
+                @endif
                 <div class="hr-line-dashed"></div>
                 <div class="table-responsive" data-first-pos="{{ $aExchangeRates->first()->pos }}">
                     <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
                             <th>Symbol</th>
-                            <th>Margin/Flat</th>
                             <th>Updated at</th>
                             <th>Buy</th>
                             <th>Buy Rate</th>
@@ -32,13 +42,6 @@
                             <td class="currency-symbol">
                                 {{ $oExchangeRate->symbol }}
                             </td>
-                            @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
-                                <td>
-                                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type change-type" {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
-                                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type change-type" {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat Rate
-                                </td>
-                            @endif
-
                             <td>
                                 {{ $oExchangeRate->updatedAt }}
                             </td>
@@ -102,6 +105,8 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+            var change_type = 'percent';
+
             $.ajaxSetup({
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
             });
@@ -113,13 +118,13 @@
                     somethingIsGoingOn(elem.parents('tr').first());
                 });
 
-            $('.rate-type')
-                .on('change',function () {
+            $('.change-type').on('click',function () {
 
-                    var row = $(this).parents('tr').first();
-                    somethingIsGoingOn(row);
-                    applyCalculationForCurrency(row);
-                });
+                //Set all them inactive
+                $('.change-type').attr('class', 'btn btn-default change-type');
+                $(this).attr('class', 'btn btn-primary change-type');
+                change_type = $(this).val();
+            });
 
             $('.rate-value-input')
                 .focusout(function(){
@@ -148,11 +153,10 @@
                 }
 
                 var exchange_rate = parseFloat(row.data('rate'));
-                var select = row.find('.change-type:checked').val();
-                if(select == 'percent') {
+                if(change_type == 'percent') {
                     calculateBuyRate(row, buy_val, exchange_rate, false);
                     calculateSellRate(row, sell_val, exchange_rate, false);
-                } else if (select == 'fixed') {
+                } else if (change_type == 'fixed') {
                     calculateBuyRate(row , buy_val , exchange_rate , true);
                     calculateSellRate(row , sell_val , exchange_rate , true);
                 }
@@ -188,12 +192,11 @@
                 var rate_buy = parseFloat(row.find('.buy_rate').text());
                 var currency = row.find('.currency-symbol').text().trim();
                 var data = {};
-                var change_type = 'fixed';
                 row.find('[data-name]').each(function () {
                     data[$(this).data('name')] =   $(this).val();
                 });
 
-                change_type = data.type_sell = data.type_buy = row.find('.change-type:checked').val();
+                data.type_sell = data.type_buy = change_type;
 
                 that.parent().find('.update-indicator').remove();
                 that.html('<i class="fa fa-circle-o-notch fa-spin"></i> Updating').prop('disabled',true);
