@@ -208,8 +208,8 @@
             $(".single-row-update").on('click', function(){
                 var that = $(this);
                 var row = that.parents('tr').first();
-                var rate_sell = parseFloat(row.find('.sell_rate').text());
-                var rate_buy = parseFloat(row.find('.buy_rate').text());
+                var rate_sell = parseFloat(row.find('input[name^=sell]').val());
+                var rate_buy = parseFloat(row.find('input[name^=buy]').val());
                 var currency = row.find('.currency-symbol').text().trim();
                 var data = {};
                 change_type = row.find('.rate-type:checked').val();
