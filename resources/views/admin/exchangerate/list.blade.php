@@ -23,6 +23,9 @@
                             <button type="button" value="percent" class="btn btn-primary change-type">Margin(%)</button>
                             <button type="button" value="fixed" class="btn btn-default change-type">Flat</button>
                         </div>
+                        <div class="btn-group pull-right" role="group" aria-label="...">
+                            <button type="button" class="btn btn-warning update-all">Update all</button>
+                        </div>
                     </div>
                 @endif
                 <div class="hr-line-dashed"></div>
@@ -205,9 +208,20 @@
                 row.css('background-color','lightyellow').addClass('triggered');
             }
 
+            //Multiple rows update
+            $(".update-all").on('click', function(){
+
+                //Update all rows
+                $("tr[id^=rate_]").each(function(key, val){
+                    currencyRowUpdate($(val));
+                })
+            });
+
             $(".single-row-update").on('click', function(){
-                var that = $(this);
-                var row = that.parents('tr').first();
+                currencyRowUpdate($(this).parents('tr').first())
+            });
+
+            function currencyRowUpdate(row){
                 var rate_sell = parseFloat(row.find('input[name^=sell]').val());
                 var rate_buy = parseFloat(row.find('input[name^=buy]').val());
                 var currency = row.find('.currency-symbol').text().trim();
@@ -219,8 +233,9 @@
 
                 data.type_sell = data.type_buy = change_type;
 
-                that.parent().find('.update-indicator').remove();
-                that.html('<i class="fa fa-circle-o-notch fa-spin"></i> Updating').prop('disabled',true);
+                row.find('.update-indicator').remove();
+                var update_button = row.find('.single-row-update');
+                update_button.html('<i class="fa fa-circle-o-notch fa-spin"></i> Updating').prop('disabled',true);
 
                 //We need to update the API to Cambiu first. More info at http://redmine.zenlime.com/redmine/issues/997
                 sendUpdateRateRequest(currency, {sell:rate_sell,buy:rate_buy}, change_type, function(){
@@ -230,8 +245,11 @@
                         data: data,
                         success: function(result) {
                             if(result.success === true) {
-                                that.prop('disabled',false).html('Update');
-                                that.after('<p style="position: absolute; top:28px; left:8px; font-size:11px; font-weight: 900" class="text text-success update-indicator">Done <i class="fa fa-check" aria-hidden="true"></i></p>');
+                                update_button.prop('disabled',false).html('Update');
+                                update_button.after('<p style="position: absolute; top:28px; left:8px; font-size:11px; font-weight: 900" class="text text-success update-indicator">Done <i class="fa fa-check" aria-hidden="true"></i></p>');
+                                if(row.hasClass('triggered')){
+                                    row.css('background-color','rgba(59, 198, 30, 0.15)').removeClass('triggered');
+                                }
                             }
                         }, error: function (xhr, status, error) {
                             var data = JSON.parse(xhr.responseText);
@@ -244,7 +262,7 @@
                         }
                     });
                 });
-            });
+            }
         });
 
         //Cambiu API
@@ -311,5 +329,12 @@
                 $("tr[id^=rate_]").show();
             }
         });
+
+        //Show save before go msg: Read more on: http://redmine.zenlime.com/redmine/issues/1124
+        window.onbeforeunload = function(){
+            if($(".triggered").length > 0){
+                return 'Are you sure?';
+            }
+        };
     </script>
 @endsection
