@@ -202,11 +202,11 @@
                 var change_type = row.find('.rate-type:checked').val();
                 var exchange_rate = parseFloat(row.data('rate'));
                 if(change_type == 'percent') {
-                    calculateRate('buy', row, buy_val, exchange_rate, false);
-                    calculateRate('sell', row, sell_val, exchange_rate, false);
+                    calculateBuyRate(row, buy_val, exchange_rate, false);
+                    calculateSellRate(row, sell_val, exchange_rate, false);
                 } else if (change_type == 'fixed') {
-                    calculateRate('buy', row , buy_val , exchange_rate , true);
-                    calculateRate('sell', row , sell_val , exchange_rate , true);
+                    calculateBuyRate(row , buy_val , exchange_rate , true);
+                    calculateSellRate(row , sell_val , exchange_rate , true);
                 }
 
                 //See is there any differences
@@ -226,8 +226,18 @@
                 }
             }
 
-            function calculateRate(type, row, value, exchange_rate, flatRate) {
-                var field = row.find('.'+ type +'_rate');
+            function calculateBuyRate(row, value, exchange_rate, flatRate) {
+                var field = row.find('.buy_rate');
+                if(flatRate) {
+                    field.text(value.toFixed(6));
+                } else {
+                    field.text( (exchange_rate * ((value + 100) / 100)).toFixed(6) );
+                }
+            }
+
+            function calculateSellRate(row, value, exchange_rate, flatRate) {
+
+                var field = row.find('.sell_rate');
                 if(flatRate) {
                     field.text(value.toFixed(6));
                 } else {
