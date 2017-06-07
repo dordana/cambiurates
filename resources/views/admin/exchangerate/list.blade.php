@@ -63,6 +63,9 @@
                                        class="form-control buy col-md-4 rate-value-input"
                                        name="buy[]" data-name="buy"
                                        style="width:50%;">
+                                @if($oExchangeRate->type_buy == 'percent')
+                                    <i class="percent-sign">%</i>
+                                @endif
                             </td>
                             <td class="buy_rate">
                                 {{ $oExchangeRate->getBuyRateAttribute() }}
@@ -75,6 +78,9 @@
                                        class="form-control margin-rate-input col-md-4 rate-value-input"
                                        name="sell[]" data-name="sell"
                                        style="width:50%;">
+                                @if($oExchangeRate->type_sell == 'percent')
+                                    <i class="percent-sign">%</i>
+                                @endif
                             </td>
                             <td class="sell_rate">
                                 {{ $oExchangeRate->getSellRateAttribute() }}
@@ -128,8 +134,7 @@
                     somethingIsGoingOn(elem.parents('tr').first());
                 });
 
-            $('.rate-type')
-                    .on('change',function () {
+            $('.rate-type').on('change',function () {
 
                         var row = $(this).parents('tr').first();
                         somethingIsGoingOn(row);
@@ -145,6 +150,12 @@
                 //We change all local rates
                 $('input.rate-type').each(function(key, val){
                     $(val).prop('checked', ($(val).val() == change_type));
+                });
+
+                //Perform a calculation
+                triggerItForAnyRow(function(row){
+                    somethingIsGoingOn(row);
+                    applyCalculationForCurrency(row);
                 });
             });
 
@@ -179,9 +190,12 @@
                 if(change_type == 'percent') {
                     calculateBuyRate(row, buy_val, exchange_rate, false);
                     calculateSellRate(row, sell_val, exchange_rate, false);
+                    row.find("input[name^=buy]").after('<i class="percent-sign">%</i>');
+                    row.find("input[name^=sell]").after('<i class="percent-sign">%</i>');
                 } else if (change_type == 'fixed') {
                     calculateBuyRate(row , buy_val , exchange_rate , true);
                     calculateSellRate(row , sell_val , exchange_rate , true);
+                    row.find('.percent-sign').remove();
                 }
             }
 
@@ -212,9 +226,7 @@
             $(".update-all").on('click', function(){
 
                 //Update all rows
-                $("tr[id^=rate_]").each(function(key, val){
-                    currencyRowUpdate($(val));
-                })
+                triggerItForAnyRow(currencyRowUpdate)
             });
 
             $(".single-row-update").on('click', function(){
@@ -329,6 +341,12 @@
                 $("tr[id^=rate_]").show();
             }
         });
+
+        function triggerItForAnyRow(callMe){
+            $("tr[id^=rate_]").each(function(key, val){
+                callMe($(val));
+            })
+        }
 
         //Show save before go msg: Read more on: http://redmine.zenlime.com/redmine/issues/1124
         window.onbeforeunload = function(){
