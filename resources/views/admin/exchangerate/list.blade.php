@@ -67,7 +67,7 @@
                                     <i class="percent-sign">%</i>
                                 @endif
                             </td>
-                            <td class="buy_rate">
+                            <td class="buy_rate" data-original="{{ $oExchangeRate->getBuyRateAttribute() }}">
                                 {{ $oExchangeRate->getBuyRateAttribute() }}
                             </td>
                             <td>
@@ -82,7 +82,7 @@
                                     <i class="percent-sign">%</i>
                                 @endif
                             </td>
-                            <td class="sell_rate">
+                            <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}">
                                 {{ $oExchangeRate->getSellRateAttribute() }}
                             </td>
                             <td class="text-center footable-last-column">
@@ -121,8 +121,6 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var change_type = 'percent';
-
             $.ajaxSetup({
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
             });
@@ -134,18 +132,24 @@
                     somethingIsGoingOn(elem.parents('tr').first());
                 });
 
-            $('.rate-type').on('change',function () {
+            //Local level (row level) changing type
+            $('.rate-type').on('change', function () {
 
-                        var row = $(this).parents('tr').first();
-                        somethingIsGoingOn(row);
-                        applyCalculationForCurrency(row);
+                var row = $(this).parents('tr').first();
+                //Perform a calculation
+                applyCalculationForCurrency(row);
+                
+                //Set percent after the rate change input
+                setPercentIfMargin(row);
             });
+            
+            //Global level changing type
             $('.change-type').on('click',function () {
 
                 //Set all them inactive
                 $('.change-type').attr('class', 'btn btn-default change-type');
                 $(this).attr('class', 'btn btn-primary change-type');
-                change_type = $(this).val();
+                var change_type = $(this).val();
 
                 //We change all local rates
                 $('input.rate-type').each(function(key, val){
@@ -154,24 +158,34 @@
 
                 //Perform a calculation
                 triggerItForAnyRow(function(row){
-                    somethingIsGoingOn(row);
                     applyCalculationForCurrency(row);
+                    setPercentIfMargin(row);
                 });
             });
 
-            $('.rate-value-input')
-                .focusout(function(){
+            //It checks if there is a margin set it percent sign after the input
+            function setPercentIfMargin(row){
+
+                var change_type = row.find('.rate-type:checked').val();
+                if(change_type == 'percent'){
+
+                    if(row.find('.percent-sign').length == 0){
+                        row.find("input[name^=buy]").after('<i class="percent-sign">%</i>');
+                        row.find("input[name^=sell]").after('<i class="percent-sign">%</i>');
+                    }
+                }else{
+                    row.find('.percent-sign').remove();
+                }
+            }
+
+            $('.rate-value-input').focusout(function(){
                     if ($(this).val() == '') {
                         $(this).val('0.000000');
                     }
-                })
-                .on('change keyup',function (event) {
+            }).on('change keyup',function (event) {
 
                     var row = $(this).parents('tr').first();
 
-                    if(event.type == 'keyup') {
-                        somethingIsGoingOn(row);
-                    }
                     applyCalculationForCurrency(row);
             });
 
@@ -185,32 +199,35 @@
                     sell_val = 0;
                 }
 
+                var change_type = row.find('.rate-type:checked').val();
                 var exchange_rate = parseFloat(row.data('rate'));
-                change_type = row.find('.rate-type:checked').val();
                 if(change_type == 'percent') {
-                    calculateBuyRate(row, buy_val, exchange_rate, false);
-                    calculateSellRate(row, sell_val, exchange_rate, false);
-                    row.find("input[name^=buy]").after('<i class="percent-sign">%</i>');
-                    row.find("input[name^=sell]").after('<i class="percent-sign">%</i>');
+                    calculateRate('buy', row, buy_val, exchange_rate, false);
+                    calculateRate('sell', row, sell_val, exchange_rate, false);
                 } else if (change_type == 'fixed') {
-                    calculateBuyRate(row , buy_val , exchange_rate , true);
-                    calculateSellRate(row , sell_val , exchange_rate , true);
-                    row.find('.percent-sign').remove();
+                    calculateRate('buy', row , buy_val , exchange_rate , true);
+                    calculateRate('sell', row , sell_val , exchange_rate , true);
+                }
+
+                //See is there any differences
+                //For Sell
+                var sell = row.find('.sell_rate');
+                var sell_origin = sell.data('original');
+                var sell_current = sell.text();
+                //For Buy
+                var buy = row.find('.buy_rate');
+                var buy_origin = buy.data('original');
+                var buy_current = buy.text();
+                //Do it
+                if(buy_origin != buy_current || sell_origin != sell_current){
+                    somethingIsGoingOn(row);
+                }else{
+                    nothingIsGoingOn(row);
                 }
             }
 
-            function calculateBuyRate(row, value, exchange_rate, flatRate) {
-                var field = row.find('.buy_rate');
-                if(flatRate) {
-                    field.text(value.toFixed(6));
-                } else {
-                    field.text( (exchange_rate * ((value + 100) / 100)).toFixed(6) );
-                }
-            }
-
-            function calculateSellRate(row, value, exchange_rate, flatRate) {
-
-                var field = row.find('.sell_rate');
+            function calculateRate(type, row, value, exchange_rate, flatRate) {
+                var field = row.find('.'+ type +'_rate');
                 if(flatRate) {
                     field.text(value.toFixed(6));
                 } else {
@@ -220,6 +237,12 @@
 
             function somethingIsGoingOn(row) {
                 row.css('background-color','lightyellow').addClass('triggered');
+            }
+
+
+            //Do not have funny with this one! I had no choice
+            function nothingIsGoingOn(row) {
+                row.css('background-color','').removeClass('triggered');
             }
 
             //Multiple rows update
@@ -238,7 +261,7 @@
                 var rate_buy = parseFloat(row.find('input[name^=buy]').val());
                 var currency = row.find('.currency-symbol').text().trim();
                 var data = {};
-                change_type = row.find('.rate-type:checked').val();
+                var change_type = row.find('.rate-type:checked').val();
                 row.find('[data-name]').each(function () {
                     data[$(this).data('name')] =   $(this).val();
                 });
@@ -260,8 +283,10 @@
                                 update_button.prop('disabled',false).html('Update');
                                 update_button.after('<p style="position: absolute; top:28px; left:8px; font-size:11px; font-weight: 900" class="text text-success update-indicator">Done <i class="fa fa-check" aria-hidden="true"></i></p>');
                                 if(row.hasClass('triggered')){
-                                    row.css('background-color','rgba(59, 198, 30, 0.15)').removeClass('triggered');
+                                    row.css('background-color','rgba(59, 198, 30, 0.11)').removeClass('triggered');
                                 }
+                                //Change original value
+                                changeOriginalRateWithCurrent(row);
                             }
                         }, error: function (xhr, status, error) {
                             var data = JSON.parse(xhr.responseText);
@@ -346,6 +371,13 @@
             $("tr[id^=rate_]").each(function(key, val){
                 callMe($(val));
             })
+        }
+
+        function changeOriginalRateWithCurrent(row){
+            var buy_rate = row.find(".buy_rate");
+            var sell_rate = row.find(".sell_rate");
+            buy_rate.attr('data-original', buy_rate.text());
+            sell_rate.attr('data-original', sell_rate.text());
         }
 
         //Show save before go msg: Read more on: http://redmine.zenlime.com/redmine/issues/1124
