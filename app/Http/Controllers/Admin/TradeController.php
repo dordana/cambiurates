@@ -21,15 +21,11 @@ class TradeController extends Controller
      */
     public function store(TradeRequest $request)
     {
-        
-        $data = $this->user->userExchangeRates->keyBy('exchange_rate_id')->toArray();
-        $data[$request->get('id')]['type_buy'] = $request->get('type_buy');
-        $data[$request->get('id')]['buy'] = $request->get('buy');
-        $data[$request->get('id')]['type_sell'] = $request->get('type_sell');
-        $data[$request->get('id')]['sell'] = $request->get('sell');
 
-        //Save the new rates
-        $this->user->exchangeRates()->sync($data);
+    	//Update user's currency rate
+    	$this->user->userExchangeRates()
+		    ->where('exchange_rate_id', $request->get('id'))->get()->first()
+		    ->update($request->except('id'));
 
         return response()->json(['success' => true, 'rate_id' => $request->get('id')]);
     }

@@ -30,8 +30,9 @@
                 @endif
                 <div class="hr-line-dashed"></div>
                 <div class="table-responsive" data-first-pos="{{ $aExchangeRates->first()->pos }}">
-                    <table class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
+                    <table id="currency-table" class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
+                            <th style="min-width: 6px;">Add</th>
                             <th>Symbol</th>
                             <th>Margin/Flat</th>
                             <th>Updated at</th>
@@ -41,67 +42,27 @@
                             <th>Sell Rate</th>
                             <th class="text-center footable-last-column" style="min-width: 10%;">Action</th>
                         </tr>
-                        @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
-                        <tr class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}" id="rate_{{ $oExchangeRate->id }}" data-symbol="{{ $oExchangeRate->symbol }}" data-rate="{{ $oExchangeRate->exchangeRate }}">
-                            <td class="currency-symbol">
-                                {{ $oExchangeRate->symbol }}
-                            </td>
-                            @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
-                                <td>
-                                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type" {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
-                                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type" {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat Rate
-                                </td>
-                            @endif
-                            <td>
-                                {{ $oExchangeRate->updatedAt }}
-                            </td>
-                            <td>
-                                <input type="text"
-                                       pattern="[0-9]"
-                                       title="Numbers only"
-                                       value="{{ sprintf('%01.6f', $oExchangeRate->buy) }}"
-                                       class="form-control buy col-md-4 rate-value-input"
-                                       name="buy[]" data-name="buy"
-                                       style="width:50%;">
-                                @if($oExchangeRate->type_buy == 'percent')
-                                    <i class="percent-sign">%</i>
-                                @endif
-                            </td>
-                            <td class="buy_rate" data-original="{{ $oExchangeRate->getBuyRateAttribute() }}">
-                                {{ $oExchangeRate->getBuyRateAttribute() }}
-                            </td>
-                            <td>
-                                <input type="text"
-                                       pattern="[0-9]"
-                                       title="Numbers only"
-                                       value="{{ sprintf('%01.6f', $oExchangeRate->sell) }}"
-                                       class="form-control margin-rate-input col-md-4 rate-value-input"
-                                       name="sell[]" data-name="sell"
-                                       style="width:50%;">
-                                @if($oExchangeRate->type_sell == 'percent')
-                                    <i class="percent-sign">%</i>
-                                @endif
-                            </td>
-                            <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}">
-                                {{ $oExchangeRate->getSellRateAttribute() }}
-                            </td>
-                            <td class="text-center footable-last-column">
-                                <input type="hidden" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}">
-                                <div class="btn-group">
-                                    <button class="btn-warning btn btn-sm single-row-update">
-                                        Update
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
                         <tr>
-                            <td colspan="7" class="footable-visible">
-                                @if($aExchangeRates->render() != '')
-                                    {{ $aExchangeRates->appends(\Illuminate\Support\Facades\Input::except(array('page')))->render() }}
-                                @endif
+                            <td colspan="9">
+                                <form class="pick-currency-form">
+                                    <div class="form-group">
+                                        <select name="pick-currency" id="pick-currency" style="width: 100%" data-placeholder="Pick up a currency">
+                                            <option value=""></option>
+                                            @foreach($aCurrencies as $oCurrency)
+                                                <option data-id="{{ $oCurrency->id }}" value="{{ $oCurrency->symbol }}">[{{ $oCurrency->symbol }}] {{ ucfirst(strtolower($oCurrency->title)) }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </form>
                             </td>
                         </tr>
+                        {{--<tr>--}}
+                            {{--<td colspan="8" class="footable-visible">--}}
+                                {{--@if($aExchangeRates->render() != '')--}}
+                                    {{--{{ $aExchangeRates->appends(\Illuminate\Support\Facades\Input::except(array('page')))->render() }}--}}
+                                {{--@endif--}}
+                            {{--</td>--}}
+                        {{--</tr>--}}
                     </table>
                 </div>
 
@@ -115,25 +76,121 @@
         </div>
 
     </div>
+    <table style="display: none;" id="copy-change-table">
+        @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
+            <tr style="display:none" class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}"
+                data-symbol="{{ $oExchangeRate->symbol }}"
+                data-id="{{ $oExchangeRate->id }}"
+                data-rate="{{ $oExchangeRate->exchangeRate }}">
+                <td>
+                    <button id="more-currency" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                </td>
+                <td class="currency-symbol">
+                    {{ $oExchangeRate->symbol }}
+                </td>
+                @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
+                    <td>
+                        <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
+                               {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
+                        <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
+                               {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat
+                        Rate
+                    </td>
+                @endif
+                <td>
+                    {{ $oExchangeRate->updatedAt }}
+                </td>
+                <td>
+                    <input type="text"
+                           pattern="[0-9]"
+                           title="Numbers only"
+                           value="{{ sprintf('%01.6f', $oExchangeRate->buy) }}"
+                           class="form-control buy col-md-4 rate-value-input"
+                           name="buy[]" data-name="buy"
+                           style="width:50%;">
+                    @if($oExchangeRate->type_buy == 'percent')
+                        <i class="percent-sign">%</i>
+                    @endif
+                </td>
+                <td class="buy_rate" data-original="{{ $oExchangeRate->getBuyRateAttribute() }}">
+                    {{ $oExchangeRate->getBuyRateAttribute() }}
+                </td>
+                <td>
+                    <input type="text"
+                           pattern="[0-9]"
+                           title="Numbers only"
+                           value="{{ sprintf('%01.6f', $oExchangeRate->sell) }}"
+                           class="form-control margin-rate-input col-md-4 rate-value-input"
+                           name="sell[]" data-name="sell"
+                           style="width:50%;">
+                    @if($oExchangeRate->type_sell == 'percent')
+                        <i class="percent-sign">%</i>
+                    @endif
+                </td>
+                <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}">
+                    {{ $oExchangeRate->getSellRateAttribute() }}
+                </td>
+                <td class="text-center footable-last-column">
+                    <input type="hidden" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}">
+                    <div class="btn-group">
+                        <button class="btn-warning btn btn-sm single-row-update">
+                            Update
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        @endforeach
+    </table>
 @stop
 
 @section('footer')
     <script type="text/javascript">
         $(document).ready(function () {
 
+            var currency_table = $("#currency-table");
+            var currency_picker = $("#pick-currency");
+
+            currency_table.on('click', '#more-currency', function(e){
+                $(".pick-currency-form").show();
+                currency_picker.val('').trigger('change');
+                $(this).remove();
+            });
+
+            currency_picker.select2().on("change", function (e) {
+
+                //Do not do anything if we do not have value :)
+                if($(this).val() == ''){
+                    return;
+                }
+
+                //Which one currency we have?
+                var symbol = $(this).val();
+
+                //Now remove it from the select
+                $("option[value=" + symbol + "]").remove();
+
+                //Move this rate from copy-change table to currency table
+                var tr_new = $("#copy-change-table tr[data-symbol="+symbol+"]").clone();
+                tr_new.css('display', '').attr('id', 'rate_' + tr_new.data('id'));
+                $("table#currency-table tr:last").before(tr_new);
+
+                //After the movement we need to delete the select
+                $(".pick-currency-form").hide();
+
+//                apigClient.ratesGet({city: 'London', country: 'UK', type: 'reference'}, {})
+//                        .then(function (result) {
+//                        }).catch(function (result) {
+//                    var errorMsg =  (result) ? result : 'Try refreshing the page or contact your web dev';
+//                    swal('Ups!', 'API remoting web service problem. Message: ' + errorMsg, 'warning');
+//                });
+            });
+
             $.ajaxSetup({
                 headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
             });
 
-            $('.visible-switch')
-                .bootstrapSwitch()
-                .on('switchChange.bootstrapSwitch', function(event, state) {
-                   var elem = $('#vs_' + $(this).data('id')).val(state ? 1 : 0);
-                    somethingIsGoingOn(elem.parents('tr').first());
-                });
-
             //Local level (row level) changing type
-            $('.rate-type').on('change', function () {
+            currency_table.on('change',  '.rate-type', function () {
 
                 var row = $(this).parents('tr').first();
                 //Perform a calculation
@@ -144,7 +201,7 @@
             });
             
             //Global level changing type
-            $('.change-type').on('click',function () {
+            currency_table.on('click', '.change-type',function () {
 
                 //Set all them inactive
                 $('.change-type').attr('class', 'btn btn-default change-type');
@@ -178,11 +235,11 @@
                 }
             }
 
-            $('.rate-value-input').focusout(function(){
+            currency_table.on('focusout', '.rate-value-input', function(){
                     if ($(this).val() == '') {
                         $(this).val('0.000000');
                     }
-            }).on('change keyup',function (event) {
+            }).on('change keyup','.rate-value-input',function (event) {
 
                     var row = $(this).parents('tr').first();
 
@@ -212,12 +269,13 @@
                 //See is there any differences
                 //For Sell
                 var sell = row.find('.sell_rate');
-                var sell_origin = sell.data('original');
+                var sell_origin = sell.attr('data-original');
                 var sell_current = sell.text();
                 //For Buy
                 var buy = row.find('.buy_rate');
-                var buy_origin = buy.data('original');
+                var buy_origin = buy.attr('data-original');
                 var buy_current = buy.text();
+
                 //Do it
                 if(buy_origin != buy_current || sell_origin != sell_current){
                     somethingIsGoingOn(row);
@@ -262,7 +320,7 @@
                 triggerItForAnyRow(currencyRowUpdate)
             });
 
-            $(".single-row-update").on('click', function(){
+            currency_table.on('click', '.single-row-update', function(){
                 currencyRowUpdate($(this).parents('tr').first())
             });
 
@@ -337,7 +395,6 @@
 //                    body.nearest_station = nearest_station;
 //                }
             }
-            console.log(rates);
             for(var i in rates){
                 body[i] = rates[i];
             }

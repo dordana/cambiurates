@@ -37,12 +37,10 @@ class ExchangeRate extends BaseModel
      */
     public function getBuyRateAttribute()
     {
-        if($this->typeBuy == 'percent') {
-            return sprintf('%01.6f', $this->exchangeRate * (($this->buy + 100) / 100));
-        } elseif ($this->typeBuy == 'fixed') {
+        if ($this->typeBuy == 'fixed') {
             return sprintf('%01.6f',$this->buy);
         }
-        return sprintf('%01.6f', 0);
+	    return sprintf('%01.6f', $this->exchangeRate * (($this->buy + 100) / 100));
     }
     
     /**
@@ -52,12 +50,11 @@ class ExchangeRate extends BaseModel
      */
     public function getSellRateAttribute()
     {
-        if ($this->typeSell == 'percent') {
-            return sprintf('%01.6f', $this->exchangeRate * ((100 - $this->sell) / 100));
-        } elseif ($this->typeSell == 'fixed') {
+        if ($this->typeSell == 'fixed') {
             return sprintf('%01.6f',$this->sell);
         }
-        return sprintf('%01.6f', 0);
+
+	    return sprintf('%01.6f', $this->exchangeRate * ((100 - $this->sell) / 100));
     }
 
     public function scopeSearchFor(Builder $query)
@@ -67,11 +64,16 @@ class ExchangeRate extends BaseModel
             $query->where('symbol', 'LIKE', '%'.\Request::get('search').'%')
                 ->orWhere('title', 'LIKE','%'.\Request::get('search').'%');
         }
-        if(\Auth::user()->role != 'admin'){
-        	$query->whereIn('symbol', config('currencies.supported'));
-        }
-    
-        $query->where(['is_visible' => 1]);
+    }
+
+    public function scopeVisibleOnly(Builder $query){
+
+	    $query->where(['is_visible' => 1]);
+    }
+
+    public function scopeSupportedOnly(Builder $query){
+
+	    $query->whereIn('symbol', config('currencies.supported'));
     }
 
     public function scopeByUser(Builder $query)
