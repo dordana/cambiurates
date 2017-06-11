@@ -81,21 +81,48 @@
         var chains;
         var exchangeSelect = $('#select-exchange');
         var exchanges;
-        apigClient.chainsGet({city : 'London', country : 'UK'}, {}, {})
-                .then(function(result){
-                    chains = result.data;
-                    $.each(result.data, function( index, value ) {
-                        hidePleaseWait();
-                        chainSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"'>"+value.name+ "</option>");
-                        if(parseInt(old_id) == parseInt(value.id) && rates_policy == 'chain') {
-                            chainSelect.val(value.id);
-                        }
-                    });
-                    chainSelect.trigger("chosen:updated");
-                    if(parseInt(chainSelect.val()) > 0) {
-                        chainSelect.trigger('change');
-                    }
-                }).catch( function(result){
+
+        function processChains(result) {
+            chains = result.data;
+            $.each(result.data, function( index, value ) {
+                hidePleaseWait();
+                chainSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"'>"+value.name+ "</option>");
+                if(parseInt(old_id) == parseInt(value.id) && rates_policy == 'chain') {
+                    chainSelect.val(value.id);
+                }
+            });
+            chainSelect.trigger("chosen:updated");
+            if(parseInt(chainSelect.val()) > 0) {
+                chainSelect.trigger('change');
+            }
+        }
+
+        funciton processExchanges(result) {
+
+            exchanges = result.data;
+            $.each(result.data, function( index, value ) {
+                hidePleaseWait();
+                var address = value.address;
+                if(value.chain_id != null) {
+                    return;
+                }
+                exchangeSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-rates_policy='"+ value.rates_policy +"'  data-nearest_station='"+value.nearest_station+"'>"+value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
+                if(parseInt(old_id) == parseInt(value.id) && rates_policy != 'chain') {
+                    exchangeSelect.val(value.id);
+                }
+            });
+            exchangeSelect.trigger("chosen:updated");
+            if(parseInt(exchangeSelect.val()) > 0) {
+                exchangeSelect.trigger('change');
+            }
+            // Add success callback code here.
+        }
+
+        apigClient.chainsGet({country : 'UK'}, {}, {})
+            .then(processChains).catch( function(result){
+            swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+        apigClient.chainsGet({country : 'ISR'}, {}, {})
+                .then(processChains).catch( function(result){
             swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
         });
 
@@ -125,26 +152,13 @@
             }
             name.after('<input type="hidden" class="form-control" name="chain" id="chain" value="'+chainName+'">');
         });
-        apigClient.exchangesGet({city : 'London', country : 'UK'}, {}, {})
-            .then(function(result){
-                    exchanges = result.data;
-                    $.each(result.data, function( index, value ) {
-                        hidePleaseWait();
-                        var address = value.address;
-                        if(value.chain_id != null) {
-                            return;
-                        }
-                        exchangeSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-rates_policy='"+ value.rates_policy +"'  data-nearest_station='"+value.nearest_station+"'>"+value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
-                        if(parseInt(old_id) == parseInt(value.id) && rates_policy != 'chain') {
-                            exchangeSelect.val(value.id);
-                        }
-                    });
-                    exchangeSelect.trigger("chosen:updated");
-                    if(parseInt(exchangeSelect.val()) > 0) {
-                        exchangeSelect.trigger('change');
-                    }
-                    // Add success callback code here.
-            }).catch( function(result){
+
+        apigClient.exchangesGet({country : 'UK'}, {}, {})
+            .then(processExchanges).catch( function(result){
+                swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+            });
+        apigClient.exchangesGet({country : 'ISR'}, {}, {})
+            .then(processExchanges).catch( function(result){
                 swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
             });
 
