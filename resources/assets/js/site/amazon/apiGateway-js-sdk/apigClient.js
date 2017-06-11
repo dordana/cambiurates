@@ -86,7 +86,7 @@ apigClientFactory.newClient = function (config) {
     apigClient.chainsGet = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
-        apiGateway.core.utils.assertParametersDefined(params, ['city', 'country'], ['body']);
+        apiGateway.core.utils.assertParametersDefined(params, ['country'], ['body']);
         
         var chainsGetRequest = {
             verb: 'get'.toUpperCase(),
@@ -122,7 +122,7 @@ apigClientFactory.newClient = function (config) {
     apigClient.exchangesGet = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
-        apiGateway.core.utils.assertParametersDefined(params, ['city', 'country'], ['body']);
+        apiGateway.core.utils.assertParametersDefined(params, ['country'], ['body']);
         
         var exchangesGetRequest = {
             verb: 'get'.toUpperCase(),
