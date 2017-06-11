@@ -82,6 +82,8 @@
         var exchangeSelect = $('#select-exchange');
         var exchanges;
 
+        console.log(apigClient.countriesGet({}, {}, {}));
+
         function processChains(result) {
             chains = result.data;
             $.each(result.data, function( index, value ) {
