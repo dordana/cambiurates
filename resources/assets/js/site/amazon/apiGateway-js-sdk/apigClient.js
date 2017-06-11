@@ -86,7 +86,7 @@ apigClientFactory.newClient = function (config) {
         
         apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
         
-        var chainsGetRequest = {
+        var countriesGetRequest = {
             verb: 'get'.toUpperCase(),
             path: pathComponent + uritemplate('/countries').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
             headers: apiGateway.core.utils.parseParametersToObject(params, []),
@@ -95,7 +95,7 @@ apigClientFactory.newClient = function (config) {
         };
         
         
-        return apiGatewayClient.makeRequest(chainsGetRequest, authType, additionalParams, config.apiKey);
+        return apiGatewayClient.makeRequest(countriesGetRequest, authType, additionalParams, config.apiKey);
     };
     
     

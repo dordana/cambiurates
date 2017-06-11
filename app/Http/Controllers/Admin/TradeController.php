@@ -24,8 +24,14 @@ class TradeController extends Controller
 
     	//Update user's currency rate
     	$this->user->userExchangeRates()
-		    ->where('exchange_rate_id', $request->get('id'))->get()->first()
-		    ->update($request->except('id'));
+		    ->where('exchange_rate_id', $request->get('id'))
+            ->delete();
+
+        $data = $request->except('id');
+        $data['exchange_rate_id'] = $request->get('id');
+
+        $this->user->userExchangeRates()
+		    ->insert($data);
 
         return response()->json(['success' => true, 'rate_id' => $request->get('id')]);
     }
