@@ -37,9 +37,9 @@
                             <th>Margin/Flat</th>
                             <th>Updated at</th>
                             <th>Buy</th>
-                            <th>Buy Rate</th>
+                            <th style="display:none">Buy Rate</th>
                             <th>Sell</th>
-                            <th>Sell Rate</th>
+                            <th style="display:none">Sell Rate</th>
                             <th class="text-center footable-last-column" style="min-width: 10%;">Action</th>
                         </tr>
                         <tr>
@@ -112,7 +112,7 @@
                         <i class="percent-sign">%</i>
                     @endif
                 </td>
-                <td class="buy_rate" data-original="{{ $oExchangeRate->getBuyRateAttribute() }}">
+                <td class="buy_rate" data-original="{{ $oExchangeRate->getBuyRateAttribute() }}" style="display:none">
                     {{ $oExchangeRate->getBuyRateAttribute() }}
                 </td>
                 <td>
@@ -127,7 +127,7 @@
                         <i class="percent-sign">%</i>
                     @endif
                 </td>
-                <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}">
+                <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}" style="display:none">
                     {{ $oExchangeRate->getSellRateAttribute() }}
                 </td>
                 <td class="text-center footable-last-column">
