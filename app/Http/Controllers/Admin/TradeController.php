@@ -29,6 +29,7 @@ class TradeController extends Controller
 
         $data = $request->except('id');
         $data['exchange_rate_id'] = $request->get('id');
+        $data['user_id'] = $this->user->id;
 
         $this->user->userExchangeRates()
 		    ->insert($data);
