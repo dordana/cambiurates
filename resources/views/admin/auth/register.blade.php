@@ -119,10 +119,14 @@
         }
 
         apigClient.chainsGet({country : 'UK'}, {}, {})
-            .then(processChains).catch( function(result){
+            .then(processChains)
+            .catch( function(result){
             swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+        });
+
         apigClient.chainsGet({country : 'ISR'}, {}, {})
-                .then(processChains).catch( function(result){
+                .then(processChains)
+                .catch( function(result){
             swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
         });
 
@@ -154,11 +158,13 @@
         });
 
         apigClient.exchangesGet({country : 'UK'}, {}, {})
-            .then(processExchanges).catch( function(result){
+            .then(processExchanges)
+            .catch( function(result){
                 swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
             });
         apigClient.exchangesGet({country : 'ISR'}, {}, {})
-            .then(processExchanges).catch( function(result){
+            .then(processExchanges)
+            .catch( function(result){
                 swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
             });
 
