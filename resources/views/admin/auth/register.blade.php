@@ -97,7 +97,7 @@
             }
         }
 
-        funciton processExchanges(result) {
+        function processExchanges(result) {
 
             exchanges = result.data;
             $.each(result.data, function( index, value ) {
