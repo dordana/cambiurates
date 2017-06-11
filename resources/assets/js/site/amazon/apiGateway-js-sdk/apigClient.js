@@ -92,7 +92,7 @@ apigClientFactory.newClient = function (config) {
             verb: 'get'.toUpperCase(),
             path: pathComponent + uritemplate('/chains').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
             headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['city', 'country']),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['country']),
             body: body
         };
         
@@ -128,7 +128,7 @@ apigClientFactory.newClient = function (config) {
             verb: 'get'.toUpperCase(),
             path: pathComponent + uritemplate('/exchanges').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
             headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['city', 'country']),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['country']),
             body: body
         };
         
@@ -158,13 +158,13 @@ apigClientFactory.newClient = function (config) {
     apigClient.ratesGet = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
-        apiGateway.core.utils.assertParametersDefined(params, ['city', 'type', 'country'], ['body']);
+        apiGateway.core.utils.assertParametersDefined(params, ['type', 'country'], ['body']);
         
         var ratesGetRequest = {
             verb: 'get'.toUpperCase(),
             path: pathComponent + uritemplate('/rates').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
             headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['city', 'type', 'country']),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['type', 'country']),
             body: body
         };
         
@@ -176,13 +176,13 @@ apigClientFactory.newClient = function (config) {
     apigClient.ratesPost = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
-        apiGateway.core.utils.assertParametersDefined(params, ['body', 'city', 'country'], ['body']);
+        apiGateway.core.utils.assertParametersDefined(params, ['body', 'country'], ['body']);
         
         var ratesPostRequest = {
             verb: 'post'.toUpperCase(),
             path: pathComponent + uritemplate('/rates').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
             headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['city', 'country']),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['country']),
             body: body
         };
         
