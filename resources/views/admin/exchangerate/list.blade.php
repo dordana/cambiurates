@@ -18,7 +18,7 @@
                 <div class="hr-line-dashed"></div>
                 @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
                     <h4>Change type</h4>
-                    <div>
+                    <div id="change-type-wrapper">
                         <div class="btn-group" role="group" aria-label="...">
                             <button type="button" value="percent" class="btn btn-primary change-type">Margin(%)</button>
                             <button type="button" value="fixed" class="btn btn-default change-type">Flat</button>
@@ -201,7 +201,7 @@
             });
             
             //Global level changing type
-            currency_table.on('click', '.change-type',function () {
+            $("#change-type-wrapper").on('click', '.change-type',function () {
 
                 //Set all them inactive
                 $('.change-type').attr('class', 'btn btn-default change-type');
@@ -209,7 +209,7 @@
                 var change_type = $(this).val();
 
                 //We change all local rates
-                $('input.rate-type').each(function(key, val){
+                $('#currency-table input.rate-type').each(function(key, val){
                     $(val).prop('checked', ($(val).val() == change_type));
                 });
 
