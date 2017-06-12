@@ -88,15 +88,13 @@
                 <td class="currency-symbol">
                     {{ $oExchangeRate->symbol }}
                 </td>
-                @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
-                    <td>
-                        <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
-                               {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
-                        <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
-                               {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat
+                <td>
+                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
+                         {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(<span style="font-size: 16px;">%</span>)
+                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
+                         {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat
                         Rate
-                    </td>
-                @endif
+                </td>
                 <td>
                     {{ $oExchangeRate->updatedAt }}
                 </td>
