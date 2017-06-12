@@ -2,11 +2,9 @@
 
 namespace App\Console;
 
+use App\Console\Commands\Cambiu\ApiSync;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Console\Commands\XE\SyncRates as SyncRatesXE;
-use App\Console\Commands\OpenExchangeRates\SyncRates as SyncRatesOER;
-use App\Console\Commands\Cambiu\SyncRates as SyncRatesCambiu;
 
 class Kernel extends ConsoleKernel
 {
@@ -16,7 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        SyncRatesCambiu::class
+        ApiSync::class
     ];
 
     /**
@@ -29,7 +27,7 @@ class Kernel extends ConsoleKernel
     {
         
         if (config('app.env') == 'production') {
-            $schedule->command('syncrates-cambiu')
+            $schedule->command('cambiu-apisync')
                 ->withoutOverlapping()
                 ->hourly()
                 ->appendOutputTo(storage_path('logs/command.log'));

@@ -8,21 +8,21 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
  * Class SyncRates
  * @package Modules\Delivery\Console\Commands\XE
  */
-class SyncRates extends Command
+class ApiSync extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'syncrates-cambiu';
+    protected $signature = 'cambiu-apisync';
     
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Synchronize exchange rates with Cambiu API';
+    protected $description = 'Synchronize countries, chains, exchanges and exchange rates with Cambiu API';
     
     /**
      * Execute the console command.
@@ -33,7 +33,7 @@ class SyncRates extends Command
     {
     
     
-        $process = new Process('node ./app/Console/Commands/Cambiu/SyncRates.js');
+        $process = new Process('node ./app/Console/Commands/Cambiu/ApiSync.js');
         $process->run();
     
         // executes after the command finishes

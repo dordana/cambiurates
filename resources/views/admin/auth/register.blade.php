@@ -1,5 +1,6 @@
 @extends('admin.layouts.master')
 
+<button onclick="callMe()">click me</button>
 @section('content')
     <div class="container">
         <div class="row">
@@ -76,14 +77,11 @@
         showPleaseWait();
         var old_id = '<?php echo e(old('cambiu_id')); ?>';
         var rates_policy = '<?php echo e(old('rates_policy')); ?>';
-        console.log(rates_policy);
         var chainSelect = $('#select-chain');
         var chains;
         var exchangeSelect = $('#select-exchange');
         var exchanges;
-        /*
-        console.log(apigClient.countriesGet({}, {}, {}));
-        */
+
         function processChains(result) {
             chains = result.data;
             $.each(result.data, function( index, value ) {
@@ -101,22 +99,6 @@
 
         function processExchanges(result) {
 
-            exchanges = result.data;
-            $.each(result.data, function( index, value ) {
-                hidePleaseWait();
-                var address = value.address;
-                if(value.chain_id != null) {
-                    return;
-                }
-                exchangeSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-rates_policy='"+ value.rates_policy +"'  data-nearest_station='"+value.nearest_station+"'>"+value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
-                if(parseInt(old_id) == parseInt(value.id) && rates_policy != 'chain') {
-                    exchangeSelect.val(value.id);
-                }
-            });
-            exchangeSelect.trigger("chosen:updated");
-            if(parseInt(exchangeSelect.val()) > 0) {
-                exchangeSelect.trigger('change');
-            }
             // Add success callback code here.
         }
 
@@ -158,17 +140,50 @@
             }
             name.after('<input type="hidden" class="form-control" name="chain" id="chain" value="'+chainName+'">');
         });
+        function callMe(){
 
-        apigClient.exchangesGet({country : 'UK'}, {}, {})
-            .then(processExchanges)
-            .catch( function(result){
-                swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
-            });
-        apigClient.exchangesGet({country : 'ISR'}, {}, {})
-            .then(processExchanges)
-            .catch( function(result){
-                swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
-            });
+        }
+
+        //Get all countries first
+        apigClient.countriesGet({}, {}, {})
+                .then(function(result){
+
+                    //Countries
+                    var countries = result.data;
+
+                    //Now populate exchanges for any country
+                    for(var country_code in countries){
+                        apigClient.exchangesGet({country: country_code}, {}, {})
+                                .then(function(result){
+                                    console.log(result);
+
+                                    //It promised me to came here so get the exchanges
+                                    exchanges = result.data;
+                                    $.each(result.data, function( index, value ) {
+                                        hidePleaseWait();
+                                        var address = value.address;
+                                        if(value.chain_id != null) {
+                                            return;
+                                        }
+                                        exchangeSelect.append("<option value='"+value.id+"' data-name='"+ value.name +"' data-rates_policy='"+ value.rates_policy +"'  data-nearest_station='"+value.nearest_station+"'>"+ value.name+ ((address.length > 0) ? "("+address+")" : "") + "</option>");
+                                        if(parseInt(old_id) == parseInt(value.id) && rates_policy != 'chain') {
+                                            exchangeSelect.val(value.id);
+                                        }
+                                    });
+                                    exchangeSelect.trigger("chosen:updated");
+                                    if(parseInt(exchangeSelect.val()) > 0) {
+                                        exchangeSelect.trigger('change');
+                                    }
+                                })
+                                .catch( function(result){
+                                    swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+                                });
+                    }
+                })
+                .catch( function(result){
+                    swal('Ups!', 'API remoting web service problem. Try refreshing the page or contact your web dev', 'warning');
+                });
+
 
         exchangeSelect.change(function () {
             //First we need to reset chain select
