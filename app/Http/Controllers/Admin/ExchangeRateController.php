@@ -16,18 +16,13 @@ class ExchangeRateController extends Controller
     public function index()
     {
 
-//    	var_dump(ExchangeRate::all());die;
         return view(
             'admin.exchangerate.list',
             [
-                'aExchangeRates'  => ExchangeRate::searchFor()
-                    ->byUser()
-//	                ->supportedOnly()
-                    ->orderBy('visible','DESC')
-                    ->orderBy('symbol','ASC')
-	                ->get(),
+                'oUserOnlyRates'  => ExchangeRate::searchFor()->userOnly()->get(),
+                'oNoUserRates'  => ExchangeRate::searchFor()->exceptUser()->get(),
 	            'title' => 'Exchange Rates',
-	            'aCurrencies' => ExchangeRate::all()
+	            'aCurrencies' => ExchangeRate::exceptUser()->get()
             ]
         );
     }
