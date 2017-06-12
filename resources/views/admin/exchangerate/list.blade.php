@@ -16,7 +16,6 @@
                 </div>
 
                 <div class="hr-line-dashed"></div>
-                @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
                     <h4>Change type</h4>
                     <div id="change-type-wrapper">
                         <div class="btn-group" role="group" aria-label="...">
@@ -27,7 +26,6 @@
                             <button type="button" class="btn btn-warning update-all">Update all</button>
                         </div>
                     </div>
-                @endif
                 <div class="hr-line-dashed"></div>
                 <div class="table-responsive" data-first-pos="{{ $aExchangeRates->first()->pos }}">
                     <table id="currency-table" class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
@@ -98,7 +96,8 @@
                 <td>
                     {{ $oExchangeRate->updatedAt }}
                 </td>
-                <td>
+                <td class="percent-align">
+                    <div class="percent-align">
                     <input type="text"
                            pattern="[0-9]"
                            title="Numbers only"
@@ -109,11 +108,13 @@
                     @if($oExchangeRate->type_buy == 'percent')
                         <i class="percent-sign">%</i>
                     @endif
+                    </div>
                 </td>
                 <td class="buy_rate" data-original="{{ $oExchangeRate->getBuyRateAttribute() }}" style="display:none">
                     {{ $oExchangeRate->getBuyRateAttribute() }}
                 </td>
                 <td>
+                    <div class="percent-align">
                     <input type="text"
                            pattern="[0-9]"
                            title="Numbers only"
@@ -124,6 +125,7 @@
                     @if($oExchangeRate->type_sell == 'percent')
                         <i class="percent-sign">%</i>
                     @endif
+                    </div>
                 </td>
                 <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}" style="display:none">
                     {{ $oExchangeRate->getSellRateAttribute() }}

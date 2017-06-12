@@ -62,11 +62,15 @@ input[type="radio"] {
   vertical-align: middle;
 }
 
+.percent-sign {
+  font-size: 16px;
+}
 
-
-
-
-
+.percent-align {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
 
 
 
