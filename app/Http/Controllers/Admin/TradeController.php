@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\TradeRequest;
 use App\Http\Controllers\Controller;
+use App\Models\ExchangeRate;
+use App\Models\UserExchangeRate;
 
 class TradeController extends Controller
 {
@@ -21,18 +23,24 @@ class TradeController extends Controller
      */
     public function store(TradeRequest $request)
     {
+    	//Find user's currency rate
+    	$userExchangeRate = $this->user->userExchangeRates()
+		    ->where('exchange_rate_id', $request->get('id'))->get()->first();
 
-    	//Update user's currency rate
-    	$this->user->userExchangeRates()
-		    ->where('exchange_rate_id', $request->get('id'))
-            ->delete();
+	    //Create new if not exists
+	    if(!$userExchangeRate instanceof  UserExchangeRate){
+	    	$userExchangeRate = new UserExchangeRate();
+		    $userExchangeRate->user_id = $this->user->id;
+		    $userExchangeRate->exchange_rate_id = $request->get('id');
+	    }
 
-        $data = $request->except('id');
-        $data['exchange_rate_id'] = $request->get('id');
-        $data['user_id'] = $this->user->id;
+	    //Populate values
+	    foreach( $request->except('id') as $name => $value ) {
+	    	$userExchangeRate->{$name} = $value;
+	    }
 
-        $this->user->userExchangeRates()
-		    ->insert($data);
+	    //Now just save them
+	    $userExchangeRate->save();
 
         return response()->json(['success' => true, 'rate_id' => $request->get('id')]);
     }
