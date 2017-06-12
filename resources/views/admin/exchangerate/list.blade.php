@@ -66,6 +66,7 @@
                                     {{ $oExchangeRate->updatedAt }}
                                 </td>
                                 <td>
+                                    <div class="percent-align">
                                     <input type="text"
                                            pattern="[0-9]"
                                            title="Numbers only"
@@ -76,11 +77,13 @@
                                     @if($oExchangeRate->type_buy == 'percent')
                                         <i class="percent-sign">%</i>
                                     @endif
+                                    </div>
                                 </td>
                                 <td class="buy_rate" data-original="{{ $oExchangeRate->getBuyRateAttribute() }}" style="display:none">
                                     {{ $oExchangeRate->getBuyRateAttribute() }}
                                 </td>
                                 <td>
+                                    <div class="percent-align">
                                     <input type="text"
                                            pattern="[0-9]"
                                            title="Numbers only"
@@ -91,6 +94,7 @@
                                     @if($oExchangeRate->type_sell == 'percent')
                                         <i class="percent-sign">%</i>
                                     @endif
+                                    </div>
                                 </td>
                                 <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}" style="display:none">
                                     {{ $oExchangeRate->getSellRateAttribute() }}
@@ -161,7 +165,7 @@
                 <td>
                     {{ $oExchangeRate->updatedAt }}
                 </td>
-                <td class="percent-align">
+                <td>
                     <div class="percent-align">
                     <input type="text"
                            pattern="[0-9]"
