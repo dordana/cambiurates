@@ -82,7 +82,7 @@
     $('.chosen-select').chosen();
 </script>
 
-@include('admin.javascript.custom-javascript')
+@include('admin.partials.scripts')
 
 </body>
 

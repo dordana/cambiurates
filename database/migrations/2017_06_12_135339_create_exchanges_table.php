@@ -20,9 +20,9 @@ class CreateExchangesTable extends Migration
 	        $table->string('name');
 	        $table->string('currency');
 	        $table->string('address');
-	        $table->string('nearest_station');
-	        $table->string('phone');
-	        $table->string('rates_policy');
+	        $table->string('nearest_station')->nullable();
+	        $table->string('phone')->nullable();
+	        $table->string('rates_policy')->nullable();
             $table->timestamps();
 
 	        $table->foreign('country_id')

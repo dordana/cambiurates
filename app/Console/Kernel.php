@@ -2,7 +2,8 @@
 
 namespace App\Console;
 
-use App\Console\Commands\Cambiu\ApiSync;
+use App\Console\Commands\Cambiu\SyncExchanges;
+use App\Console\Commands\Cambiu\SyncRates;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,7 +15,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        ApiSync::class
+        SyncExchanges::class,
+	    SyncRates::class
     ];
 
     /**
@@ -27,7 +29,12 @@ class Kernel extends ConsoleKernel
     {
         
         if (config('app.env') == 'production') {
-            $schedule->command('cambiu-apisync')
+	        $schedule->command('cambiu:sync-exchanges')
+	                 ->withoutOverlapping()
+	                 ->daily()
+	                 ->appendOutputTo(storage_path('logs/command.log'));
+
+            $schedule->command('cambiu:sync-rates')
                 ->withoutOverlapping()
                 ->hourly()
                 ->appendOutputTo(storage_path('logs/command.log'));

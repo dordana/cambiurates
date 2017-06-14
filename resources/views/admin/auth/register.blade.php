@@ -154,8 +154,10 @@
                     //Now populate exchanges for any country
                     for(var country_code in countries){
                         apigClient.exchangesGet({country: country_code}, {}, {})
-                                .then(function(result){
+                                .then(function(result, a, b){
                                     console.log(result);
+                                    console.log(a);
+                                    console.log(b);
 
                                     //It promised me to came here so get the exchanges
                                     exchanges = result.data;
