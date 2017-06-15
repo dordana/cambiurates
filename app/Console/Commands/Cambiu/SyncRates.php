@@ -33,7 +33,7 @@ class SyncRates extends Command
 	{
 
 
-		$process = new Process('node ./app/Console/Commands/Cambiu/scripts/SyncRates.js');
+		$process = new Process('node ./app/Console/Commands/Cambiu/Scripts/SyncRates.js');
 		$process->run();
 
 		// executes after the command finishes

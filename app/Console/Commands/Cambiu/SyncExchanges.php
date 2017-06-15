@@ -102,7 +102,7 @@ class SyncExchanges extends Command
 	 */
 	private function getCountries(){
 
-		$process = new Process('node ./app/Console/Commands/Cambiu/scripts/ApiCountries.js');
+		$process = new Process('node ./app/Console/Commands/Cambiu/Scripts/ApiCountries.js');
 		$process->run();
 
 		//Is everything ok with the response?
@@ -120,7 +120,7 @@ class SyncExchanges extends Command
 	private function getExchangesByCountry($code){
 
 		//Get exchanges for this country first
-		$process = new Process('node ./app/Console/Commands/Cambiu/scripts/ApiExchanges.js ' . $code);
+		$process = new Process('node ./app/Console/Commands/Cambiu/Scripts/ApiExchanges.js ' . $code);
 		$process->run();
 
 		//Is everything ok with the response?
@@ -138,7 +138,7 @@ class SyncExchanges extends Command
 	private function getChainsByCountry($code){
 
 		//Get exchanges for this country first
-		$process = new Process('node ./app/Console/Commands/Cambiu/scripts/ApiChains.js ' . $code);
+		$process = new Process('node ./app/Console/Commands/Cambiu/Scripts/ApiChains.js ' . $code);
 		$process->run();
 
 		//Is everything ok with the response?

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use App\Models\Chain;
+use App\Models\Exchange;
 use Illuminate\Http\Request;
 
 use App\Models\User;
@@ -141,4 +143,18 @@ class AuthController extends Controller
 
         return redirect()->route('home');
     }
+
+	/**
+	 * Show the application registration form.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function showRegistrationForm()
+	{
+		return view($this->registerView, [
+			'chains' => Chain::all(),
+			'exchanges' => Exchange::all(),
+			'exchangesJson' => Exchange::get(['name'])
+		]);
+	}
 }
