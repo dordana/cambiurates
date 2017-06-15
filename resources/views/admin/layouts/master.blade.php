@@ -33,11 +33,13 @@
                 @include('admin.partials.breadcrumb')
 
                 <div class="wrapper wrapper-content animated fadeInRight">
-                    @if (Session::has('error'))
-                        <div class="alert alert-danger alert-dismissable">
-                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                            <i class="fa fa-exclamation-triangle"></i> {{ Session::get('error') }}
-                        </div>
+                    @if(count($errors) > 0)
+                        @foreach($errors->all() as $error)
+                            <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                <strong>Error!</strong> {{ $error }}
+                            </div>
+                        @endforeach
                     @endif
 
                     @if (Session::has('success'))
