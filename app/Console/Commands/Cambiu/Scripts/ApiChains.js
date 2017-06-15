@@ -7,28 +7,19 @@ var apigClient = apigClientFactory.default.newClient({
     invokeUrl: 'https://cz471val2d.execute-api.us-west-2.amazonaws.com'
 });
 
-process.argv.forEach(function (val, index) {
-
-    //We just need the country one
-    if (index === 2) {
-        var country = val;
-
-        var pathTemplate = '/production/chains';
-        var method = 'GET';
-        var additionalParams = {
-            headers: {},
-            queryParams: {
-                country: country
-            }
-        };
-
-        apigClient.invokeApi({}, pathTemplate, method, additionalParams, {})
-            .then(function (result) {
-                //Return the response data
-                console.log(JSON.stringify(result.data));
-            }).catch(function (result) {
-
-        });
+var pathTemplate = '/production/chains';
+var method = 'GET';
+var additionalParams = {
+    headers: {},
+    queryParams: {
+        country: 'UK'
     }
-})
-;
+};
+
+apigClient.invokeApi({}, pathTemplate, method, additionalParams, {})
+    .then(function (result) {
+        //Return the response data
+        console.log(JSON.stringify(result.data));
+    }).catch(function (result) {
+
+});

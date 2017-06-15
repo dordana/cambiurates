@@ -41,7 +41,7 @@
                                 <select id="select-chain" data-placeholder="Choose a chain..." class="chosen-select col-md-6" style="width:100%;" tabindex="4">
                                     <option value=""></option>
                                     @foreach($chains as $chain)
-                                        <option value="{{ $chain->origin_id }}" {{ (old('cambiu_id') == $chain->origin_id && !old('chain'))  ? "selected='selected'" : "" }} data-name="{{ $chain->name }}"> {{ $chain->name }}</option>
+                                        <option value="{{ $chain->origin_id }}" {{ (old('cambiu_id') == $chain->origin_id && old('chain'))  ? "selected='selected'" : "" }} data-name="{{ $chain->name }}"> {{ $chain->name }}</option>
                                     @endforeach
                                 </select>
 

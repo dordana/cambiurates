@@ -15,16 +15,10 @@ class CreateChainsTable extends Migration
         Schema::create('chains', function (Blueprint $table) {
             $table->increments('id');
 	        $table->integer('origin_id')->unsigned();
-	        $table->integer('country_id')->unsigned()->nullable();
 	        $table->string('name');
             $table->timestamps();
 
-	        $table->unique(['origin_id', 'country_id']);
-
-	        $table->foreign('country_id')
-	              ->references('id')->on('countries')
-	              ->onDelete('cascade');
-
+	        $table->unique(['origin_id']);
         });
     }
 

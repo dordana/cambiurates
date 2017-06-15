@@ -17,4 +17,11 @@ class Exchange extends Model
 	public function country(){
 		return $this->belongsTo(Country::class);
 	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function chain(){
+		return $this->hasOne(Chain::class, 'origin_id', 'chain_id');
+	}
 }

@@ -12,9 +12,9 @@ class Chain extends Model
 	];
 
 	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
-	public function country(){
-	    return $this->belongsTo(Country::class);
+	public function exchanges(){
+		return $this->hasMany(Exchange::class, 'chain_id', 'origin_id');
 	}
 }
