@@ -89,7 +89,6 @@
 
 @section('footer')
     <script>
-
         //Defining default vars
         var exchanges = {!! $exchangesJson !!};
         var chainSelect = $('#select-chain');
