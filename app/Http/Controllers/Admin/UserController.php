@@ -83,6 +83,6 @@ class UserController extends Controller
 	    ])->save();
 
 	    //Redirect back with success message
-	    return back()->with('success', 'The password for user with email "' . $user->email . '" was changed.');
+	    return back()->with('success', 'The password for user with email "' . $user->email . '" has been changed successfully.');
     }
 }

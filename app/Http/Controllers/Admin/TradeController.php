@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\TradeRequest;
 use App\Http\Controllers\Controller;
-use App\Models\ExchangeRate;
 use App\Models\UserExchangeRate;
 
 class TradeController extends Controller

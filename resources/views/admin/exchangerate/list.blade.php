@@ -214,6 +214,14 @@
 
 @section('footer')
     <script type="text/javascript">
+
+        //Defining the credentials
+        var apigClient = apigClientFactory.newClient({
+            accessKey: '{{ env('ACCESS_KEY') }}',
+            secretKey: '{{ env('SECRET_KEY') }}',
+            region: '{{ env('REGION') }}'
+        });
+
         $(document).ready(function () {
 
             var currency_table = $("#currency-table");
@@ -245,13 +253,6 @@
 
                 //After the movement we need to delete the select
                 $(".pick-currency-form").hide();
-
-//                apigClient.ratesGet({city: 'London', country: 'UK', type: 'reference'}, {})
-//                        .then(function (result) {
-//                        }).catch(function (result) {
-//                    var errorMsg =  (result) ? result : 'Try refreshing the page or contact your web dev';
-//                    swal('Ups!', 'API remoting web service problem. Message: ' + errorMsg, 'warning');
-//                });
             });
 
             $.ajaxSetup({
