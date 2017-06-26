@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -61,11 +62,18 @@ class AuthController extends Controller
     public function register(AuthRequest $request)
     {
         $password = str_random(8);
+    
         $request->offsetSet('password', bcrypt($password));
-      
+        
         $user = User::create($request->all());
         
-        $user->sendRegistationEmail($password);
+        $token = str_random(255);
+        $tokenReset = DB::table('password_resets')->insert(
+            ['email' => $user->email, 'token' => $token]
+        );
+       
+        
+        $user->sendRegistationEmail($password,$token);
 
         return redirect()->route('users')->with(['success' => 'User successfully created!']);
     }

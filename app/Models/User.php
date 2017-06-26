@@ -34,28 +34,25 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
     
-
     /**
-     * @param $password
+     * @param string $password
+     * @param string $token
      * @return self
      */
-    public function sendRegistationEmail($password = '')
+    public function sendRegistationEmail($password = '', $token = '')
     {
-
+        
         try {
+            
             $me = $this;
-            $emailContent = '';
-            $emailContent .= "Username : ". $this->email.'</br>';
-            $emailContent .= "Password : ". $password;
-
-            Mail::send([], [], function ($message) use ($emailContent, $me) {
-
-                $from = config('mail.from');
-                $message->from($from['address'], $from['name']);
-                $message->to($me->email, $me->email)
-                    ->subject('Cambiu Rates Registration.')
-                    ->setBody($emailContent, 'text/html');
-            });
+            Mail::send('admin.email.registration', ['user' => $this, 'password' => $password, 'token' => $token],
+                function ($message) use ($me) {
+                    
+                    $from = config('mail.from');
+                    $message->from($from['address'], $from['name']);
+                    $message->to($me->email, $me->email)
+                        ->subject('Cambiu Rates Registration.');
+                });
         } catch (\Exception $e) {
             Log::error($e->getFile() . ' | ' . $e->getLine() . ' | ' . $e->getMessage());
         }
