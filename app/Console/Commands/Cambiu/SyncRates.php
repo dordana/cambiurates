@@ -3,6 +3,9 @@
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Carbon\Carbon;
+use App\Models\ExchangeRate;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class SyncRates
@@ -41,7 +44,29 @@ class SyncRates extends Command
 			throw new ProcessFailedException($process);
 		}
 
-		echo $process->getOutput();
-
-	}
+		$result = json_decode($process->getOutput());
+        
+        $visibleRates = [];
+    
+        if (isset($result[0]->rates)) {
+            foreach (current($result)->rates as $rate) {
+                
+                if (!is_numeric($rate->buy)) {
+                    continue;
+                }
+                
+                $visibleRates[] = $rate->currency;
+                
+                ExchangeRate::where(['symbol' => $rate->currency])->update(
+                    [
+                        'updated_at'    => Carbon::parse($rate->updated_at)->format('Y-m-d H:i:s'),
+                        'exchange_rate' => $rate->buy
+                    ]
+                );
+            }
+            
+            ExchangeRate::whereIn('symbol', $visibleRates)->update(['is_visible' => 1]);
+            ExchangeRate::whereNotIn('symbol', $visibleRates)->update(['is_visible' => 0]);
+        }
+    }
 }
