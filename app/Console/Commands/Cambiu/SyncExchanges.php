@@ -19,7 +19,7 @@ class SyncExchanges extends Command
 	 *
 	 * @var string
 	 */
-	protected $signature = 'cambiu:sync-exchanges';
+	protected $signature = 'cambiu:sync-exchanges {country=ALL}';
 
 	/**
 	 * The console command description.
@@ -38,14 +38,21 @@ class SyncExchanges extends Command
 		//Inform that we started the process
 		$this->line(\Carbon\Carbon::now().' Process started!');
 
+		$arg = strtoupper($this->argument('country'));
+
 		//Get countries
-		$countries = $this->getCountries();
+		$countries = [];
+		if( $arg == 'ALL'){
+			$countries = $this->getCountries();
+		}else{
+			$countries[$arg] = $arg;
+		}
+
 		$this->validateResponse($countries);
 		$this->info('There are ' . count($countries) . ' countries.');
 
 		//Truncate the old once so to achieve syncing
 		DB::table('chains')->delete();
-		DB::table('exchanges')->delete();
 
 		//First let's get the chains and sync them
 		$chains = $this->getChains();
@@ -67,10 +74,15 @@ class SyncExchanges extends Command
 		//Now populate the exchanges for any country
 		foreach($countries as $code => $name){
 
+
 			$country = Country::firstOrCreate([
-				'code' => $code,
-				'name' => $name
+				'code' => $code
 			]);
+			$country->name = $name;
+			$country->save();
+
+			//Delete all exchanges for this country first
+			DB::table('exchanges')->where('country_id', $country->id)->delete();
 
 			//Now get all exchanges for this country and sync them
 			$exchanges = $this->getExchangesByCountry($code);
