@@ -15,31 +15,31 @@ class AddUsers2 extends Migration
     {
         //Create our example user
         User::create([
-            'name'     => 'Dror Poliak,
+            'name'     => 'Dror Poliak',
             'role'     => 'admin',
             'email'    => 'dror@cambiu.com',
-            'password' => bcrypt('password'),
+            'password' => bcrypt('password')
         ]);
  
         User::create([
-            'name'     => 'Eyal Daskal,
+            'name'     => 'Eyal Daskal',
             'role'     => 'admin',
             'email'    => 'eyal@cambiu.com',
-            'password' => bcrypt('password'),
+            'password' => bcrypt('password')
         ]);
 
         User::create([
-            'name'     => 'Yonatan Brand,
+            'name'     => 'Yonatan Brand',
             'role'     => 'admin',
             'email'    => 'yonatan@cambiu.com',
-            'password' => bcrypt('password'),
+            'password' => bcrypt('password')
         ]);
 
         User::create([
-            'name'     => 'Anat Alroy,
+            'name'     => 'Anat Alroy',
             'role'     => 'admin',
             'email'    => 'anat@cambiu.com',
-            'password' => bcrypt('password'),
+            'password' => bcrypt('password')
         ]);
   }
 
