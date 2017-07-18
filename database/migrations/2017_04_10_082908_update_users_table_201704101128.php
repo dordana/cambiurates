@@ -15,7 +15,7 @@ class UpdateUsersTable201704101128 extends Migration
         Schema::table(
             'users',
             function (Blueprint $table) {
-                $table->string('rates_policy')->after('nearest_station');
+                $table->string('rates_policy')->nullable()->after('nearest_station');
                 $table->string('chain')->default(null)->nullable()->after('rates_policy');
             }
         );
