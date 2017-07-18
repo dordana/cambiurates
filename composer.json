@@ -50,7 +50,8 @@
         ],
         "compile": [
             "npm install --global gulp-cli",
-            "npm install"
+            "npm install",
+            "gulp"
         ]
 
     },
