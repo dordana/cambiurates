@@ -15,7 +15,7 @@ class UpdateExchangeRatesTable extends Migration
         Schema::table(
             'exchange_rates',
             function (Blueprint $table) {
-                $table->integer('pos')->after('exchange_rate');
+                $table->integer('pos')->nullable()->after('exchange_rate');
             }
         );
     }
