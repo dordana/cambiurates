@@ -17,7 +17,7 @@ class UpdateUsersTable extends Migration
     
         Schema::table('users', function(Blueprint $table)
         {
-            $table->string('cambiu_id')->after('email');
+            $table->string('cambiu_id')->nullable()->after('email');
         });
     }
 
