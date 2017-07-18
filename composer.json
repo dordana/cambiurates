@@ -47,7 +47,12 @@
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "php artisan optimize"
+        ],
+        "compile": [
+            "npm install --global gulp-cli",
+            "npm install"
         ]
+
     },
     "config": {
         "preferred-install": "dist"
