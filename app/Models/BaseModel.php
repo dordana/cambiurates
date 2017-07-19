@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseModel extends Model
 {
+    
     // Allow for camelCased attribute access
     public function getAttribute($key)
     {

@@ -8,6 +8,7 @@ use App\Models\UserExchangeRate;
 
 class TradeController extends Controller
 {
+    
     private $user;
     
     public function __construct()
@@ -22,28 +23,28 @@ class TradeController extends Controller
      */
     public function store(TradeRequest $request)
     {
-    	//Find user's currency rate
-    	$userExchangeRate = $this->user->userExchangeRates()
-		    ->where('exchange_rate_id', $request->get('id'))->get()->first();
-
-	    //Create new if not exists
-	    if(!$userExchangeRate instanceof  UserExchangeRate){
-	    	$userExchangeRate = new UserExchangeRate();
-		    $userExchangeRate->user_id = $this->user->id;
-		    $userExchangeRate->exchange_rate_id = $request->get('id');
-	    }
-
-	    //Populate values
-	    foreach( $request->except('id') as $name => $value ) {
-	    	$userExchangeRate->{$name} = $value;
-	    }
-
-	    //Now just save them
-	    $userExchangeRate->save();
-
+        //Find user's currency rate
+        $userExchangeRate = $this->user->userExchangeRates()
+            ->where('exchange_rate_id', $request->get('id'))->get()->first();
+        
+        //Create new if not exists
+        if (!$userExchangeRate instanceof UserExchangeRate) {
+            $userExchangeRate = new UserExchangeRate();
+            $userExchangeRate->user_id = $this->user->id;
+            $userExchangeRate->exchange_rate_id = $request->get('id');
+        }
+        
+        //Populate values
+        foreach ($request->except('id') as $name => $value) {
+            $userExchangeRate->{$name} = $value;
+        }
+        
+        //Now just save them
+        $userExchangeRate->save();
+        
         return response()->json(['success' => true, 'rate_id' => $request->get('id')]);
     }
-
+    
     public function collection(TradeRequest $request)
     {
         $aIds = [];
@@ -56,9 +57,10 @@ class TradeController extends Controller
             $data[$row['id']]['type_sell'] = $row['type_sell'];
             $data[$row['id']]['sell'] = $row['sell'];
         }
-
+        
         //Save the new rates
         $this->user->exchangeRates()->sync($data);
+        
         return response()->json(['success' => true, 'rate_ids' => $aIds]);
     }
 }

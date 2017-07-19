@@ -7,7 +7,7 @@ use App\Models\ExchangeRate;
 
 class ExchangeRateController extends Controller
 {
-
+    
     /**
      * Render ExchangeRates
      *
@@ -15,14 +15,14 @@ class ExchangeRateController extends Controller
      */
     public function index()
     {
-
+        
         return view(
             'admin.exchangerate.list',
             [
-                'oUserOnlyRates'  => ExchangeRate::searchFor()->userOnly()->get(),
-                'oNoUserRates'  => ExchangeRate::searchFor()->exceptUser()->get(),
-	            'title' => 'Exchange Rates',
-	            'aCurrencies' => ExchangeRate::exceptUser()->get()
+                'oUserOnlyRates' => ExchangeRate::searchFor()->userOnly()->get(),
+                'oNoUserRates'   => ExchangeRate::searchFor()->exceptUser()->get(),
+                'title'          => 'Exchange Rates',
+                'aCurrencies'    => ExchangeRate::exceptUser()->get()
             ]
         );
     }

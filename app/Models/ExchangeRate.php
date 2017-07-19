@@ -88,7 +88,7 @@ class ExchangeRate extends BaseModel
                 })
 	            ->orderBy('visible','DESC')
 	            ->orderBy('symbol','ASC')
-                ->select('exchange_rates.*', 'a.id AS user_ex_id', \DB::Raw('IFNULL(a.type_buy, "disabled") AS type_buy') , \DB::Raw('IFNULL(a.type_sell, "disabled") AS type_sell'), 'a.sell', 'a.buy', 'a.visible');
+                ->select('exchange_rates.*', 'a.id AS user_ex_id','a.sell', 'a.buy', 'a.visible');
     }
 
 	/**
@@ -104,7 +104,6 @@ class ExchangeRate extends BaseModel
 	          ->where('a.id', null)
 	          ->orderBy('visible', 'DESC')
 	          ->orderBy('symbol', 'ASC')
-	          ->select('exchange_rates.*', 'a.id AS user_ex_id', \DB::Raw('IFNULL(a.type_buy, "disabled") AS type_buy'),
-		          \DB::Raw('IFNULL(a.type_sell, "disabled") AS type_sell'), 'a.sell', 'a.buy', 'a.visible');
+	          ->select('exchange_rates.*', 'a.id AS user_ex_id','a.sell', 'a.buy', 'a.visible');
     }
 }
