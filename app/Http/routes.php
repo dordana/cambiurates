@@ -42,6 +42,7 @@ Route::group(['middleware' => 'cors'], function() {
                 Route::get('user/register',['as' => 'user-register-form', 'uses' => 'Auth\AuthController@showRegistrationForm']);
                 Route::post('user/register', ['as' => 'user-register', 'uses' => 'Auth\AuthController@register']);
                 Route::get('user/destroy/{id}', ['as' => 'user-destroy', 'uses' => 'UserController@destroy']);
+	            Route::post('user/password', ['as' => 'change-password', 'uses' => 'UserController@password']);
             });
     
             //Exchange Rates

@@ -16,9 +16,8 @@
                 </div>
 
                 <div class="hr-line-dashed"></div>
-                @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
                     <h4>Change type</h4>
-                    <div>
+                    <div id="change-type-wrapper">
                         <div class="btn-group" role="group" aria-label="...">
                             <button type="button" value="percent" class="btn btn-primary change-type">Margin(%)</button>
                             <button type="button" value="fixed" class="btn btn-default change-type">Flat</button>
@@ -27,9 +26,8 @@
                             <button type="button" class="btn btn-warning update-all">Update all</button>
                         </div>
                     </div>
-                @endif
                 <div class="hr-line-dashed"></div>
-                <div class="table-responsive" data-first-pos="{{ $aExchangeRates->first()->pos }}">
+                <div class="table-responsive" data-first-pos="{{ (isset($oUserOnlyRates->first()->pos)) ? $oUserOnlyRates->first()->pos : 0 }}">
                     <table id="currency-table" class="footable table table-stripped toggle-arrow-tiny default breakpoint footable-loaded">
                         <tr>
                             <th style="min-width: 6px;">Add</th>
@@ -42,13 +40,85 @@
                             <th style="display:none">Sell Rate</th>
                             <th class="text-center footable-last-column" style="min-width: 10%;">Action</th>
                         </tr>
+                        @foreach($oUserOnlyRates as $iIdx => $oExchangeRate)
+                            <tr id="rate_{{ $oExchangeRate->id }}" class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}"
+                                data-symbol="{{ $oExchangeRate->symbol }}"
+                                data-id="{{ $oExchangeRate->id }}"
+                                data-rate="{{ $oExchangeRate->exchangeRate }}">
+                                <td>
+                                    @if(++$iIdx === ($oUserOnlyRates->count()))
+                                        <button id="more-currency" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                                    @endif
+                                </td>
+                                <td class="currency-symbol">
+                                    {{ $oExchangeRate->symbol }}
+                                </td>
+                                @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
+                                    <td>
+                                        <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
+                                               {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === null ? 'checked' : '' }} value="percent"/>Margin(%)
+                                        <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
+                                               {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat
+                                        Rate
+                                    </td>
+                                @endif
+                                <td>
+                                    {{ $oExchangeRate->updatedAt }}
+                                </td>
+                                <td>
+                                    <div class="percent-align">
+                                    <input type="text"
+                                           pattern="[0-9]"
+                                           title="Numbers only"
+                                           value="{{ sprintf('%01.6f', $oExchangeRate->buy) }}"
+                                           class="form-control buy col-md-4 rate-value-input"
+                                           name="buy[]" data-name="buy"
+                                           style="width:50%;">
+                                    @if($oExchangeRate->type_buy == 'percent')
+                                        <i class="percent-sign">%</i>
+                                    @endif
+                                    </div>
+                                </td>
+                                <td class="buy_rate" data-original="{{ $oExchangeRate->getBuyRateAttribute() }}" style="display:none">
+                                    {{ $oExchangeRate->getBuyRateAttribute() }}
+                                </td>
+                                <td>
+                                    <div class="percent-align">
+                                    <input type="text"
+                                           pattern="[0-9]"
+                                           title="Numbers only"
+                                           value="{{ sprintf('%01.6f', $oExchangeRate->sell) }}"
+                                           class="form-control margin-rate-input col-md-4 rate-value-input"
+                                           name="sell[]" data-name="sell"
+                                           style="width:50%;">
+                                    @if($oExchangeRate->type_sell == 'percent')
+                                        <i class="percent-sign">%</i>
+                                    @endif
+                                    </div>
+                                </td>
+                                <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}" style="display:none">
+                                    {{ $oExchangeRate->getSellRateAttribute() }}
+                                </td>
+                                <td class="text-center footable-last-column">
+                                    <input type="hidden" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}">
+                                    <div class="btn-group">
+                                        <button class="btn-warning btn btn-sm single-row-update">
+                                            Update
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
                         <tr>
                             <td colspan="9">
-                                <form class="pick-currency-form">
+                                <form class="pick-currency-form" style="display:{{ ($oUserOnlyRates->count() === 0) ? "block" : "none" }}">
                                     <div class="form-group">
                                         <select name="pick-currency" id="pick-currency" style="width: 100%" data-placeholder="Pick up a currency">
                                             <option value=""></option>
                                             @foreach($aCurrencies as $oCurrency)
+                                                @if(!in_array($oCurrency->symbol, config('currencies.supported')))
+                                                    @continue;
+                                                @endif
                                                 <option data-id="{{ $oCurrency->id }}" value="{{ $oCurrency->symbol }}">[{{ $oCurrency->symbol }}] {{ ucfirst(strtolower($oCurrency->title)) }}</option>
                                             @endforeach
                                         </select>
@@ -66,7 +136,7 @@
                     </table>
                 </div>
 
-                @if(empty($aExchangeRates->all()))
+                @if(empty($oUserOnlyRates))
                     <div class="alert alert-info alert-dismissable">
                         <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
                         You don't have any exchangeRates!
@@ -77,7 +147,7 @@
 
     </div>
     <table style="display: none;" id="copy-change-table">
-        @foreach($aExchangeRates->all() as $iIdx => $oExchangeRate)
+        @foreach($oNoUserRates as $iIdx => $oExchangeRate)
             <tr style="display:none" class="footable-{{$iIdx % 2 == 0 ? 'odd' : 'even'}}"
                 data-symbol="{{ $oExchangeRate->symbol }}"
                 data-id="{{ $oExchangeRate->id }}"
@@ -88,19 +158,18 @@
                 <td class="currency-symbol">
                     {{ $oExchangeRate->symbol }}
                 </td>
-                @if(env('APP_ENV') == 'local' || \Auth::user()->role == 'user')
-                    <td>
-                        <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
-                               {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === 'disabled' ? 'checked' : '' }} value="percent"/>Margin(%)
-                        <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
-                               {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat
+                <td>
+                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
+                         {{ $oExchangeRate->type_sell === 'percent' || $oExchangeRate->type_sell === null ? 'checked' : '' }} value="percent"/>Margin(<span style="font-size: 16px;">%</span>)
+                    <input type="radio" name="change_type_{{$oExchangeRate->id}}" class="rate-type"
+                         {{ $oExchangeRate->type_sell === 'fixed' ? 'checked' : '' }} value="fixed"/>Flat
                         Rate
-                    </td>
-                @endif
+                </td>
                 <td>
                     {{ $oExchangeRate->updatedAt }}
                 </td>
                 <td>
+                    <div class="percent-align">
                     <input type="text"
                            pattern="[0-9]"
                            title="Numbers only"
@@ -108,14 +177,16 @@
                            class="form-control buy col-md-4 rate-value-input"
                            name="buy[]" data-name="buy"
                            style="width:50%;">
-                    @if($oExchangeRate->type_buy == 'percent')
+                    @if($oExchangeRate->type_buy != 'fixed')
                         <i class="percent-sign">%</i>
                     @endif
+                    </div>
                 </td>
                 <td class="buy_rate" data-original="{{ $oExchangeRate->getBuyRateAttribute() }}" style="display:none">
                     {{ $oExchangeRate->getBuyRateAttribute() }}
                 </td>
                 <td>
+                    <div class="percent-align">
                     <input type="text"
                            pattern="[0-9]"
                            title="Numbers only"
@@ -123,9 +194,10 @@
                            class="form-control margin-rate-input col-md-4 rate-value-input"
                            name="sell[]" data-name="sell"
                            style="width:50%;">
-                    @if($oExchangeRate->type_sell == 'percent')
+                    @if($oExchangeRate->type_sell != 'fixed')
                         <i class="percent-sign">%</i>
                     @endif
+                    </div>
                 </td>
                 <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}" style="display:none">
                     {{ $oExchangeRate->getSellRateAttribute() }}
@@ -145,6 +217,14 @@
 
 @section('footer')
     <script type="text/javascript">
+
+        //Defining the credentials
+        var apigClient = apigClientFactory.newClient({
+            accessKey: '{{ env('ACCESS_KEY') }}',
+            secretKey: '{{ env('SECRET_KEY') }}',
+            region: '{{ env('REGION') }}'
+        });
+
         $(document).ready(function () {
 
             var currency_table = $("#currency-table");
@@ -176,13 +256,6 @@
 
                 //After the movement we need to delete the select
                 $(".pick-currency-form").hide();
-
-//                apigClient.ratesGet({city: 'London', country: 'UK', type: 'reference'}, {})
-//                        .then(function (result) {
-//                        }).catch(function (result) {
-//                    var errorMsg =  (result) ? result : 'Try refreshing the page or contact your web dev';
-//                    swal('Ups!', 'API remoting web service problem. Message: ' + errorMsg, 'warning');
-//                });
             });
 
             $.ajaxSetup({
@@ -201,7 +274,7 @@
             });
             
             //Global level changing type
-            currency_table.on('click', '.change-type',function () {
+            $("#change-type-wrapper").on('click', '.change-type',function () {
 
                 //Set all them inactive
                 $('.change-type').attr('class', 'btn btn-default change-type');
@@ -209,7 +282,7 @@
                 var change_type = $(this).val();
 
                 //We change all local rates
-                $('input.rate-type').each(function(key, val){
+                $('#currency-table input.rate-type').each(function(key, val){
                     $(val).prop('checked', ($(val).val() == change_type));
                 });
 

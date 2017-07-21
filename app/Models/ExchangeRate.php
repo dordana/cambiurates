@@ -76,12 +76,34 @@ class ExchangeRate extends BaseModel
 	    $query->whereIn('symbol', config('currencies.supported'));
     }
 
-    public function scopeByUser(Builder $query)
+	/**
+	 * It constrains the query to get users's rates only
+	 * @param Builder $query
+	 */
+	public function scopeUserOnly(Builder $query)
     {
-            $query->leftJoin('user_exchange_rates as a', function ($join) {
+            $query->join('user_exchange_rates as a', function ($join) {
                     $join->on('a.exchange_rate_id', '=', 'exchange_rates.id')
                         ->where('a.user_id', '=', \Auth::user()->id);
                 })
-                ->select('exchange_rates.*', 'a.id AS user_ex_id', \DB::Raw('IFNULL(a.type_buy, "disabled") AS type_buy') , \DB::Raw('IFNULL(a.type_sell, "disabled") AS type_sell'), 'a.sell', 'a.buy', 'a.visible');
+	            ->orderBy('visible','DESC')
+	            ->orderBy('symbol','ASC')
+                ->select('exchange_rates.*', 'a.id AS user_ex_id','a.sell', 'a.buy', 'a.visible');
+    }
+
+	/**
+	 * It constrains the query to get all rates except current user's rates
+	 * @param Builder $query
+	 */
+	public function scopeExceptUser(Builder $query){
+
+	    $query->leftJoin('user_exchange_rates as a', function($join) {
+		    $join->on('a.exchange_rate_id', '=', 'exchange_rates.id')
+		         ->where('a.user_id', '=', \Auth::user()->id);
+	    })
+	          ->where('a.id', null)
+	          ->orderBy('visible', 'DESC')
+	          ->orderBy('symbol', 'ASC')
+	          ->select('exchange_rates.*', 'a.id AS user_ex_id','a.sell', 'a.buy', 'a.visible');
     }
 }
