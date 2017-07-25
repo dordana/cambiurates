@@ -34,39 +34,35 @@ class SyncRates extends Command
 	 */
 	public function handle()
 	{
+		$client = new \GuzzleHttp\Client();
+		$res = $client->request('GET', 'https://www.cambiu.com/api/v1/rates?type=reference&base=GBP');
+		if($res->getStatusCode() == 200){
 
+			$result = json_decode($res->getBody(), true);
 
-		$process = new Process('node ./app/Console/Commands/Cambiu/Scripts/SyncRates.js');
-		$process->run();
+			if(isset($result['GBP']) && !empty($result['GBP'])){
 
-		// executes after the command finishes
-		if (!$process->isSuccessful()) {
-			throw new ProcessFailedException($process);
+				$visibleRates = [];
+
+				foreach ($result['GBP'] as $currency => $rate) {
+
+					if (!is_numeric($rate)) {
+						continue;
+					}
+
+					$visibleRates[] = $currency;
+
+					ExchangeRate::where(['symbol' => $currency])->update(
+						[
+							'updated_at' => Carbon::now()->toDateTimeString(),
+							'exchange_rate' => $rate
+						]
+					);
+				}
+
+				ExchangeRate::whereIn('symbol', $visibleRates)->update(['is_visible' => 1]);
+				ExchangeRate::whereNotIn('symbol', $visibleRates)->update(['is_visible' => 0]);
+			}
 		}
-
-		$result = json_decode($process->getOutput());
-        
-        $visibleRates = [];
-    
-        if (isset($result[0]->rates)) {
-            foreach (current($result)->rates as $rate) {
-                
-                if (!is_numeric($rate->buy)) {
-                    continue;
-                }
-                
-                $visibleRates[] = $rate->currency;
-                
-                ExchangeRate::where(['symbol' => $rate->currency])->update(
-                    [
-                        'updated_at'    => Carbon::parse($rate->updated_at)->format('Y-m-d H:i:s'),
-                        'exchange_rate' => $rate->buy
-                    ]
-                );
-            }
-            
-            ExchangeRate::whereIn('symbol', $visibleRates)->update(['is_visible' => 1]);
-            ExchangeRate::whereNotIn('symbol', $visibleRates)->update(['is_visible' => 0]);
-        }
     }
 }
