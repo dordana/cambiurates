@@ -116,7 +116,7 @@
                                         <select name="pick-currency" id="pick-currency" style="width: 100%" data-placeholder="Pick up a currency">
                                             <option value=""></option>
                                             @foreach($aCurrencies as $oCurrency)
-                                                @if(!in_array($oCurrency->symbol, config('currencies.supported')))
+                                                @if($oCurrency->is_visible == 0)
                                                     @continue;
                                                 @endif
                                                 <option data-id="{{ $oCurrency->id }}" value="{{ $oCurrency->symbol }}">[{{ $oCurrency->symbol }}] {{ ucfirst(strtolower($oCurrency->title)) }}</option>
