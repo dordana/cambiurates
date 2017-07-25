@@ -46,10 +46,6 @@ class SyncRates extends Command
 
 				foreach ($result['GBP'] as $currency => $rate) {
 
-					if($currency == 'USD'){
-						continue;
-					}
-
 					if (!is_numeric($rate)) {
 						continue;
 					}
