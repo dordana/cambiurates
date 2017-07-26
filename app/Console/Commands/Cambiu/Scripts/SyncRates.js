@@ -8,7 +8,7 @@ var apigClient = apigClientFactory.default.newClient({
 });
 
 
-var pathTemplate = '/production2/rates';
+var pathTemplate = '/staging/rates';
 var method = 'GET';
 var additionalParams = {
     headers: {
