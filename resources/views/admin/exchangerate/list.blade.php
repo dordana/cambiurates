@@ -444,7 +444,7 @@
         });
 
         //Cambiu API
-        var name = '{{ \Auth::user()->name }}';
+        var name = '{!! \Auth::user()->name !!}';
         var nearest_station = '{{ \Auth::user()->nearest_station }}';
         var rates_policy = '{{ \Auth::user()->rates_policy }}';
         var chain = '{{ \Auth::user()->chain }}';
