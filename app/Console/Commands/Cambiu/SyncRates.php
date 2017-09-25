@@ -32,10 +32,11 @@ class SyncRates extends Command
 	 *
 	 * @return mixed
 	 */
-	public function handle()
-	{
+	public function handle(){
 		$client = new \GuzzleHttp\Client();
+
 		$res = $client->request('GET', 'https://www.cambiu.com/api/v1/rates?type=reference&base=GBP');
+		
 		if($res->getStatusCode() == 200){
 
 			$result = json_decode($res->getBody(), true);

@@ -5,13 +5,12 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox-content forum-container">
-
+                <h2></h2>
                 <div class="search-form">
                     <form action="" method="get">
                         <div class="input-group" style="width: 100%">
                             <input type="text" autocomplete="off" placeholder="Filter by symbol ..." name="search" style="width: 100%" class="form-control input-lg" value="{{\Illuminate\Support\Facades\Input::get('search')}}">
                         </div>
-
                     </form>
                 </div>
 
@@ -99,11 +98,14 @@
                                 <td class="sell_rate" data-original="{{ $oExchangeRate->getSellRateAttribute() }}" style="display:none">
                                     {{ $oExchangeRate->getSellRateAttribute() }}
                                 </td>
-                                <td class="text-center footable-last-column">
+                                <td class="text-center footable-last-column actions-buttons">
                                     <input type="hidden" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}">
                                     <div class="btn-group">
                                         <button class="btn-warning btn btn-sm single-row-update">
                                             Update
+                                        </button>
+                                        <button class="btn-warning btn btn-sm single-row-delete">
+                                            Delete
                                         </button>
                                     </div>
                                 </td>
@@ -116,9 +118,6 @@
                                         <select name="pick-currency" id="pick-currency" style="width: 100%" data-placeholder="Pick up a currency">
                                             <option value=""></option>
                                             @foreach($aCurrencies as $oCurrency)
-                                                @if($oCurrency->is_visible == 0)
-                                                    @continue;
-                                                @endif
                                                 <option data-id="{{ $oCurrency->id }}" value="{{ $oCurrency->symbol }}">[{{ $oCurrency->symbol }}] {{ ucfirst(strtolower($oCurrency->title)) }}</option>
                                             @endforeach
                                         </select>
@@ -204,9 +203,12 @@
                 </td>
                 <td class="text-center footable-last-column">
                     <input type="hidden" name="id[]" data-name="id" value="{{ $oExchangeRate->id }}">
-                    <div class="btn-group">
+                    <div class="btn-group actions-buttons">
                         <button class="btn-warning btn btn-sm single-row-update">
                             Update
+                        </button>
+                        <button class="btn-warning btn btn-sm single-row-delete">
+                            Delete
                         </button>
                     </div>
                 </td>
@@ -268,11 +270,11 @@
                 var row = $(this).parents('tr').first();
                 //Perform a calculation
                 applyCalculationForCurrency(row);
-                
+
                 //Set percent after the rate change input
                 setPercentIfMargin(row);
             });
-            
+
             //Global level changing type
             $("#change-type-wrapper").on('click', '.change-type',function () {
 
@@ -397,7 +399,12 @@
                 currencyRowUpdate($(this).parents('tr').first())
             });
 
-            function currencyRowUpdate(row){
+            currency_table.on('click', '.single-row-delete', function(){
+                $(this).parents('tr').find('input.rate-value-input').val("0");
+                currencyRowUpdate($(this).parents('tr').first() , delete_row );
+            });
+
+            function currencyRowUpdate( row , callback ){
                 var rate_sell = parseFloat(row.find('input[name^=sell]').val());
                 var rate_buy = parseFloat(row.find('input[name^=buy]').val());
                 var currency = row.find('.currency-symbol').text().trim();
@@ -429,6 +436,9 @@
                                 //Change original value
                                 changeOriginalRateWithCurrent(row);
                             }
+                            if(typeof callback != undefined && callback){
+                                delete_row( data );
+                            }
                         }, error: function (xhr, status, error) {
                             var data = JSON.parse(xhr.responseText);
                             for(var i in data){
@@ -439,6 +449,19 @@
                             that.prop('disabled',false).html('Update');
                         }
                     });
+                });
+            }
+
+            function delete_row( data ){
+                $.ajax({
+                    method: "POST",
+                    url: "trade/delete",
+                    data: data,
+                    success: function(result) {
+                        jQuery("#rate_" + result.rate_id).remove();
+                    }, error: function (xhr, status, error) {
+                        swal('Warning!', data[i], 'warning');
+                    }
                 });
             }
         });

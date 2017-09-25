@@ -71,6 +71,9 @@ class SyncExchanges extends Command
 		//Now just insert the new once
 		DB::table('chains')->insert($chains);
 
+		//Delete all exchanges first
+		DB::table('exchanges')->whereIn('rates_policy', ['individual' , 'chain'] )->delete();
+
 		//Now populate the exchanges for any country
 		foreach($countries as $code => $name){
 
@@ -81,8 +84,6 @@ class SyncExchanges extends Command
 			$country->name = $name;
 			$country->save();
 
-			//Delete all exchanges for this country first
-			DB::table('exchanges')->where('country_id', $country->id)->delete();
 
 			//Now get all exchanges for this country and sync them
 			$exchanges = $this->getExchangesByCountry($code);
@@ -92,14 +93,14 @@ class SyncExchanges extends Command
 
 				//We declare them instead using unset avoiding api changing issues
 				return new Exchange([
-					'origin_id' => $val['id'],
-					'chain_id' => $val['chain_id'],
-					'name' => $val['name'],
-					'currency' => $val['currency'],
-					'address' => $val['address'],
+					'origin_id'       => $val['id'],
+					'chain_id'        => $val['chain_id'],
+					'name'            => $val['name'],
+					'currency'        => $val['currency'],
+					'address'         => isset( $val['address'] ) && $val['address'] ? $val['address'] : "",
 					'nearest_station' => $val['nearest_station'],
-					'phone' => $val['phone'],
-					'rates_policy' => $val['rates_policy'],
+					'phone'           => $val['phone'],
+					'rates_policy'    => $val['rates_policy'],
 				]);
 			}, $exchanges);
 

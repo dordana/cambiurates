@@ -12,9 +12,9 @@ class ExchangeRate extends BaseModel
         'title',
         'pos'
     ];
-    
+
     protected $appends = ['BuyRate', 'SellRate'];
-    
+
     public $timestamps = false; // a must !
 
     public function users(){
@@ -42,7 +42,7 @@ class ExchangeRate extends BaseModel
         }
 	    return sprintf('%01.6f', $this->exchangeRate * (($this->buy + 100) / 100));
     }
-    
+
     /**
      * Attribute to add the sell rate, calculated from exchange_rate+exchange_rate*sell_markup
      *
@@ -88,7 +88,8 @@ class ExchangeRate extends BaseModel
                 })
 	            ->orderBy('visible','DESC')
 	            ->orderBy('symbol','ASC')
-                ->select('exchange_rates.*', 'a.id AS user_ex_id','a.sell', 'a.buy', 'a.visible');
+                ->select('exchange_rates.*', 'a.id AS user_ex_id','a.sell', 'a.buy', 'a.visible' , 'a.type_buy' , 'a.type_sell');
+
     }
 
 	/**
@@ -97,13 +98,19 @@ class ExchangeRate extends BaseModel
 	 */
 	public function scopeExceptUser(Builder $query){
 
-	    $query->leftJoin('user_exchange_rates as a', function($join) {
+	    $sql = $query->leftJoin('user_exchange_rates as a', function($join) {
 		    $join->on('a.exchange_rate_id', '=', 'exchange_rates.id')
 		         ->where('a.user_id', '=', \Auth::user()->id);
-	    })
+	        })
 	          ->where('a.id', null)
+              ->where('exchange_rates.symbol', '!=' , function($query){
+                    $query->select('currency')
+                    ->from('exchanges')
+                    ->where('origin_id', \Auth::user()->cambiu_id );
+              })
 	          ->orderBy('visible', 'DESC')
 	          ->orderBy('symbol', 'ASC')
-	          ->select('exchange_rates.*', 'a.id AS user_ex_id','a.sell', 'a.buy', 'a.visible');
+	          ->select('exchange_rates.*', 'a.id AS user_ex_id','a.sell', 'a.buy', 'a.visible')->toSql();
+
     }
 }

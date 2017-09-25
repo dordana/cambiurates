@@ -15,7 +15,7 @@ class UpdateUsersAllowNull201707181539 extends Migration
          Schema::table(
             'users', 
             function (Blueprint $table) {
-                $table->string('confirmation_code')->nullable()->change();
+                $table->string('confirmation_code')->nullable()->default('')->change();
             });     
      }
     

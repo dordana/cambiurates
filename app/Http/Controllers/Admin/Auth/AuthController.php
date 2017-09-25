@@ -62,17 +62,17 @@ class AuthController extends Controller
     public function register(AuthRequest $request)
     {
         $password = str_random(8);
-    
+
         $request->offsetSet('password', bcrypt($password));
-        
+
         $user = User::create($request->all());
-        
-        $token = str_random(255);
+
+        $token = str_random(100);
         $tokenReset = DB::table('password_resets')->insert(
             ['email' => $user->email, 'token' => $token]
         );
-       
-        
+
+
         $user->sendRegistationEmail($password,$token);
 
         return redirect()->route('users')->with(['success' => 'User successfully created!']);
@@ -90,14 +90,14 @@ class AuthController extends Controller
         if (!$oUser) {
             return redirect()->back()->with(['not_found' => 'Sorry, we couldn\'t find that record.']);
         }
-        
+
         if(trim($request->get('password')) != '') {
             $request->offsetSet('password', bcrypt($request->get('password')));
             $oUser->update($request->all());
         } else {
             $oUser->update($request->except('password'));
         }
-        
+
         return redirect()->route('home')->with(['success' => 'Settings successfully updated!']);
     }
 
@@ -159,6 +159,7 @@ class AuthController extends Controller
 	 */
 	public function showRegistrationForm()
 	{
+
 		return view($this->registerView, [
 			'chains' => Chain::all(),
 			'exchanges' => Exchange::all(),

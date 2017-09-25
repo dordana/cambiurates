@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -24,7 +24,7 @@ class User extends Authenticatable
         'remember_token',
         'cambiu_id'
     ];
-    
+
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -34,7 +34,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-    
+
     /**
      * @param string $password
      * @param string $token
@@ -42,13 +42,12 @@ class User extends Authenticatable
      */
     public function sendRegistationEmail($password = '', $token = '')
     {
-        
+
         try {
-            
             $me = $this;
+
             Mail::send('admin.email.registration', ['user' => $this, 'password' => $password, 'token' => $token],
                 function ($message) use ($me) {
-                    
                     $from = config('mail.from');
                     $message->from($from['address'], $from['name']);
                     $message->to($me->email, $me->email)
@@ -58,7 +57,7 @@ class User extends Authenticatable
             Log::error($e->getFile() . ' | ' . $e->getLine() . ' | ' . $e->getMessage());
         }
     }
-    
+
     /**
      * @return $this
      */
@@ -67,7 +66,7 @@ class User extends Authenticatable
         return $this->belongsToMany(ExchangeRate::class, 'user_exchange_rates', 'user_id',
             'exchange_rate_id')->withPivot(['visible', 'sell', 'buy'])->orderBy('user_exchange_rates.id', 'asc');;
     }
-    
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

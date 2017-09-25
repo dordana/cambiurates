@@ -18,28 +18,32 @@ class AddUsers2 extends Migration
             'name'     => 'Dror Poliak',
             'role'     => 'admin',
             'email'    => 'dror@cambiu.com',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
+	'confirmation_code' => ''
         ]);
  
         User::create([
             'name'     => 'Eyal Daskal',
             'role'     => 'admin',
             'email'    => 'eyal@cambiu.com',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
+	'confirmation_code' => ''
         ]);
 
         User::create([
             'name'     => 'Yonatan Brand',
             'role'     => 'admin',
             'email'    => 'yonatan@cambiu.com',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
+	'confirmation_code' => ''
         ]);
 
         User::create([
             'name'     => 'Anat Alroy',
             'role'     => 'admin',
             'email'    => 'anat@cambiu.com',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
+	'confirmation_code' => ''
         ]);
   }
 

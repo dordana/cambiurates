@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        
+
         if (config('app.env') == 'production') {
 	        $schedule->command('cambiu:sync-exchanges')
 	                 ->withoutOverlapping()
@@ -37,6 +37,18 @@ class Kernel extends ConsoleKernel
             $schedule->command('cambiu:sync-rates')
                 ->withoutOverlapping()
                 ->hourly()
+                ->appendOutputTo(storage_path('logs/command.log'));
+        }
+
+        if (config('app.env') == 'dev') {
+	        $schedule->command('cambiu:sync-exchanges')
+	                 ->withoutOverlapping()
+	                 ->everyMinute()
+	                 ->appendOutputTo(storage_path('logs/command.log'));
+
+            $schedule->command('cambiu:sync-rates')
+                ->withoutOverlapping()
+                ->everyMinute()
                 ->appendOutputTo(storage_path('logs/command.log'));
         }
     }

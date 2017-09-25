@@ -1,5 +1,7 @@
 <?php
 
+error_reporting( E_ALL );
+
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
@@ -19,8 +21,8 @@
 |
 */
 
-require __DIR__.'/../bootstrap/autoload.php';
 
+require __DIR__.'/../bootstrap/autoload.php';
 /*
 |--------------------------------------------------------------------------
 | Turn On The Lights
